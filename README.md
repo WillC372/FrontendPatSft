@@ -57,3 +57,8 @@ Vercel reconocerá el archivo `vercel.json` y publicará la aplicación en segun
 | `operario` | `operario123` | Operario |
 
 *(También es posible crear cuentas nuevas desde la pestaña "Registrarse")*.
+
+
+
+
+https://frontendpatsft.vercel.app/
