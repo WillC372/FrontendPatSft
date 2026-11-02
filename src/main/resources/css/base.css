@@ -143,3 +143,27 @@
 .chart-series-line { -fx-stroke: -aq-primary; -fx-stroke-width: 2.5px; }
 .chart-line-symbol { -fx-background-color: -aq-primary, -aq-surface; }
 .chart-vertical-grid-lines, .chart-horizontal-grid-lines { -fx-stroke: -aq-border; -fx-stroke-dash-array: 2 4; }
+
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: -aq-surface-alt;
+    -fx-background-radius: 10 10 0 0;
+    -fx-padding: 6 16 6 16;
+}
+.tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-background-color: -aq-primary;
+}
+.tab-pane > .tab-header-area > .headers-region > .tab .tab-label { -fx-text-fill: -aq-muted; }
+.tab-pane > .tab-header-area > .headers-region > .tab:selected .tab-label { -fx-text-fill: white; -fx-font-weight: bold; }
+.tab-pane > .tab-header-area > .tab-header-background { -fx-background-color: transparent; }
+.tab-pane > .tab-content-area { -fx-background-color: transparent; }
+.check-box .box { -fx-background-color: -aq-surface; -fx-border-color: -aq-border; -fx-border-radius: 4; -fx-background-radius: 4; }
+.check-box:selected .mark { -fx-background-color: -aq-primary; }
+
+.tab-button {
+    -fx-background-color: -aq-surface-alt;
+    -fx-text-fill: -aq-muted;
+    -fx-background-radius: 10;
+    -fx-padding: 8 18 8 18;
+    -fx-cursor: hand;
+}
+.tab-button-active { -fx-background-color: -aq-primary; -fx-text-fill: white; -fx-font-weight: bold; }
