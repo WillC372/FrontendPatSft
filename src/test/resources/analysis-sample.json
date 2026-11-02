@@ -1,0 +1,65 @@
+{
+    "analysisId": "6761236b-8913-4a27-848d-7e3d1227cdb2",
+    "createdAt": "2026-11-02T16:56:01.374792699Z",
+    "alertsCreated": 0,
+    "report": {
+        "profileName": "Piscina",
+        "measurementCount": 11,
+        "simulatedCount": 11,
+        "sufficientData": true,
+        "statistics": {
+            "count": 11,
+            "mean": 7.125454545454545,
+            "median": 7.12,
+            "min": 6.8,
+            "max": 7.5,
+            "standardDeviation": 0.23325366605323214
+        },
+        "anomalies": [],
+        "trend": {
+            "direction": "FALLING",
+            "slopePerDay": -0.1397678888638086,
+            "rSquared": 0.6850390199923497,
+            "firstHalfMean": 7.336,
+            "secondHalfMean": 6.95,
+            "summary": "El pH tiende a bajar unas 0.14 unidades por d\u00eda (ajuste R\u00b2 = 0.69)."
+        },
+        "forecast": {
+            "available": true,
+            "reason": "Proyecci\u00f3n disponible.",
+            "horizonHours": 49,
+            "points": [
+                {
+                    "at": "2026-11-03T08:15:31.469351Z",
+                    "predicted": 6.741646585748283,
+                    "lower": 6.361143048001161,
+                    "upper": 7.122150123495405
+                },
+                {
+                    "at": "2026-11-04T01:15:31.469351Z",
+                    "predicted": 6.6426443311364185,
+                    "lower": 6.233732102793081,
+                    "upper": 7.051556559479756
+                },
+                {
+                    "at": "2026-11-04T17:15:31.469351Z",
+                    "predicted": 6.549465738560546,
+                    "lower": 6.1101515207810095,
+                    "upper": 6.988779956340082
+                }
+            ],
+            "method": "Regresi\u00f3n lineal por m\u00ednimos cuadrados con intervalo de predicci\u00f3n del 95 %",
+            "limitations": "Supone que el comportamiento reciente contin\u00faa. No considera intervenciones, clima, uso ni recalibraciones del sensor. Es una estimaci\u00f3n, no una certeza."
+        },
+        "recommendations": [
+            "La \u00faltima lectura (7.12) est\u00e1 por debajo del rango recomendado (7.20\u20137.80) del perfil \u00abPiscina\u00bb. Repita la medici\u00f3n, verifique que el sensor est\u00e9 calibrado y revise la fuente de agua.",
+            "En piscinas, un pH fuera de rango puede reducir la eficacia de la desinfecci\u00f3n e irritar a los ba\u00f1istas. Siga las instrucciones del fabricante de los productos de ajuste y verifique tambi\u00e9n cloro libre y alcalinidad.",
+            "Se observa una tendencia sostenida: conviene investigar qu\u00e9 cambi\u00f3 (fuente de agua, tratamientos, vegetaci\u00f3n, uso) antes de que la lectura salga del rango."
+        ],
+        "limitations": [
+            "11 de 11 mediciones son SIMULACI\u00d3N; no representan agua real.",
+            "Los an\u00e1lisis se basan \u00fanicamente en el pH; no eval\u00faan contaminantes ni otros par\u00e1metros."
+        ],
+        "disclaimer": "El pH es solo un indicador: por s\u00ed solo no demuestra que el agua sea potable, segura ni est\u00e9 libre de contaminantes."
+    }
+}

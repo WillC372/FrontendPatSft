@@ -1,0 +1,20 @@
+{
+    "hypothetical": true,
+    "baselinePh": 7.12,
+    "baseline": {
+        "ph": 7.12,
+        "acidity": "NEUTRAL",
+        "status": "CAUTION",
+        "withinRecommendedRange": false
+    },
+    "scenarioPh": 6.12,
+    "scenario": {
+        "ph": 6.12,
+        "acidity": "ACIDIC",
+        "status": "CRITICAL",
+        "withinRecommendedRange": false
+    },
+    "comparison": "Pasar\u00eda de \u00abneutra, precauci\u00f3n\u00bb (pH 7.12) a \u00ab\u00e1cida, cr\u00edtico\u00bb (pH 6.12).",
+    "followUp": "Ser\u00eda un valor muy alejado del rango del perfil: se requerir\u00eda verificaci\u00f3n con un m\u00e9todo independiente y revisar la causa antes de actuar.",
+    "notice": "Escenario hipot\u00e9tico: no es una predicci\u00f3n de lo que ocurrir\u00e1 ni demuestra que el agua sea segura o potable."
+}
