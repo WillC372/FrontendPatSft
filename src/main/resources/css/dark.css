@@ -1,0 +1,17 @@
+.root {
+    -aq-bg: #07182a;
+    -aq-surface: #0e2740;
+    -aq-surface-alt: #123150;
+    -aq-text: #e6f4fb;
+    -aq-muted: #8fb0c4;
+    -aq-border: #1d4163;
+    -aq-primary: #1fa6ee;
+    -aq-primary-dark: #168bc9;
+    -aq-accent: #2ee6d6;
+    -aq-ok: #34d399;
+    -aq-warn: #f5b942;
+    -aq-danger: #ff6b7d;
+    -aq-sidebar: #051222;
+    -aq-sidebar-text: #bfe3f3;
+    -aq-gauge-track: #1b3a58;
+}

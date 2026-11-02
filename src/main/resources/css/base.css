@@ -1,0 +1,120 @@
+.root {
+    -fx-font-family: "Segoe UI", "Noto Sans", "DejaVu Sans", sans-serif;
+    -fx-font-size: 14px;
+    -fx-background-color: -aq-bg;
+    -fx-text-fill: -aq-text;
+}
+
+.label { -fx-text-fill: -aq-text; }
+.muted { -fx-text-fill: -aq-muted; }
+.h1 { -fx-font-size: 28px; -fx-font-weight: bold; }
+.h2 { -fx-font-size: 20px; -fx-font-weight: bold; }
+.h3 { -fx-font-size: 16px; -fx-font-weight: bold; }
+.small { -fx-font-size: 12px; }
+
+.brand-panel {
+    -fx-background-color: linear-gradient(to bottom right, #06324f, #0a84c6 60%, #14c8c0);
+}
+.brand-title { -fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: white; }
+.brand-subtitle { -fx-font-size: 15px; -fx-text-fill: #d8f3f7; }
+.brand-icon { -fx-fill: white; }
+
+.card {
+    -fx-background-color: -aq-surface;
+    -fx-background-radius: 16;
+    -fx-border-color: -aq-border;
+    -fx-border-radius: 16;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(10,60,90,0.10), 18, 0.1, 0, 4);
+}
+.card-title { -fx-font-size: 13px; -fx-text-fill: -aq-muted; -fx-font-weight: bold; }
+
+.text-field, .password-field, .text-area {
+    -fx-background-color: -aq-surface;
+    -fx-text-fill: -aq-text;
+    -fx-prompt-text-fill: -aq-muted;
+    -fx-border-color: -aq-border;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 10 12 10 12;
+}
+.text-field:focused, .password-field:focused {
+    -fx-border-color: -aq-primary;
+    -fx-effect: dropshadow(gaussian, rgba(10,132,198,0.30), 8, 0, 0, 0);
+}
+
+.btn-primary {
+    -fx-background-color: linear-gradient(to right, -aq-primary, -aq-accent);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 12;
+    -fx-padding: 11 22 11 22;
+    -fx-cursor: hand;
+}
+.btn-primary:hover { -fx-effect: dropshadow(gaussian, rgba(20,200,192,0.55), 14, 0, 0, 2); }
+.btn-primary:disabled { -fx-opacity: 0.55; }
+.btn-secondary {
+    -fx-background-color: transparent;
+    -fx-text-fill: -aq-primary;
+    -fx-border-color: -aq-primary;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 8 16 8 16;
+    -fx-cursor: hand;
+}
+.btn-secondary:hover { -fx-background-color: -aq-surface-alt; }
+.btn-danger { -fx-text-fill: -aq-danger; -fx-border-color: -aq-danger; }
+.btn-link {
+    -fx-background-color: transparent;
+    -fx-text-fill: -aq-primary;
+    -fx-padding: 2 4 2 4;
+    -fx-cursor: hand;
+}
+.btn-link:hover { -fx-underline: true; }
+
+.error-box {
+    -fx-background-color: derive(-aq-danger, 85%);
+    -fx-border-color: -aq-danger;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 8 12 8 12;
+}
+.error-text { -fx-text-fill: -aq-danger; }
+.info-box {
+    -fx-background-color: derive(-aq-ok, 85%);
+    -fx-border-color: -aq-ok;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 8 12 8 12;
+}
+.info-text { -fx-text-fill: -aq-ok; }
+
+.sidebar { -fx-background-color: -aq-sidebar; }
+.sidebar-brand { -fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold; }
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -aq-sidebar-text;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 11 16 11 16;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+}
+.nav-button:hover { -fx-background-color: rgba(255,255,255,0.08); }
+.nav-button-active {
+    -fx-background-color: linear-gradient(to right, -aq-primary, -aq-accent);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+.topbar { -fx-background-color: -aq-surface; -fx-border-color: -aq-border; -fx-border-width: 0 0 1 0; }
+
+.chip { -fx-padding: 4 12 4 12; -fx-background-radius: 20; -fx-font-weight: bold; }
+.chip-ok { -fx-background-color: derive(-aq-ok, 80%); -fx-text-fill: -aq-ok; }
+.chip-warn { -fx-background-color: derive(-aq-warn, 80%); -fx-text-fill: -aq-warn; }
+.chip-danger { -fx-background-color: derive(-aq-danger, 80%); -fx-text-fill: -aq-danger; }
+.chip-sim { -fx-background-color: derive(-aq-warn, 80%); -fx-text-fill: -aq-warn; }
+.chip-neutral { -fx-background-color: -aq-surface-alt; -fx-text-fill: -aq-muted; }
+
+.scroll-pane { -fx-background-color: transparent; }
+.scroll-pane > .viewport { -fx-background-color: transparent; }
+.check-box { -fx-text-fill: -aq-text; }
+.separator *.line { -fx-border-color: -aq-border; }
