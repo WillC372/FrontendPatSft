@@ -38,6 +38,8 @@ public class ShellView {
         sidebar.getChildren().addAll(Ui.label("AquaSense AI", "sidebar-brand"), new VBox(14));
 
         addSection(sidebar, "Inicio", () -> new DashboardView(ctx).build());
+        addSection(sidebar, "Dispositivos y medición", () -> new MeasureView(ctx).build());
+        addSection(sidebar, "Historial", () -> new HistoryView(ctx).build());
         addSection(sidebar, "Perfiles de agua", () -> new ProfilesView(ctx).build());
         sidebar.getChildren().add(Ui.spacer());
 
