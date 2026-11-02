@@ -59,4 +59,14 @@ public final class ApiModels {
     public record ClassificationDto(BigDecimal ph, String acidity, String status, boolean withinRecommendedRange,
                                     String explanation, String disclaimer) {
     }
+
+    public record DeviceRequest(String name, String manufacturer, String model, String externalId,
+                                String connectionType) {
+    }
+
+    public record MeasurementRequest(String deviceId, String profileId, BigDecimal ph, Instant measuredAt) {
+    }
+
+    public record PageDto<T>(List<T> items, int page, int size, long totalItems, int totalPages) {
+    }
 }

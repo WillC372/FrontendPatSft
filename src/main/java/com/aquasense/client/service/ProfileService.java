@@ -1,6 +1,7 @@
 package com.aquasense.client.service;
 
 import com.aquasense.client.api.ApiClient;
+import com.aquasense.client.api.ApiModels.ClassificationDto;
 import com.aquasense.client.api.ApiModels.DuplicateRequest;
 import com.aquasense.client.api.ApiModels.ProfileDto;
 import com.aquasense.client.api.ApiModels.ProfileRequest;
@@ -33,5 +34,9 @@ public class ProfileService {
 
     public void delete(String id) {
         api.delete("/api/v1/profiles/" + id);
+    }
+
+    public ClassificationDto classify(String id, java.math.BigDecimal ph) {
+        return api.get("/api/v1/profiles/" + id + "/classify?ph=" + ph.toPlainString(), ClassificationDto.class);
     }
 }
