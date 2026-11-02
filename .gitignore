@@ -1,6 +1,9 @@
+target/
+.env
+*.log
+.idea/
+.vscode/
+*.iml
 .DS_Store
 Thumbs.db
-Desktop.ini
-.vscode/
-.idea/
-*.log
+*.bundle
