@@ -7,6 +7,7 @@ import com.aquasense.client.device.ConnectorFactory;
 import com.aquasense.client.device.command.CommandInvoker;
 import com.aquasense.client.service.DashboardService;
 import com.aquasense.client.service.DeviceApiService;
+import com.aquasense.client.service.IntelligenceApiService;
 import com.aquasense.client.service.MeasurementApiService;
 import com.aquasense.client.service.ProfileService;
 import com.aquasense.client.session.RememberedSessionStore;
@@ -23,6 +24,7 @@ public final class AppContext {
     private final DashboardService dashboard = new DashboardService(api);
     private final DeviceApiService devices = new DeviceApiService(api);
     private final MeasurementApiService measurements = new MeasurementApiService(api);
+    private final IntelligenceApiService intelligence = new IntelligenceApiService(api);
     private final ConnectorFactory connectors = new ConnectorFactory();
     private final CommandInvoker invoker = new CommandInvoker();
     private final ThemeManager themes = new ThemeManager(AppConfig.dataDirectory());
@@ -65,5 +67,9 @@ public final class AppContext {
 
     public CommandInvoker invoker() {
         return invoker;
+    }
+
+    public IntelligenceApiService intelligence() {
+        return intelligence;
     }
 }
