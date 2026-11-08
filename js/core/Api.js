@@ -32,6 +32,8 @@ class ApiClient {
 
   async request(method, path, { body, query, raw = false } = {}) {
     let response;
+    // A free hosted backend sleeps when idle: if the answer takes long, the UI explains why.
+    const slow = setTimeout(() => bus.emit("api:slow"), 5000);
     try {
       response = await fetch(this.url(path, query), {
         method,
@@ -41,6 +43,8 @@ class ApiClient {
       });
     } catch {
       throw new ApiError(0, "No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.");
+    } finally {
+      clearTimeout(slow);
     }
     if (response.status === 401 && session.isAuthenticated) {
       session.clear();

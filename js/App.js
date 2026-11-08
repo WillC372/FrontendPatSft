@@ -74,6 +74,13 @@ ctx.router = new Router(show)
   .add("billing", billingView)
   .add("admin", adminView);
 
+let slowNoticeShown = false;
+bus.on("api:slow", () => {
+  if (slowNoticeShown) return;
+  slowNoticeShown = true;
+  toast("El servidor se está activando; la primera respuesta puede tardar hasta un minuto.", "info", 9000);
+});
+
 bus.on("session:expired", () => {
   toast("Tu sesión expiro. Inicia sesión de nuevo.", "warn");
   ctx.router.go("login");
