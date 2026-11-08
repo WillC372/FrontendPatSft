@@ -1,0 +1,78 @@
+/* Tokens de diseno de AquaSense AI. El tema oscuro es el predeterminado (mockups). */
+:root,
+:root[data-theme="dark"] {
+  --bg: #040b1c;
+  --bg-2: #071530;
+  --bg-glow-1: rgba(30, 139, 255, 0.22);
+  --bg-glow-2: rgba(25, 211, 197, 0.12);
+  --surface: rgba(10, 27, 60, 0.72);
+  --surface-2: rgba(14, 38, 82, 0.66);
+  --surface-solid: #0a1b3c;
+  --sidebar: rgba(5, 15, 36, 0.92);
+  --border: rgba(64, 156, 255, 0.24);
+  --border-strong: rgba(64, 176, 255, 0.55);
+  --text: #eaf4ff;
+  --text-soft: #c2d6f2;
+  --muted: #8aa4c8;
+  --primary: #1e8bff;
+  --primary-2: #22c7f0;
+  --turquoise: #19d3c5;
+  --ok: #2fd27a;
+  --ok-bg: rgba(47, 210, 122, 0.14);
+  --warn: #ffb547;
+  --warn-bg: rgba(255, 181, 71, 0.14);
+  --crit: #ff5d6c;
+  --crit-bg: rgba(255, 93, 108, 0.14);
+  --sim: #c39bff;
+  --sim-bg: rgba(195, 155, 255, 0.14);
+  --glow: 0 0 24px rgba(34, 199, 240, 0.28);
+  --glow-strong: 0 0 36px rgba(34, 199, 240, 0.45);
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+  --track: rgba(120, 160, 220, 0.16);
+  --grid: rgba(120, 170, 255, 0.10);
+  --input-bg: rgba(6, 20, 46, 0.7);
+  --gradient-primary: linear-gradient(90deg, #1e6dff 0%, #1e8bff 40%, #22c7f0 100%);
+  --gradient-gauge: linear-gradient(90deg, #1e6dff, #22c7f0, #2fd27a);
+  --font-display: "Exo 2", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Manrope", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --sidebar-w: 248px;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #eaf3fc;
+  --bg-2: #f6fbff;
+  --bg-glow-1: rgba(30, 139, 255, 0.16);
+  --bg-glow-2: rgba(25, 211, 197, 0.12);
+  --surface: rgba(255, 255, 255, 0.86);
+  --surface-2: rgba(240, 248, 255, 0.92);
+  --surface-solid: #ffffff;
+  --sidebar: rgba(255, 255, 255, 0.94);
+  --border: rgba(30, 120, 220, 0.16);
+  --border-strong: rgba(30, 139, 255, 0.45);
+  --text: #0b2340;
+  --text-soft: #23466e;
+  --muted: #56708f;
+  --primary: #0f72e0;
+  --primary-2: #0aa9cf;
+  --turquoise: #0aa89c;
+  --ok: #138a50;
+  --ok-bg: rgba(19, 138, 80, 0.12);
+  --warn: #b26a00;
+  --warn-bg: rgba(178, 106, 0, 0.12);
+  --crit: #d12f43;
+  --crit-bg: rgba(209, 47, 67, 0.1);
+  --sim: #7a4fd0;
+  --sim-bg: rgba(122, 79, 208, 0.1);
+  --glow: 0 6px 22px rgba(15, 114, 224, 0.12);
+  --glow-strong: 0 10px 30px rgba(15, 114, 224, 0.2);
+  --shadow: 0 16px 40px rgba(20, 60, 110, 0.14);
+  --track: rgba(20, 80, 160, 0.1);
+  --grid: rgba(20, 80, 160, 0.08);
+  --input-bg: #f3f8fe;
+  --gradient-primary: linear-gradient(90deg, #0f5fd0 0%, #0f72e0 40%, #0aa9cf 100%);
+  color-scheme: light;
+}
