@@ -1,0 +1,199 @@
+import { api, ApiError } from "../core/api.js";
+import { session } from "../core/session.js";
+import { icon, logo } from "../ui/icons.js";
+import { showFieldErrors, toast, withBusy } from "../ui/components.js";
+import { animateWater } from "../ui/water.js";
+import { esc } from "../core/format.js";
+
+function layout(card) {
+  return `
+    <div class="auth">
+      <section class="auth-hero" aria-hidden="true">
+        <canvas data-waves></canvas>
+        <div class="auth-hero-content">
+          ${logo()}
+          <h1>AquaSense <span>AI</span></h1>
+          <p>Monitorea · Analiza · Cuida</p>
+          <div class="auth-hero-features">
+            <div>${icon("drop")}Mide</div><div>${icon("brain")}Analiza</div><div>${icon("shield")}Cuida</div>
+          </div>
+        </div>
+      </section>
+      <section class="auth-panel"><div class="card glow auth-card">${card}</div></section>
+    </div>`;
+}
+
+function inputField({ name, label, type = "text", iconName, autocomplete, placeholder, toggle = false }) {
+  return `<div class="field">
+      <label for="f-${name}">${label}</label>
+      <div class="input-wrap">${icon(iconName)}
+        <input class="input" id="f-${name}" name="${name}" type="${type}" autocomplete="${autocomplete}" placeholder="${placeholder}" required>
+        ${toggle ? `<button type="button" class="input-action" data-toggle-password aria-label="Mostrar contraseña">${icon("eye")}</button>` : ""}
+      </div>
+      <div class="field-error" data-error-for="${name}"></div>
+    </div>`;
+}
+
+function bindPasswordToggles(root) {
+  root.querySelectorAll("[data-toggle-password]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const input = button.parentElement.querySelector("input");
+      const show = input.type === "password";
+      input.type = show ? "text" : "password";
+      button.innerHTML = icon(show ? "eyeOff" : "eye");
+      button.setAttribute("aria-label", show ? "Ocultar contraseña" : "Mostrar contraseña");
+    });
+  });
+}
+
+function mount(root, card, onSubmit) {
+  root.innerHTML = layout(card);
+  const stop = animateWater(root.querySelector("[data-waves]"), { layers: 4, bubbles: 40, height: 0.42 });
+  bindPasswordToggles(root);
+  const form = root.querySelector("form");
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const data = Object.fromEntries(new FormData(form));
+    const button = form.querySelector("button[type=submit]");
+    showFieldErrors(form);
+    try {
+      await withBusy(button, () => onSubmit(data, form));
+    } catch (error) {
+      if (error instanceof ApiError && Object.keys(error.fields).length) showFieldErrors(form, error.fields);
+      toast(error.message, "error");
+    }
+  });
+  form.querySelector("input")?.focus();
+  return stop;
+}
+
+export const loginView = {
+  name: "login", title: "Iniciar sesión", layout: "auth",
+  render(root, ctx) {
+    return mount(root, `
+      <h2>Iniciar sesión</h2><p class="card-sub">Accede a tu cuenta para continuar</p>
+      <form class="auth-form" novalidate>
+        ${inputField({ name: "email", label: "Correo electrónico", type: "email", iconName: "user", autocomplete: "email", placeholder: "tu@correo.com" })}
+        ${inputField({ name: "password", label: "Contraseña", type: "password", iconName: "lock", autocomplete: "current-password", placeholder: "Tu contraseña", toggle: true })}
+        <div class="auth-links">
+          <label class="check"><input type="checkbox" name="rememberMe">Recordarme</label>
+          <a href="#/forgot-password">¿Olvidaste tu contraseña?</a>
+        </div>
+        <button class="btn btn-primary btn-block btn-pill" type="submit">Entrar ${icon("arrowRight")}</button>
+      </form>
+      <p class="auth-foot">¿No tienes cuenta? <a href="#/register">Regístrate aquí</a></p>`,
+    async (data) => {
+      const remember = data.rememberMe === "on";
+      const auth = await api.post("/auth/login", { email: data.email, password: data.password, rememberMe: remember });
+      session.save(auth, remember);
+      toast(`Bienvenido, ${auth.user.fullName.split(" ")[0]}.`, "ok");
+      if (auth.notice) toast(auth.notice, "warn", 10000);
+      ctx.router.go("dashboard");
+    });
+  },
+};
+
+export const registerView = {
+  name: "register", title: "Crear cuenta", layout: "auth",
+  render(root, ctx) {
+    return mount(root, `
+      <h2>Crear cuenta</h2><p class="card-sub">Empieza a monitorear la calidad de tu agua</p>
+      <form class="auth-form" novalidate>
+        ${inputField({ name: "fullName", label: "Nombre completo", iconName: "user", autocomplete: "name", placeholder: "Tu nombre" })}
+        ${inputField({ name: "email", label: "Correo electrónico", type: "email", iconName: "mail", autocomplete: "email", placeholder: "tu@correo.com" })}
+        ${inputField({ name: "password", label: "Contraseña", type: "password", iconName: "lock", autocomplete: "new-password", placeholder: "Mínimo 8 caracteres, letras y números", toggle: true })}
+        ${inputField({ name: "confirm", label: "Confirmar contraseña", type: "password", iconName: "lock", autocomplete: "new-password", placeholder: "Repite la contraseña", toggle: true })}
+        <button class="btn btn-primary btn-block btn-pill" type="submit">Crear cuenta ${icon("arrowRight")}</button>
+      </form>
+      <p class="auth-foot">¿Ya tienes cuenta? <a href="#/login">Inicia sesión</a></p>`,
+    async (data, form) => {
+      if (data.password !== data.confirm) {
+        showFieldErrors(form, { confirm: "Las contraseñas no coinciden." });
+        throw new Error("Revisa los campos marcados.");
+      }
+      const auth = await api.post("/auth/register", { fullName: data.fullName, email: data.email, password: data.password });
+      session.save(auth, false);
+      toast("Cuenta creada. ¡Bienvenido a AquaSense AI!", "ok");
+      if (auth.notice) toast(auth.notice, "warn", 10000);
+      ctx.router.go("dashboard");
+    });
+  },
+};
+
+export const forgotView = {
+  name: "forgot-password", title: "Recuperar contraseña", layout: "auth",
+  render(root) {
+    return mount(root, `
+      <h2>Recuperar contraseña</h2><p class="card-sub">Te enviaremos un enlace para restablecerla</p>
+      <form class="auth-form" novalidate>
+        ${inputField({ name: "email", label: "Correo electrónico", type: "email", iconName: "mail", autocomplete: "email", placeholder: "tu@correo.com" })}
+        <button class="btn btn-primary btn-block btn-pill" type="submit">Enviar enlace ${icon("send")}</button>
+        <div data-result></div>
+      </form>
+      <p class="auth-foot"><a href="#/login">Volver a iniciar sesión</a></p>`,
+    async (data, form) => {
+      const result = form.querySelector("[data-result]");
+      try {
+        const response = await api.post("/auth/forgot-password", { email: data.email });
+        result.innerHTML = `<div class="banner banner-info">${icon("mail")}<p>${esc(response.message)}</p></div>`;
+      } catch (error) {
+        if (error instanceof ApiError && error.status === 503) {
+          result.innerHTML = `<div class="banner banner-warn">${icon("alert")}<p>${esc(error.message)}</p></div>`;
+          return;
+        }
+        throw error;
+      }
+    });
+  },
+};
+
+export const resetView = {
+  name: "reset-password", title: "Restablecer contraseña", layout: "auth",
+  render(root, ctx) {
+    const token = ctx.route.query.token;
+    if (!token) {
+      root.innerHTML = layout(`<h2>Enlace inválido</h2><p class="card-sub">El enlace no contiene un token. Solicita uno nuevo.</p>
+        <a class="btn btn-primary btn-block" href="#/forgot-password">Solicitar enlace</a>`);
+      return animateWater(root.querySelector("[data-waves]"));
+    }
+    return mount(root, `
+      <h2>Nueva contraseña</h2><p class="card-sub">Elige una contraseña segura</p>
+      <form class="auth-form" novalidate>
+        ${inputField({ name: "newPassword", label: "Nueva contraseña", type: "password", iconName: "lock", autocomplete: "new-password", placeholder: "Mínimo 8 caracteres, letras y números", toggle: true })}
+        <button class="btn btn-primary btn-block btn-pill" type="submit">Guardar contraseña</button>
+      </form>`,
+    async (data) => {
+      const response = await api.post("/auth/reset-password", { token, newPassword: data.newPassword });
+      session.clear();
+      toast(response.message, "ok");
+      ctx.router.go("login");
+    });
+  },
+};
+
+/** Confirmación del rol de administrador desde el enlace enviado al correo de ADMIN_EMAIL. */
+export const verifyAdminView = {
+  name: "verify-admin", title: "Confirmar administrador", layout: "auth",
+  render(root, ctx) {
+    const token = ctx.route.query.token;
+    if (!token) {
+      root.innerHTML = layout(`<h2>Enlace inválido</h2><p class="card-sub">El enlace no contiene un código. Inicia sesión para recibir uno nuevo.</p>
+        <a class="btn btn-primary btn-block" href="#/login">Iniciar sesión</a>`);
+      return animateWater(root.querySelector("[data-waves]"));
+    }
+    return mount(root, `
+      <h2>Confirmar administrador</h2><p class="card-sub">Activa los permisos de administrador de esta cuenta</p>
+      <form class="auth-form" novalidate>
+        <p class="muted" style="font-size:14px">Confirma solo si tú creaste la cuenta con este correo. Después tendrás que iniciar sesión de nuevo.</p>
+        <button class="btn btn-primary btn-block btn-pill" type="submit">${icon("shield")}Confirmar</button>
+        <div data-result></div>
+      </form>
+      <p class="auth-foot"><a href="#/login">Ir a iniciar sesión</a></p>`,
+    async (data, form) => {
+      const response = await api.post("/auth/verify-admin", { token });
+      session.clear();
+      form.querySelector("[data-result]").innerHTML = `<div class="banner banner-info">${icon("check")}<p>${esc(response.message)}</p></div>`;
+      form.querySelector("button[type=submit]").remove();
+    });
+  },
+};
