@@ -86,13 +86,16 @@ python3 -m http.server 5500
 
 ## Configuración de conexión con el backend
 
-Edita `Config.js`:
+El frontend se comunica con el backend solo por su API REST (`/api/v1`, con el token JWT en la cabecera). `Config.js` elige la dirección según dónde corre la página:
 
-```js
-window.AQUASENSE_CONFIG = { apiBaseUrl: "http://localhost:8080/api/v1" };
-```
+- En `localhost`: `http://localhost:8080/api/v1`.
+- Publicado (Vercel): `https://aquasense-backend-willc372.onrender.com/api/v1`.
 
-El origen del frontend debe estar en la variable `CORS_ORIGINS` del backend (por defecto `http://localhost:5500`).
+El origen del frontend debe estar en la variable `CORS_ORIGINS` del backend: `http://localhost:5500` en desarrollo y `https://frontendpatsft.vercel.app` en producción.
+
+## Despliegue
+
+Vercel publica la carpeta tal cual (sin compilación). `vercel.json` envía cualquier ruta a `index.html`. Con el proyecto conectado al repositorio, cada `git push` publica una versión nueva. La guía completa (Neon, Render y Vercel) está en `docs/Deployment.md` del repositorio BackendPatSft.
 
 ## Compilar y distribuir
 
