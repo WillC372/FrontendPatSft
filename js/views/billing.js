@@ -8,7 +8,7 @@ const RESULT = { APPROVED: ["ok", "check"], DECLINED: ["crit", "error"], ERROR: 
 const cop = (value) => `COP ${Number(value).toLocaleString("es-CO", { maximumFractionDigits: 0 })}`;
 const longDate = (iso) => new Intl.DateTimeFormat("es-CO", { dateStyle: "long" }).format(new Date(iso));
 
-/** Lee la referencia con la que PayU devuelve al usuario (en el hash o, por si acaso, en la URL). */
+/** Reads the reference PayU sends the user back with (in the hash or, just in case, in the URL). */
 function returnedReference(route) {
   const fromHash = route.query.referenceCode;
   if (fromHash) return fromHash;

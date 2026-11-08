@@ -13,7 +13,7 @@ function aiBubble(text, model, citations = [], extra = "") {
 }
 
 /**
- * Asistente con memoria: lista de conversaciones, historial guardado y repreguntas que usan el contexto anterior.
+ * Assistant with memory: list of conversations, stored history and follow-up questions that use the previous context.
  */
 export async function assistantPane(host) {
   host.innerHTML = loading();

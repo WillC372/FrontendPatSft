@@ -2,8 +2,8 @@ import { esc } from "../core/format.js";
 import { icon } from "../ui/icons.js";
 
 /**
- * Fuentes normativas (RAG). La cita literal se muestra en su idioma original dentro de <blockquote lang="en">;
- * el resumen en español se rotula como resumen propio para no presentarlo como traducción oficial.
+ * Guideline sources (RAG). The literal quote is shown in its original language inside <blockquote lang="en">;
+ * the Spanish summary is labeled as our own summary so it is not presented as an official translation.
  */
 const ORG_CLASS = { "epa-sdws": "org-epa", "who-gdwq-ph": "org-who", "cdc-mahc-2024": "org-cdc", "fao-ipd29": "org-fao" };
 
@@ -25,7 +25,7 @@ export function citationCard(c, index) {
     </article>`;
 }
 
-/** Bloque "Respaldo normativo" para recomendaciones, diagnósticos e informes. */
+/** "Respaldo normativo" block for recommendations, diagnoses and reports. */
 export function citationBlock(citations, { coverageNote = null, title = "Respaldo normativo", lead = null } = {}) {
   const list = citations || [];
   if (!list.length && !coverageNote) return "";
@@ -39,14 +39,14 @@ export function citationBlock(citations, { coverageNote = null, title = "Respald
     </section>`;
 }
 
-/** Texto del chat con las referencias [id] convertidas en marcas numeradas que llevan a la cita. */
+/** Chat text with the [id] references turned into numbered marks that lead to the quote. */
 export function withReferenceMarks(text, citations) {
   const order = new Map((citations || []).map((c, i) => [c.id, i + 1]));
   return esc(text).replace(/\[([a-z0-9]+(?:-[a-z0-9]+)+)\]/g, (match, id) =>
     order.has(id) ? `<button type="button" class="ref-mark" data-ref="${id}" aria-label="Ver la cita ${order.get(id)}">${order.get(id)}</button>` : "");
 }
 
-/** Al pulsar una marca, abre la lista de fuentes de esa respuesta y resalta la cita. */
+/** Clicking a mark opens the list of sources of that answer and highlights the quote. */
 export function bindReferenceMarks(container) {
   container.addEventListener("click", (event) => {
     const mark = event.target.closest("[data-ref]");
@@ -63,7 +63,7 @@ export function bindReferenceMarks(container) {
   });
 }
 
-/** Lista compacta y desplegable de citas bajo una burbuja del chat. */
+/** Compact, collapsible list of citations under a chat bubble. */
 export function chatCitations(citations) {
   if (!citations || !citations.length) return "";
   return `<details class="chat-sources"><summary>${icon("book")}${citations.length} ${citations.length === 1 ? "fuente citada" : "fuentes citadas"}</summary>

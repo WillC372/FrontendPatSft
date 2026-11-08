@@ -4,7 +4,7 @@ import { icon } from "../ui/icons.js";
 import { emptyState, loading } from "../ui/components.js";
 import { lineChart, scoreChart } from "../ui/charts.js";
 
-// Color de la escala de pH (indicador universal) para el patrón por hora.
+// pH scale color (universal indicator) for the hourly pattern.
 function phColor(ph) {
   const stops = [[4, [229, 56, 59]], [5.5, [247, 127, 0]], [6.5, [252, 191, 73]], [7, [47, 210, 122]], [7.6, [25, 211, 197]], [8.5, [30, 139, 255]], [10, [123, 47, 247]]];
   if (ph <= stops[0][0]) return `rgb(${stops[0][1]})`;

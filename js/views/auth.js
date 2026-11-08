@@ -171,7 +171,7 @@ export const resetView = {
   },
 };
 
-/** Confirmación del rol de administrador desde el enlace enviado al correo de ADMIN_EMAIL. */
+/** Confirmation of the administrator role from the link sent to the ADMIN_EMAIL address. */
 export const verifyAdminView = {
   name: "verify-admin", title: "Confirmar administrador", layout: "auth",
   render(root, ctx) {

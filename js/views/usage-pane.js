@@ -8,7 +8,7 @@ import { usageChart } from "../ui/charts.js";
 const usd = (v, digits = 4) => `US$ ${Number(v || 0).toFixed(digits)}`;
 const int = (v) => Number(v || 0).toLocaleString("es");
 
-/** Consumo y costos de IA: llamadas, fallos, tokens, costo estimado y cargo real, por modelo, función y día. */
+/** AI usage and costs: calls, failures, tokens, estimated cost and real charge, per model, feature and day. */
 export async function usagePane(host) {
   const admin = session.user?.role === "ADMIN";
   let days = 30;

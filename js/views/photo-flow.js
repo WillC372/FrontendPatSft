@@ -6,7 +6,7 @@ import { modal, toast } from "../ui/components.js";
 
 const MAX_SIDE = 1600;
 
-// Convierte cualquier foto que el navegador pueda abrir (incluida la orientación de la cámara) a JPEG reducido.
+// Converts any photo the browser can open (including the camera orientation) to a reduced JPEG.
 async function prepareImage(file) {
   const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" }).catch(() => null);
   if (!bitmap) throw new Error("No se pudo abrir la imagen. Prueba con una foto JPEG o PNG.");

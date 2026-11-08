@@ -17,7 +17,7 @@ const NAV = [
 ];
 const MOBILE = [["dashboard", "Inicio", "home"], ["history", "Historial", "history"], ["intelligence", "IA", "brain"], ["devices", "Equipo", "bluetooth"]];
 
-// Marco de la aplicación autenticada: barra lateral, barra superior, navegacion movil y alertas.
+// Frame of the authenticated application: sidebar, top bar, mobile navigation and alerts.
 export class Shell {
   #offs = [];
   #lastCriticalToast = 0;

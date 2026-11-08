@@ -8,7 +8,7 @@ const TYPES = [["", "Todos los usos"], ["GENERAL", "Uso general"], ["DRINKING", 
   ["AQUARIUM", "Acuario"], ["IRRIGATION", "Agricultura y riego"]];
 const SUGGESTIONS = ["rango recomendado", "corrosión de tuberías", "cada cuántas horas medir", "cierre de la piscina", "daño a equipos de riego"];
 
-/** Biblioteca normativa: fuentes oficiales, cobertura por uso del agua y búsqueda en los fragmentos. */
+/** Guidelines library: official sources, coverage per water use and search in the fragments. */
 export async function libraryPane(host) {
   host.innerHTML = loading("Cargando la biblioteca normativa...");
   let lib;

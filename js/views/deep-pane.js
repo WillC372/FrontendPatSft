@@ -7,7 +7,7 @@ import { lineChart, lossChart } from "../ui/charts.js";
 const ALERT_CLASS = { OK: "banner-info", INFO: "banner-info", CAUTION: "banner-warn", CRITICAL: "banner-crit" };
 const ALERT_ICON = { OK: "check", INFO: "info", CAUTION: "alert", CRITICAL: "error" };
 
-/** Diagrama animado de la red desplegada en el tiempo: 24 horas entran, 12 salen. */
+/** Animated diagram of the network unrolled in time: 24 hours in, 12 out. */
 function networkDiagram(a) {
   const cells = 6;
   return `<svg class="lstm-diagram" viewBox="0 0 720 170" role="img" aria-label="Red LSTM desplegada en el tiempo">

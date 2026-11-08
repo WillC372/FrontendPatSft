@@ -8,7 +8,7 @@ import { emptyState, loading, toast, withBusy } from "../ui/components.js";
 
 const SECTIONS = [["appearance", "Apariencia", "sun"], ["measurement", "Notificaciones y medición", "bell"], ["account", "Cuenta y plan", "user"], ["activity", "Actividad", "history"], ["about", "Acerca de", "info"]];
 
-/** Estado del envío de correo y correo de prueba (solo administradores). */
+/** Email delivery status and test email (administrators only). */
 async function loadMail(root) {
   const box = root.querySelector("[data-mail]");
   const badge = root.querySelector("[data-mail-badge]");

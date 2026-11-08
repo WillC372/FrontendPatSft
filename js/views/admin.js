@@ -113,7 +113,7 @@ function activityList(list, withUser) {
       ${a.detail ? `<small class="detail">${esc(a.detail)}</small>` : ""}</div></li>`).join("")}</ol>`;
 }
 
-/** Ventana de gestión de una cuenta: datos, plan, rol, estado, pagos y actividad. */
+/** Account management dialog: details, plan, role, status, payments and activity. */
 async function manageUser(id, onChange) {
   let detail;
   try {
@@ -175,7 +175,7 @@ async function manageUser(id, onChange) {
   });
 }
 
-/** Segundo clic para confirmar, dentro de la misma ventana (evita abrir un diálogo sobre otro). */
+/** Second click to confirm, inside the same dialog (avoids opening a dialog on top of another). */
 function confirmInline(button, warning, action) {
   if (button.dataset.armed) { action(); return; }
   button.dataset.armed = "1";
