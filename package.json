@@ -1,0 +1,12 @@
+{
+  "name": "aquasense-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Interfaz web de AquaSense AI (HTML, CSS y JavaScript sin framework).",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "check": "node scripts/check-syntax.mjs"
+  },
+  "engines": { "node": ">=18" }
+}
