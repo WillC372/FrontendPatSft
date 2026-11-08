@@ -5,6 +5,7 @@ import { icon } from "../ui/Icons.js";
 import { confirmDialog, emptyState, loading, modal, toast, withBusy } from "../ui/Components.js";
 import { beaker } from "../ui/Illustrations.js";
 import { measureWithDevice } from "./MeasureFlow.js";
+import { cameraMeter } from "./CameraMeter.js";
 
 const PROTOCOLS = [
   ["AQUASENSE_ESP32", "Firmware AquaSense ESP32"],
@@ -17,7 +18,7 @@ export const devicesView = {
   title: "Conexión del dispositivo",
   async render(root, ctx) {
     root.innerHTML = `
-      <div class="row-between reveal"><div><h1>Conexión del dispositivo</h1><p class="muted">Empareja tu medidor de pH por USB o Bluetooth (perfil serie SPP).</p></div></div>
+      <div class="row-between reveal"><div><h1>Conexión del dispositivo</h1><p class="muted">Empareja tu medidor de pH por USB o Bluetooth (perfil serie SPP), o léelo con la cámara si no tiene cable de datos.</p></div></div>
       <div class="grid grid-2">
         <section class="card glow reveal">
           <div class="card-head"><div class="card-title">${icon("bluetooth")}Dispositivos</div>
@@ -32,6 +33,7 @@ export const devicesView = {
           <section class="card reveal">${beaker()}</section>
         </div>
       </div>
+      <section class="card reveal camera-meter" data-camera-meter></section>
       <section class="card reveal">
         <div class="card-head"><div class="card-title">${icon("database")}Dispositivos registrados</div></div>
         <div data-registered>${loading()}</div>
@@ -164,7 +166,8 @@ export const devicesView = {
 
     root.querySelector("[data-scan]").addEventListener("click", scan);
     const off = bus.on("live:status", () => renderStatus());
+    const stopCamera = cameraMeter(root.querySelector("[data-camera-meter]"));
     await refresh();
-    return off;
+    return () => { off(); stopCamera(); };
   },
 };
