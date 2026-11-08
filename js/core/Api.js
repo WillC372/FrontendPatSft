@@ -1,5 +1,5 @@
-import { session } from "./session.js";
-import { bus } from "./event-bus.js";
+import { session } from "./Session.js";
+import { bus } from "./EventBus.js";
 
 export class ApiError extends Error {
   constructor(status, message, fields = {}) {

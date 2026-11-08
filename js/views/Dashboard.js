@@ -1,13 +1,13 @@
-import { api } from "../core/api.js";
-import { bus } from "../core/event-bus.js";
-import { session } from "../core/session.js";
-import { esc, fmt } from "../core/format.js";
-import { brainHolo, icon, PROFILE_ICONS } from "../ui/icons.js";
-import { emptyState, loading, sourceBadge, statusBadge, toast } from "../ui/components.js";
-import { createGauge, phScale } from "../ui/gauge.js";
-import { animateWater } from "../ui/water.js";
-import { manualEntry, measureWithDevice } from "./measure-flow.js";
-import { photoReading } from "./photo-flow.js";
+import { api } from "../core/Api.js";
+import { bus } from "../core/EventBus.js";
+import { session } from "../core/Session.js";
+import { esc, fmt } from "../core/Format.js";
+import { brainHolo, icon, PROFILE_ICONS } from "../ui/Icons.js";
+import { emptyState, loading, sourceBadge, statusBadge, toast } from "../ui/Components.js";
+import { createGauge, phScale } from "../ui/Gauge.js";
+import { animateWater } from "../ui/Water.js";
+import { manualEntry, measureWithDevice } from "./MeasureFlow.js";
+import { photoReading } from "./PhotoFlow.js";
 
 const NATURE_TEXT = {
   ACIDIC: "El pH está por debajo del neutro. Revisa si es adecuado para el uso del agua.",

@@ -1,6 +1,6 @@
-import { api } from "./api.js";
-import { session } from "./session.js";
-import { bus } from "./event-bus.js";
+import { api } from "./Api.js";
+import { session } from "./Session.js";
+import { bus } from "./EventBus.js";
 
 // Server-Sent Events reader built on fetch (allows sending the token in a header).
 // Publishes "live:reading" and "live:status" on the bus and reconnects with increasing backoff.

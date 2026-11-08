@@ -1,11 +1,11 @@
-import { api } from "../core/api.js";
-import { bus } from "../core/event-bus.js";
-import { esc, fmt } from "../core/format.js";
-import { icon } from "../ui/icons.js";
-import { confirmDialog, emptyState, loading, sourceBadge, toast } from "../ui/components.js";
-import { barChart, lineChart } from "../ui/charts.js";
-import { manualEntry } from "./measure-flow.js";
-import { photoReading } from "./photo-flow.js";
+import { api } from "../core/Api.js";
+import { bus } from "../core/EventBus.js";
+import { esc, fmt } from "../core/Format.js";
+import { icon } from "../ui/Icons.js";
+import { confirmDialog, emptyState, loading, sourceBadge, toast } from "../ui/Components.js";
+import { barChart, lineChart } from "../ui/Charts.js";
+import { manualEntry } from "./MeasureFlow.js";
+import { photoReading } from "./PhotoFlow.js";
 
 const PAGE_SIZE = 15;
 

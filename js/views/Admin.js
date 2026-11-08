@@ -1,8 +1,8 @@
-import { api } from "../core/api.js";
-import { esc, fmt } from "../core/format.js";
-import { session } from "../core/session.js";
-import { icon } from "../ui/icons.js";
-import { countUp, emptyState, loading, modal, toast } from "../ui/components.js";
+import { api } from "../core/Api.js";
+import { esc, fmt } from "../core/Format.js";
+import { session } from "../core/Session.js";
+import { icon } from "../ui/Icons.js";
+import { countUp, emptyState, loading, modal, toast } from "../ui/Components.js";
 
 const PAGE_SIZE = 12;
 const SOURCES = { REAL: "Medidor", MANUAL: "Manual", PHOTO: "Foto IA", SIMULATED: "Simulador" };

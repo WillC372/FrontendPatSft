@@ -1,8 +1,8 @@
-import { api, ApiError } from "../core/api.js";
-import { bus } from "../core/event-bus.js";
-import { esc, fmt } from "../core/format.js";
-import { icon } from "../ui/icons.js";
-import { modal, showFieldErrors, sourceBadge, statusBadge, toast } from "../ui/components.js";
+import { api, ApiError } from "../core/Api.js";
+import { bus } from "../core/EventBus.js";
+import { esc, fmt } from "../core/Format.js";
+import { icon } from "../ui/Icons.js";
+import { modal, showFieldErrors, sourceBadge, statusBadge, toast } from "../ui/Components.js";
 
 function resultBody(r) {
   const validationClass = r.validationStatus === "VALID" ? "ok" : r.validationStatus === "WARNING" ? "warn" : "crit";

@@ -1,9 +1,9 @@
-import { api, ApiError } from "../core/api.js";
-import { session } from "../core/session.js";
-import { icon, logo } from "../ui/icons.js";
-import { showFieldErrors, toast, withBusy } from "../ui/components.js";
-import { animateWater } from "../ui/water.js";
-import { esc } from "../core/format.js";
+import { api, ApiError } from "../core/Api.js";
+import { session } from "../core/Session.js";
+import { icon, logo } from "../ui/Icons.js";
+import { showFieldErrors, toast, withBusy } from "../ui/Components.js";
+import { animateWater } from "../ui/Water.js";
+import { esc } from "../core/Format.js";
 
 function layout(card) {
   return `

@@ -1,4 +1,4 @@
-import { session } from "./session.js";
+import { session } from "./Session.js";
 
 // Hash router: maps every route to a view and protects the ones that require a session.
 export class Router {

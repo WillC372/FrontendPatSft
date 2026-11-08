@@ -1,5 +1,5 @@
-import { esc } from "../core/format.js";
-import { icon } from "../ui/icons.js";
+import { esc } from "../core/Format.js";
+import { icon } from "../ui/Icons.js";
 
 /**
  * Guideline sources (RAG). The literal quote is shown in its original language inside <blockquote lang="en">;

@@ -1,9 +1,9 @@
-import { api } from "../core/api.js";
-import { esc } from "../core/format.js";
-import { session } from "../core/session.js";
-import { icon } from "../ui/icons.js";
-import { countUp, emptyState, loading } from "../ui/components.js";
-import { usageChart } from "../ui/charts.js";
+import { api } from "../core/Api.js";
+import { esc } from "../core/Format.js";
+import { session } from "../core/Session.js";
+import { icon } from "../ui/Icons.js";
+import { countUp, emptyState, loading } from "../ui/Components.js";
+import { usageChart } from "../ui/Charts.js";
 
 const usd = (v, digits = 4) => `US$ ${Number(v || 0).toFixed(digits)}`;
 const int = (v) => Number(v || 0).toLocaleString("es");

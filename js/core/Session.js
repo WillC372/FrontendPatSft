@@ -1,4 +1,4 @@
-import { bus } from "./event-bus.js";
+import { bus } from "./EventBus.js";
 
 const KEY = "aquasense.session";
 

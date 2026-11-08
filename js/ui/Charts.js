@@ -1,4 +1,4 @@
-import { esc, fmt } from "../core/format.js";
+import { esc, fmt } from "../core/Format.js";
 
 const W = 720;
 const H = 280;

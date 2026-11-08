@@ -1,5 +1,5 @@
-import { icon } from "./icons.js";
-import { esc } from "../core/format.js";
+import { icon } from "./Icons.js";
+import { esc } from "../core/Format.js";
 
 const TOAST_ICONS = { ok: "check", error: "error", warn: "alert", info: "info" };
 

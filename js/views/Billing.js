@@ -1,7 +1,7 @@
-import { api } from "../core/api.js";
-import { esc, fmt } from "../core/format.js";
-import { icon } from "../ui/icons.js";
-import { emptyState, loading, toast, withBusy } from "../ui/components.js";
+import { api } from "../core/Api.js";
+import { esc, fmt } from "../core/Format.js";
+import { icon } from "../ui/Icons.js";
+import { emptyState, loading, toast, withBusy } from "../ui/Components.js";
 
 const STATUS = { PENDING: ["warn", "Pendiente"], APPROVED: ["ok", "Aprobado"], DECLINED: ["crit", "Rechazado"], ERROR: ["crit", "Error"], EXPIRED: ["", "Vencido"] };
 const RESULT = { APPROVED: ["ok", "check"], DECLINED: ["crit", "error"], ERROR: ["crit", "error"], EXPIRED: ["warn", "alert"], PENDING: ["info", "refresh"] };

@@ -1,8 +1,8 @@
-import { api } from "../core/api.js";
-import { esc } from "../core/format.js";
-import { icon } from "../ui/icons.js";
-import { emptyState, loading, toast } from "../ui/components.js";
-import { citationCard } from "./citations.js";
+import { api } from "../core/Api.js";
+import { esc } from "../core/Format.js";
+import { icon } from "../ui/Icons.js";
+import { emptyState, loading, toast } from "../ui/Components.js";
+import { citationCard } from "./Citations.js";
 
 const TYPES = [["", "Todos los usos"], ["GENERAL", "Uso general"], ["DRINKING", "Agua potable"], ["POOL", "Piscina"],
   ["AQUARIUM", "Acuario"], ["IRRIGATION", "Agricultura y riego"]];

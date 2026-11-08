@@ -1,16 +1,16 @@
-import { api } from "../core/api.js";
-import { esc, fmt } from "../core/format.js";
-import { brainHolo, icon } from "../ui/icons.js";
-import { emptyState, loading, statusBadge, toast, withBusy } from "../ui/components.js";
-import { lineChart } from "../ui/charts.js";
-import { flask } from "../ui/illustrations.js";
-import { agentReportPane } from "./agent-report.js";
-import { mlPane } from "./ml-pane.js";
-import { citationBlock } from "./citations.js";
-import { libraryPane } from "./library.js";
-import { assistantPane } from "./assistant-pane.js";
-import { usagePane } from "./usage-pane.js";
-import { deepPane } from "./deep-pane.js";
+import { api } from "../core/Api.js";
+import { esc, fmt } from "../core/Format.js";
+import { brainHolo, icon } from "../ui/Icons.js";
+import { emptyState, loading, statusBadge, toast, withBusy } from "../ui/Components.js";
+import { lineChart } from "../ui/Charts.js";
+import { flask } from "../ui/Illustrations.js";
+import { agentReportPane } from "./AgentReport.js";
+import { mlPane } from "./MlPane.js";
+import { citationBlock } from "./Citations.js";
+import { libraryPane } from "./Library.js";
+import { assistantPane } from "./AssistantPane.js";
+import { usagePane } from "./UsagePane.js";
+import { deepPane } from "./DeepPane.js";
 
 const PANES = [
   ["diagnosis", "Diagnóstico IA", "sparkle"],

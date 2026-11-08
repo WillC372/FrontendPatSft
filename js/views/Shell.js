@@ -1,11 +1,11 @@
-import { api } from "../core/api.js";
-import { bus } from "../core/event-bus.js";
-import { session } from "../core/session.js";
-import { theme } from "../core/theme.js";
-import { liveStream } from "../core/live-stream.js";
-import { esc, fmt } from "../core/format.js";
-import { icon, logo } from "../ui/icons.js";
-import { confirmDialog, modal, toast } from "../ui/components.js";
+import { api } from "../core/Api.js";
+import { bus } from "../core/EventBus.js";
+import { session } from "../core/Session.js";
+import { theme } from "../core/Theme.js";
+import { liveStream } from "../core/LiveStream.js";
+import { esc, fmt } from "../core/Format.js";
+import { icon, logo } from "../ui/Icons.js";
+import { confirmDialog, modal, toast } from "../ui/Components.js";
 
 const NAV = [
   ["dashboard", "Inicio", "home"],

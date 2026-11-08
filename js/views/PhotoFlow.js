@@ -1,8 +1,8 @@
-import { api, ApiError } from "../core/api.js";
-import { bus } from "../core/event-bus.js";
-import { esc, fmt } from "../core/format.js";
-import { icon } from "../ui/icons.js";
-import { modal, toast } from "../ui/components.js";
+import { api, ApiError } from "../core/Api.js";
+import { bus } from "../core/EventBus.js";
+import { esc, fmt } from "../core/Format.js";
+import { icon } from "../ui/Icons.js";
+import { modal, toast } from "../ui/Components.js";
 
 const MAX_SIDE = 1600;
 

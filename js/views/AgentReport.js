@@ -1,9 +1,9 @@
-import { api } from "../core/api.js";
-import { esc, fmt } from "../core/format.js";
-import { brainHolo, icon } from "../ui/icons.js";
-import { emptyState, loading, toast } from "../ui/components.js";
-import { barChart, lineChart } from "../ui/charts.js";
-import { citationBlock } from "./citations.js";
+import { api } from "../core/Api.js";
+import { esc, fmt } from "../core/Format.js";
+import { brainHolo, icon } from "../ui/Icons.js";
+import { emptyState, loading, toast } from "../ui/Components.js";
+import { barChart, lineChart } from "../ui/Charts.js";
+import { citationBlock } from "./Citations.js";
 
 const SUGGESTIONS = [
   "Informe general de la semana",

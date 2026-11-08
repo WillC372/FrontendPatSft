@@ -1,7 +1,7 @@
-import { api, ApiError } from "../core/api.js";
-import { esc } from "../core/format.js";
-import { icon, PROFILE_ICONS } from "../ui/icons.js";
-import { confirmDialog, emptyState, loading, modal, showFieldErrors, toast } from "../ui/components.js";
+import { api, ApiError } from "../core/Api.js";
+import { esc } from "../core/Format.js";
+import { icon, PROFILE_ICONS } from "../ui/Icons.js";
+import { confirmDialog, emptyState, loading, modal, showFieldErrors, toast } from "../ui/Components.js";
 
 function profileForm(p = {}) {
   const v = (key, fallback = "") => esc(p[key] ?? fallback);

@@ -1,4 +1,4 @@
-import { countUp } from "./components.js";
+import { countUp } from "./Components.js";
 
 const ARC = "M 49.29 190.71 A 100 100 0 1 1 190.71 190.71";
 const LENGTH = 2 * Math.PI * 100 * 0.75;

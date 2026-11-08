@@ -1,8 +1,8 @@
-import { api } from "../core/api.js";
-import { esc, fmt } from "../core/format.js";
-import { icon } from "../ui/icons.js";
-import { confirmDialog, emptyState, loading, toast } from "../ui/components.js";
-import { bindReferenceMarks, chatCitations, withReferenceMarks } from "./citations.js";
+import { api } from "../core/Api.js";
+import { esc, fmt } from "../core/Format.js";
+import { icon } from "../ui/Icons.js";
+import { confirmDialog, emptyState, loading, toast } from "../ui/Components.js";
+import { bindReferenceMarks, chatCitations, withReferenceMarks } from "./Citations.js";
 
 const SUGGESTIONS = ["¿Cómo está mi agua esta semana?", "¿Por qué pudo bajar el pH?", "¿Qué dicen las normas sobre mi rango?"];
 
