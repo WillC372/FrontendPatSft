@@ -1,4 +1,4 @@
-/* Tokens de diseno de AquaSense AI. El tema oscuro es el predeterminado (mockups). */
+/* AquaSense AI design tokens. The dark theme is the default (mockups). */
 :root,
 :root[data-theme="dark"] {
   --bg: #040b1c;

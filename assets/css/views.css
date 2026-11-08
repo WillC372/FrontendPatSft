@@ -1,4 +1,4 @@
-/* Acceso */
+/* Sign in */
 .auth { min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
 .auth-hero { position: relative; overflow: hidden; display: grid; place-items: center; padding: 40px; border-right: 1px solid var(--border); }
 .auth-hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -71,7 +71,7 @@
 .quick-link svg:last-child { margin-left: auto; width: 18px; color: var(--muted); }
 .quick-link:hover { transform: translateX(3px); border-color: var(--border-strong); }
 
-/* Graficas */
+/* Charts */
 .chart { position: relative; width: 100%; min-height: 240px; }
 .chart svg { width: 100%; height: auto; display: block; overflow: visible; }
 .chart .grid-line { stroke: var(--grid); }
@@ -90,7 +90,7 @@
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .legend i { width: 14px; height: 4px; border-radius: 2px; display: inline-block; }
 
-/* Centro IA */
+/* AI center */
 .ia-layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 20px; align-items: start; }
 .ia-menu { display: flex; flex-direction: column; gap: 6px; position: sticky; top: 90px; }
 .ia-menu-head { display: grid; justify-items: center; text-align: center; gap: 6px; padding: 8px 0 14px; }
@@ -111,7 +111,7 @@
 .flask .bubble-dot:nth-of-type(2) { animation-delay: .8s; } .flask .bubble-dot:nth-of-type(3) { animation-delay: 1.6s; }
 .scenario-value { font-family: var(--font-display); font-size: 44px; font-weight: 700; font-variant-numeric: tabular-nums; }
 
-/* Dispositivo */
+/* Device */
 .radar { position: relative; width: 170px; height: 170px; display: grid; place-items: center; margin: 4px auto 0; }
 .radar .core { position: relative; z-index: 2; width: 96px; height: 96px; border-radius: 50%; display: grid; place-items: center; border: 2px solid var(--primary-2); background: radial-gradient(circle, rgba(34,199,240,.25), rgba(30,139,255,.05)); box-shadow: var(--glow-strong); }
 .radar .core svg { width: 52px; height: 52px; color: var(--primary-2); }
@@ -129,7 +129,7 @@
 .beaker .b-bubble:nth-of-type(2) { animation-delay: 1s; } .beaker .b-bubble:nth-of-type(3) { animation-delay: 2s; }
 .beaker .probe { animation: probe 4s ease-in-out infinite; }
 
-/* Perfiles */
+/* Profiles */
 .profile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
 .profile-card { display: flex; flex-direction: column; gap: 12px; padding: 18px; border-radius: 16px; border: 1px solid var(--border); background: var(--surface); transition: transform .2s, border-color .2s, box-shadow .2s; }
 .profile-card:hover { transform: translateY(-3px); border-color: var(--border-strong); box-shadow: var(--glow); }
@@ -142,7 +142,7 @@
 .profile-card.add { align-items: center; justify-content: center; text-align: center; border-style: dashed; cursor: pointer; min-height: 200px; color: var(--text-soft); background: transparent; }
 .profile-card.add svg { width: 40px; height: 40px; color: var(--primary-2); }
 
-/* Configuracion */
+/* Settings */
 .settings-layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 20px; align-items: start; }
 .setting-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--border); }
 .setting-row:last-child { border-bottom: 0; }
@@ -156,7 +156,7 @@
 .reveal { animation: rise-in .5s ease both; }
 .reveal:nth-child(2) { animation-delay: .06s; } .reveal:nth-child(3) { animation-delay: .12s; } .reveal:nth-child(4) { animation-delay: .18s; }
 
-/* Diagnostico IA */
+/* AI diagnosis */
 .dx-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
 .dx-pipeline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 18px 0; }
 .dx-step { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 8px; border-radius: 14px; border: 1px solid var(--border); background: var(--surface-2); text-align: center; font-size: 13px; color: var(--muted); transition: all .35s; }
@@ -202,7 +202,7 @@
 .ai-last { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-2); font-size: 13px; text-decoration: none; color: var(--text); }
 .ai-last svg { width: 18px; height: 18px; }
 
-/* Lectura por foto */
+/* Photo reading */
 .photo-modal { width: min(640px, 100%); }
 .drop-zone { position: relative; display: grid; place-items: center; gap: 8px; min-height: 200px; padding: 18px; border-radius: 16px; border: 2px dashed var(--border-strong); background: var(--surface-2); text-align: center; cursor: pointer; transition: border-color .2s, background .2s; overflow: hidden; }
 .drop-zone:hover, .drop-zone.over { border-color: var(--primary-2); background: color-mix(in srgb, var(--primary-2) 8%, var(--surface-2)); }
@@ -224,7 +224,7 @@
 .opinions div { padding: 10px 12px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border); font-size: 13px; }
 .opinions strong { display: block; font-family: var(--font-display); font-size: 22px; }
 
-/* Agente de informes */
+/* Report agent */
 .agent-form textarea { min-height: 70px; resize: vertical; }
 .agent-live { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 18px; align-items: start; margin-top: 18px; }
 @media (max-width: 700px) { .agent-live { grid-template-columns: minmax(0, 1fr); } .agent-live .brain-holo { display: none; } }
@@ -252,7 +252,7 @@
 .agent-history button:hover, .agent-history button.active { background: var(--surface-2); border-color: var(--border); }
 .agent-history small { margin-left: auto; color: var(--muted); }
 
-/* Aprendizaje automatico */
+/* Machine learning */
 .hour-strip { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); gap: 3px; margin-top: 10px; }
 .hour-strip div { height: 44px; border-radius: 6px; position: relative; border: 1px solid var(--border); }
 .hour-strip div.empty { background: repeating-linear-gradient(45deg, var(--track), var(--track) 3px, transparent 3px, transparent 6px); }
@@ -263,7 +263,7 @@
 .factor .meter { flex: 1 1 120px; max-width: 160px; height: 6px; border-radius: 6px; background: var(--track); align-self: center; overflow: hidden; }
 .factor .meter i { display: block; height: 100%; background: linear-gradient(90deg, var(--warn), var(--crit)); }
 
-/* ---------- Capa 6: respaldo normativo (RAG) ---------- */
+/* ---------- Layer 6: guideline citations (RAG) ---------- */
 .citation-list { display: grid; gap: 12px; }
 .citation { position: relative; padding: 14px 16px 14px 18px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--border);
   overflow: hidden; animation: rise-in .45s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i, 0) * 70ms); scroll-margin-top: 90px; }
@@ -321,7 +321,7 @@
 @media (prefers-reduced-motion: reduce) { .citation, .citation::before, .lib-source { animation: none; } }
 .bubble .chat-sources { white-space: normal; }
 
-/* ---------- Memoria del asistente, escenarios con IA y costos ---------- */
+/* ---------- Assistant memory, AI scenarios and costs ---------- */
 .assistant-layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 16px; align-items: start; }
 .conv-list { display: grid; gap: 10px; padding: 14px; position: sticky; top: 90px; }
 .conv-items { display: grid; gap: 6px; max-height: 420px; overflow-y: auto; }
@@ -366,7 +366,7 @@
 @keyframes bar-grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 @media (prefers-reduced-motion: reduce) { .usage-day rect, .conv-item, .scenario-explanation .finding, .usage-stats .stat { animation: none; } }
 
-/* ---------- Capa 7: red neuronal LSTM ---------- */
+/* ---------- Layer 7: LSTM neural network ---------- */
 .lstm-diagram { width: 100%; height: auto; margin-top: 4px; }
 .lstm-diagram rect { fill: var(--surface-2); stroke: var(--border-strong); stroke-width: 1.5; }
 .lstm-diagram .dense { fill: rgba(195, 155, 255, .12); stroke: var(--sim); }
@@ -392,7 +392,7 @@
 .series-dot.dot-INTERP { fill: var(--surface-solid); stroke: var(--muted); }
 @media (prefers-reduced-motion: reduce) { .lstm-diagram line, .lstm-cell, .lstm-cell rect, .score-row { animation: none; } }
 
-/* ---------- Plan y pagos (PayU) ---------- */
+/* ---------- Plan and payments (PayU) ---------- */
 .billing { display: grid; gap: 16px; }
 .billing-top { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 16px; align-items: stretch; }
 @media (max-width: 900px) { .billing-top { grid-template-columns: minmax(0, 1fr); } }
@@ -428,7 +428,7 @@
 .pay-result.warn .pay-icon, .pay-result.info .pay-icon { color: var(--warn); }
 @media (prefers-reduced-motion: reduce) { .buy-card::after, .pay-result, .pay-result.ok .pay-icon { animation: none; } }
 
-/* ---------- Administración ---------- */
+/* ---------- Administration ---------- */
 .admin-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 18px 0; }
 .admin-kpis .stat { animation: rise-in .45s ease both; }
 .admin-kpis .stat small { font-size: 12px; color: var(--muted); }
@@ -480,7 +480,7 @@
   .admin-filters { grid-template-columns: 1fr 1fr; }
   .admin-filters .input-wrap, .admin-filters select:last-child { grid-column: 1 / -1; }
   .admin-filters select.input { font-size: 14px; padding-left: 10px; padding-right: 6px; }
-  /* La tabla de usuarios pasa a tarjetas: nombre arriba, insignias y mediciones abajo; la fila entera abre la gestión. */
+  /* On mobile the user table becomes cards: name on top, badges and measurements below; the whole row opens the management dialog. */
   .admin-users { border: 0; overflow: visible; }
   .admin-users thead { display: none; }
   .admin-users table, .admin-users tbody { display: block; }
