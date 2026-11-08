@@ -9,7 +9,7 @@ async function walk(dir) {
   return files.flat().filter((f) => f.endsWith(".js") || f.endsWith(".mjs"));
 }
 
-const files = [...(await walk("js")), "server.mjs", "config.js"];
+const files = [...(await walk("js")), "Server.mjs", "Config.js"];
 let failed = 0;
 for (const file of files) {
   const result = spawnSync(process.execPath, ["--check", file], { encoding: "utf8" });

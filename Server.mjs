@@ -1,4 +1,4 @@
-// Minimal static server (no dependencies) for local development: node server.mjs
+// Minimal static server (no dependencies) for local development: node Server.mjs
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize, sep } from "node:path";

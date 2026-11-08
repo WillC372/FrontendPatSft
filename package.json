@@ -5,8 +5,8 @@
   "description": "Interfaz web de AquaSense AI (HTML, CSS y JavaScript sin framework).",
   "type": "module",
   "scripts": {
-    "start": "node server.mjs",
-    "check": "node scripts/check-syntax.mjs"
+    "start": "node Server.mjs",
+    "check": "node scripts/CheckSyntax.mjs"
   },
   "engines": { "node": ">=18" }
 }
