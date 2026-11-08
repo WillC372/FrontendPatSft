@@ -56,6 +56,13 @@ Frontend/
 
 Patrones en el cliente: **Observer** (`event-bus`: lecturas en vivo, sesión, alertas), **Singleton** (`api`, `session`, `liveStream`) y un router que asocia cada ruta con su vista.
 
+## Convenciones de código
+
+- **Inglés:** nombres de funciones y variables, comentarios del código y de los estilos.
+- **Español:** solo los textos que ve el usuario en la interfaz.
+- **Nombres de archivo en inglés y en PascalCase**, como `js/views/AgentReport.js`, `js/core/Api.js`, `assets/css/Tokens.css` o `Server.mjs`.
+- **Excepciones por convención de las herramientas:** `index.html` (página que sirven por defecto los navegadores y Vercel), `package.json`, `vercel.json`, `README.md` y `.gitignore`. Las carpetas van en minúsculas.
+
 ## Requisitos previos
 
 - Un navegador moderno (Chrome, Edge, Firefox o Safari recientes).
