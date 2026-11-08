@@ -495,3 +495,7 @@
   .admin-log li { grid-template-columns: 1fr; gap: 2px; }
   .admin-action select.input { flex: 1 1 140px; }
 }
+.admin-danger h3 svg { color: var(--crit); }
+.admin-danger .input { width: 100%; }
+.danger-card { border-color: color-mix(in srgb, var(--crit) 35%, var(--border)); }
+.danger-card .card-title svg { color: var(--crit); }

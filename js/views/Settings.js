@@ -4,7 +4,7 @@ import { session } from "../core/Session.js";
 import { theme } from "../core/Theme.js";
 import { esc, fmt } from "../core/Format.js";
 import { icon, logo } from "../ui/Icons.js";
-import { emptyState, loading, toast, withBusy } from "../ui/Components.js";
+import { confirmDialog, emptyState, loading, toast, withBusy } from "../ui/Components.js";
 
 const SECTIONS = [["appearance", "Apariencia", "sun"], ["measurement", "Notificaciones y medición", "bell"], ["account", "Cuenta y plan", "user"], ["activity", "Actividad", "history"], ["about", "Acerca de", "info"]];
 
@@ -104,6 +104,15 @@ export const settingsView = {
               ${activity.map((a) => `<tr><td class="num">${fmt.dateTime(a.createdAt)}</td><td class="mono" style="font-size:12px">${esc(a.action)}</td><td>${esc(a.detail)}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">Sin actividad.</p>`}</div>
           </section>
 
+          <section class="card reveal danger-card" id="s-delete">
+            <div class="card-head"><div class="card-title">${icon("trash")}Eliminar mi cuenta</div></div>
+            <p class="muted">Se borran para siempre tu cuenta, tus mediciones, perfiles, informes, diagnósticos y conversaciones. No se puede deshacer.</p>
+            <div class="row" style="margin-top:12px">
+              <div class="input-wrap" style="flex:1 1 240px">${icon("lock")}<input class="input" type="password" data-delete-password placeholder="Tu contraseña" autocomplete="current-password" aria-label="Contraseña para confirmar"></div>
+              <button class="btn btn-danger" data-delete-account>${icon("trash")}Eliminar mi cuenta</button>
+            </div>
+          </section>
+
           <section class="card reveal" id="s-about">
             <div class="row" style="gap:18px">${logo("brand-logo")}<div><h2>AquaSense AI</h2><p class="muted">v1.0.0 · Tecnología al servicio del agua</p></div></div>
             <p style="margin-top:12px">Monitoreo de pH con medidor físico (USB o Bluetooth SPP), simulador identificado y análisis con AquaSense Intelligence: estadística, reglas de dominio e IA generativa.</p>
@@ -133,6 +142,24 @@ export const settingsView = {
     }));
     root.querySelector("[data-notifications]").addEventListener("change", (e) => { draft.notificationsEnabled = e.target.checked; });
     root.querySelector("[data-autosave]").addEventListener("change", (e) => { draft.autoSave = e.target.checked; });
+    root.querySelector("[data-delete-account]").addEventListener("click", async (e) => {
+      const button = e.currentTarget;
+      const password = root.querySelector("[data-delete-password]").value;
+      if (!password) { toast("Escribe tu contraseña para confirmar.", "warn"); return; }
+      const ok = await confirmDialog("Eliminar mi cuenta", "Se borrarán para siempre tu cuenta y todos tus datos. ¿Continuar?", "Eliminar definitivamente", true);
+      if (!ok) return;
+      await withBusy(button, async () => {
+        try {
+          await api.delete("/users/me", { password });
+          session.clear();
+          toast("Tu cuenta fue eliminada.", "ok");
+          ctx.router.go("login");
+        } catch (error) {
+          toast(error.message, "error");
+        }
+      });
+    });
+
     root.querySelector("[data-save]").addEventListener("click", (e) => withBusy(e.currentTarget, async () => {
       try {
         const saved = await api.put("/users/me/settings", { ...draft, language: root.querySelector("[data-language]").value });

@@ -126,7 +126,7 @@ async function manageUser(id, onChange) {
     title: "Gestionar cuenta",
     body: `<div data-detail>${detailBody(detail)}</div>`,
     actions: [{ label: "Cerrar", className: "btn-ghost", value: null }],
-    onMount: (node) => {
+    onMount: (node, close) => {
       node.querySelector(".modal").classList.add("modal-wide");
       const host = node.querySelector("[data-detail]");
       const bind = () => {
@@ -169,6 +169,23 @@ async function manageUser(id, onChange) {
             () => send(e.currentTarget, "status", { enabled: false, reason: reason || null }, "Cuenta desactivada."));
         });
         host.querySelector("[data-enable]")?.addEventListener("click", (e) => send(e.currentTarget, "status", { enabled: true }, "Cuenta reactivada."));
+        const typed = host.querySelector("[data-delete-confirm]");
+        const remove = host.querySelector("[data-delete]");
+        typed?.addEventListener("input", () => { remove.disabled = typed.value.trim().toLowerCase() !== detail.user.email.toLowerCase(); });
+        remove?.addEventListener("click", (e) => {
+          confirmInline(e.currentTarget, "Se borran para siempre la cuenta y todos sus datos. No se puede deshacer.", async () => {
+            remove.disabled = true;
+            try {
+              await api.delete(`/admin/users/${id}`);
+              toast("Cuenta eliminada con todos sus datos.", "ok");
+              onChange();
+              close(true);
+            } catch (error) {
+              toast(error.message, "error");
+              remove.disabled = false;
+            }
+          });
+        });
       };
       bind();
     },
@@ -247,6 +264,14 @@ function detailBody(d) {
             : `<textarea class="input" data-reason rows="2" maxlength="300" placeholder="Motivo (opcional). Se incluye en el correo al usuario."></textarea>
                <button class="btn" data-disable>${icon("ban")}Desactivar cuenta</button>`)
           : `<button class="btn btn-primary" data-enable>${icon("check")}Reactivar cuenta</button>`}
+      </section>
+
+      <section class="admin-action admin-danger">
+        <h3>${icon("trash")}Eliminar cuenta</h3>
+        ${d.guards.deleteBlockedReason ? `<p class="muted">${icon("lock")}<span>${esc(d.guards.deleteBlockedReason)}</span></p>`
+          : `<p class="muted"><span>Borra para siempre la cuenta y sus mediciones, perfiles, informes y conversaciones. Para conservar sus datos, desactívala en su lugar.</span></p>
+             <input class="input" data-delete-confirm placeholder="Escribe ${esc(u.email)} para confirmar" aria-label="Confirma el correo de la cuenta" autocomplete="off">
+             <button class="btn btn-danger" data-delete disabled>${icon("trash")}Eliminar definitivamente</button>`}
       </section>
 
       <section class="admin-action">

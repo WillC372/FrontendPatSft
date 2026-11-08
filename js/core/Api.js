@@ -82,7 +82,7 @@ class ApiClient {
   post(path, body, query) { return this.request("POST", path, { body, query }); }
   put(path, body) { return this.request("PUT", path, { body }); }
   patch(path, body) { return this.request("PATCH", path, { body }); }
-  delete(path) { return this.request("DELETE", path); }
+  delete(path, body) { return this.request("DELETE", path, { body }); }
 
   async download(path, query, fallbackName) {
     const response = await this.request("GET", path, { query, raw: true });
