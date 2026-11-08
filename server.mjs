@@ -1,4 +1,4 @@
-// Servidor estático mínimo (sin dependencias) para desarrollo local: node server.mjs
+// Minimal static server (no dependencies) for local development: node server.mjs
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize, sep } from "node:path";
@@ -11,7 +11,7 @@ const types = {
   ".css": "text/css; charset=utf-8", ".svg": "image/svg+xml", ".png": "image/png", ".json": "application/json",
   ".ico": "image/x-icon", ".webp": "image/webp",
 };
-// Cabeceras de seguridad básicas para todas las respuestas.
+// Basic security headers for every response.
 const security = {
   "X-Content-Type-Options": "nosniff",
   "X-Frame-Options": "DENY",

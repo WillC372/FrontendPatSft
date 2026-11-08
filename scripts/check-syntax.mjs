@@ -1,4 +1,4 @@
-// Verifica la sintaxis de todos los modulos JS del frontend con el analizador de Node.
+// Checks the syntax of every JS module of the frontend with the Node parser.
 import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
