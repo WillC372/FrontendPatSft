@@ -1,0 +1,143 @@
+import { api } from "../core/api.js";
+import { esc, fmt } from "../core/format.js";
+import { icon } from "../ui/icons.js";
+import { confirmDialog, emptyState, loading, toast } from "../ui/components.js";
+import { bindReferenceMarks, chatCitations, withReferenceMarks } from "./citations.js";
+
+const SUGGESTIONS = ["¿Cómo está mi agua esta semana?", "¿Por qué pudo bajar el pH?", "¿Qué dicen las normas sobre mi rango?"];
+
+function aiBubble(text, model, citations = [], extra = "") {
+  const meta = `Generado por IA · ${esc(model || "")}${citations.length ? " · con citas verificadas" : ""}${extra}`;
+  return `<div class="bubble ai">${withReferenceMarks(String(text).replace(/\*\*/g, "").trim(), citations)}`
+    + `<small class="muted">${meta}</small>${chatCitations(citations)}</div>`;
+}
+
+/**
+ * Asistente con memoria: lista de conversaciones, historial guardado y repreguntas que usan el contexto anterior.
+ */
+export async function assistantPane(host) {
+  host.innerHTML = loading();
+  let status;
+  try { status = await api.get("/intelligence/ai-status"); } catch (error) { host.innerHTML = emptyState("error", "No disponible", error.message); return; }
+  let current = null;
+  host.innerHTML = `
+    <div class="row-between"><h2>Asistente IA</h2>
+      <span class="badge ${status.configured ? "badge-ok" : "badge-warn"}" data-quota>${status.configured ? `${status.usedToday}/${status.dailyQuota} consultas hoy` : "IA no configurada"}</span></div>
+    <div class="row" style="margin-top:10px">${status.providers.map((p) => `<span class="badge ${p.configured ? "badge-info" : ""}" style="${p.configured ? "" : "opacity:.5"}">${p.order}. ${esc(p.provider)} · ${esc(p.model)}${p.configured ? "" : " (sin clave)"}</span>`).join("")}</div>
+    ${status.configured ? "" : `<div class="banner banner-warn" style="margin-top:14px">${icon("alert")}<p>El servidor no tiene una clave de IA configurada (Gemini o Groq). El asistente no está disponible; los análisis estadísticos siguen funcionando.</p></div>`}
+    <div class="assistant-layout" style="margin-top:14px">
+      <aside class="conv-list card" aria-label="Conversaciones">
+        <button class="btn btn-primary btn-pill" data-new>${icon("plus")}Nueva conversación</button>
+        <div class="conv-items" data-convs></div>
+        <button class="btn btn-ghost conv-clear" data-clear>${icon("trash")}Borrar todas</button>
+      </aside>
+      <div class="stack" style="gap:10px;min-width:0">
+        <div class="row-between"><strong data-title>Nueva conversación</strong><span class="badge" data-memory hidden></span></div>
+        <div class="chat card" data-chat></div>
+        <div class="row" data-suggestions>${SUGGESTIONS.map((s) => `<button class="tab" data-q="${esc(s)}">${esc(s)}</button>`).join("")}</div>
+        <form class="row" data-form>
+          <input class="input" style="flex:1;min-width:200px" name="q" maxlength="500" placeholder="Escribe tu pregunta... puedes repreguntar sobre lo anterior" aria-label="Pregunta" ${status.configured ? "" : "disabled"}>
+          <button class="btn btn-primary" type="submit" ${status.configured ? "" : "disabled"}>${icon("send")}Enviar</button>
+        </form>
+      </div>
+    </div>`;
+  const chat = host.querySelector("[data-chat]");
+  const form = host.querySelector("[data-form]");
+  const list = host.querySelector("[data-convs]");
+  const title = host.querySelector("[data-title]");
+  const memory = host.querySelector("[data-memory]");
+  bindReferenceMarks(chat);
+
+  const greet = () => {
+    chat.innerHTML = `<div class="bubble ai">Hola, soy AquaSense Intelligence. Pregúntame sobre tus mediciones, tus perfiles o las normas. Recuerdo lo que hablamos en esta conversación.<small class="muted">Respondo con tus datos registrados y cito normas oficiales cuando aplican.</small></div>`;
+  };
+  const setMemory = (turns, omitted) => {
+    memory.hidden = !turns;
+    memory.innerHTML = `${icon("brain")}Recuerda ${turns} mensajes${omitted ? ` · ${omitted} más antiguos fuera de memoria` : ""}`;
+  };
+  const loadList = async () => {
+    try {
+      const items = await api.get("/intelligence/chat/conversations");
+      list.innerHTML = items.length ? items.map((c) => `<div class="conv-item ${c.id === current ? "active" : ""}" data-cid="${c.id}">
+          <button class="conv-open" data-open="${c.id}"><strong>${esc(c.title)}</strong><small class="muted">${c.messageCount} mensajes · ${fmt.dateTime(c.updatedAt)}</small></button>
+          <button class="icon-btn" data-del="${c.id}" aria-label="Borrar conversación">${icon("trash")}</button></div>`).join("")
+        : `<p class="muted" style="font-size:13px">Aún no hay conversaciones guardadas.</p>`;
+    } catch (error) {
+      list.innerHTML = `<p class="muted">${esc(error.message)}</p>`;
+    }
+  };
+  const open = async (id) => {
+    chat.innerHTML = loading("Cargando conversación...");
+    try {
+      const c = await api.get(`/intelligence/chat/conversations/${id}`);
+      current = c.id;
+      title.textContent = c.title;
+      chat.innerHTML = c.messages.map((m) => m.role === "USER" ? `<div class="bubble user">${esc(m.content)}</div>`
+        : aiBubble(m.content, m.model, m.citations || [])).join("");
+      setMemory(Math.min(c.messages.length, 12), Math.max(0, c.messages.length - 12));
+      chat.scrollTop = chat.scrollHeight;
+      list.querySelectorAll("[data-cid]").forEach((x) => x.classList.toggle("active", Number(x.dataset.cid) === current));
+    } catch (error) {
+      toast(error.message, "error");
+    }
+  };
+  const reset = () => {
+    current = null;
+    title.textContent = "Nueva conversación";
+    memory.hidden = true;
+    greet();
+    list.querySelectorAll("[data-cid]").forEach((x) => x.classList.remove("active"));
+  };
+  const ask = async (question) => {
+    if (!question.trim() || !status.configured) return;
+    chat.insertAdjacentHTML("beforeend", `<div class="bubble user">${esc(question)}</div><div class="bubble ai typing" data-typing><span></span><span></span><span></span></div>`);
+    chat.scrollTop = chat.scrollHeight;
+    try {
+      const a = await api.post("/intelligence/chat", { question, ...(current ? { conversationId: current } : {}) });
+      const extra = a.removedReferences ? ` · ${a.removedReferences} referencia(s) inexistente(s) eliminada(s)` : "";
+      chat.querySelector("[data-typing]").outerHTML = aiBubble(a.answer, a.model, a.citations || [], extra);
+      const isNew = current !== a.conversationId;
+      current = a.conversationId;
+      title.textContent = a.conversationTitle;
+      setMemory(a.memoryTurns + 2, a.omittedTurns);
+      if (isNew) await loadList(); else list.querySelector(`[data-cid="${current}"] small`)?.replaceChildren(document.createTextNode("Actualizada ahora"));
+      const quota = host.querySelector("[data-quota]");
+      status.usedToday += 1;
+      quota.textContent = `${status.usedToday}/${status.dailyQuota} consultas hoy`;
+    } catch (error) {
+      chat.querySelector("[data-typing]").outerHTML = `<div class="bubble ai">${esc(error.message)}</div>`;
+    }
+    chat.scrollTop = chat.scrollHeight;
+  };
+
+  list.addEventListener("click", async (event) => {
+    const del = event.target.closest("[data-del]");
+    if (del) {
+      if (!(await confirmDialog("Borrar conversación", "Se borrará esta conversación y su memoria. No se puede deshacer.", "Borrar", true))) return;
+      await api.delete(`/intelligence/chat/conversations/${del.dataset.del}`);
+      if (Number(del.dataset.del) === current) reset();
+      await loadList();
+      return;
+    }
+    const openBtn = event.target.closest("[data-open]");
+    if (openBtn) open(Number(openBtn.dataset.open));
+  });
+  host.querySelector("[data-new]").addEventListener("click", reset);
+  host.querySelector("[data-clear]").addEventListener("click", async () => {
+    if (!(await confirmDialog("Borrar todas", "Se borrarán todas tus conversaciones con el asistente.", "Borrar todo", true))) return;
+    const r = await api.delete("/intelligence/chat/conversations");
+    toast(`${r.deleted} conversaciones borradas.`, "success");
+    reset();
+    await loadList();
+  });
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const input = form.querySelector("input");
+    const q = input.value;
+    input.value = "";
+    ask(q);
+  });
+  host.querySelectorAll("[data-q]").forEach((b) => b.addEventListener("click", () => ask(b.dataset.q)));
+  greet();
+  await loadList();
+}
