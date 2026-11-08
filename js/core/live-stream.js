@@ -2,8 +2,8 @@ import { api } from "./api.js";
 import { session } from "./session.js";
 import { bus } from "./event-bus.js";
 
-// Lector de Server-Sent Events con fetch (permite enviar el token en la cabecera).
-// Publica "live:reading" y "live:status" en el bus y reconecta con espera creciente.
+// Server-Sent Events reader built on fetch (allows sending the token in a header).
+// Publishes "live:reading" and "live:status" on the bus and reconnects with increasing backoff.
 class LiveStream {
   #controller = null;
   #retry = 1000;

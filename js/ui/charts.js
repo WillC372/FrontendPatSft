@@ -10,7 +10,7 @@ function scale(domainMin, domainMax, rangeMin, rangeMax) {
   return (v) => rangeMin + ((v - domainMin) / span) * (rangeMax - rangeMin);
 }
 
-// Gráfica de línea en SVG: serie de pH, banda del rango ideal, predicción con incertidumbre y anomalías.
+// SVG line chart: pH series, ideal range band, forecast with uncertainty and anomalies.
 export function lineChart(host, { points = [], band, forecast = [], anomalies = [], label = "pH", bandLabel = "Rango 95 %" }) {
   const id = ++uid;
   const all = [...points.map((p) => p.v), ...forecast.flatMap((f) => [f.lo, f.hi]), ...(band ? [band.min, band.max] : [])];
@@ -89,7 +89,7 @@ export function lineChart(host, { points = [], band, forecast = [], anomalies = 
   svg.querySelector("[data-overlay]").addEventListener("pointerleave", () => { tooltip.hidden = true; });
 }
 
-// Gráfica de barras para distribución de estados.
+// Bar chart for the status distribution.
 export function barChart(host, bars) {
   const max = Math.max(1, ...bars.map((b) => b.value));
   const bw = (W - PAD.l - PAD.r) / bars.length;
@@ -110,7 +110,7 @@ export function barChart(host, bars) {
   </svg>`;
 }
 
-// Barras de puntaje de anomalía (0-1) por medición, con la línea del umbral del modelo.
+// Anomaly score bars (0-1) per measurement, with the model threshold line.
 export function scoreChart(host, items, threshold) {
   const id = ++uid;
   const minScore = 0.3;
@@ -138,7 +138,7 @@ export function scoreChart(host, items, threshold) {
   </svg>`;
 }
 
-// Consumo diario de IA: barras apiladas (llamadas correctas y fallos) con etiquetas espaciadas.
+// Daily AI usage: stacked bars (successful calls and failures) with spaced labels.
 export function usageChart(host, days) {
   const max = Math.max(1, ...days.map((d) => d.calls + d.failures));
   const bw = (W - PAD.l - PAD.r) / Math.max(days.length, 1);
@@ -161,7 +161,7 @@ export function usageChart(host, days) {
   </svg>`;
 }
 
-// Curva de aprendizaje: error de entrenamiento y de validación por época, con la época elegida (detención temprana).
+// Learning curve: training and validation error per epoch, with the chosen epoch (early stopping).
 export function lossChart(host, train, validation, bestEpoch) {
   const all = [...train, ...validation];
   const max = Math.max(...all) * 1.05;

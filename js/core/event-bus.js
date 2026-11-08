@@ -1,4 +1,4 @@
-// Observer (publicar/suscribir): los modulos se comunican por eventos sin conocerse entre si.
+// Observer (publish/subscribe): modules communicate through events without knowing each other.
 class EventBus {
   #handlers = new Map();
 

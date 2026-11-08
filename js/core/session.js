@@ -2,7 +2,7 @@ import { bus } from "./event-bus.js";
 
 const KEY = "aquasense.session";
 
-// Singleton de sesión. "Recordarme" usa localStorage; si no, sessionStorage (se borra al cerrar el navegador).
+// Session singleton. "Remember me" uses localStorage; otherwise sessionStorage (cleared when the browser closes).
 class SessionStore {
   #session = null;
 

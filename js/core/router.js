@@ -1,6 +1,6 @@
 import { session } from "./session.js";
 
-// Router por hash: asocia cada ruta con una vista y protege las que requieren sesión.
+// Hash router: maps every route to a view and protects the ones that require a session.
 export class Router {
   #routes = new Map();
   #fallback = "dashboard";

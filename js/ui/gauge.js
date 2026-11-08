@@ -4,7 +4,7 @@ const ARC = "M 49.29 190.71 A 100 100 0 1 1 190.71 190.71";
 const LENGTH = 2 * Math.PI * 100 * 0.75;
 const reduced = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-// Indicador circular de pH (0-14) con arco degradado animado y número con conteo progresivo.
+// Circular pH gauge (0-14) with an animated gradient arc and a counting number.
 export function createGauge(host) {
   const ticks = Array.from({ length: 15 }, (_, i) => {
     const angle = (135 + (270 * i) / 14) * (Math.PI / 180);

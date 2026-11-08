@@ -1,4 +1,4 @@
-// Animacion de agua en canvas: capas de olas y burbujas que suben. Respeta "reducir movimiento".
+// Water animation on canvas: layers of waves and rising bubbles. Honors "reduce motion".
 export function animateWater(canvas, { layers = 3, bubbles = 26, height = 0.55, intensity = 1 } = {}) {
   const ctx = canvas.getContext("2d");
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;

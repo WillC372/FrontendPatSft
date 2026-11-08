@@ -1,4 +1,4 @@
-// Iconos SVG en línea (trazo de 24x24). Se usan con icon("nombre").
+// Inline SVG icons (24x24 stroke). Used with icon("name").
 const P = {
   home: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/>',
   history: '<path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/>',

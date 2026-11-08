@@ -9,7 +9,7 @@ export class ApiError extends Error {
   }
 }
 
-// Cliente REST único de la aplicación: agrega el token, normaliza errores y avisa cuando la sesión expira.
+// Single REST client of the application: adds the token, normalizes errors and notifies when the session expires.
 class ApiClient {
   constructor(baseUrl) {
     this.baseUrl = baseUrl.replace(/\/$/, "");
@@ -35,7 +35,7 @@ class ApiClient {
     try {
       response = await fetch(this.url(path, query), {
         method,
-        // Las descargas (CSV, texto, PDF) aceptan cualquier tipo; con "application/json" el servidor responde 406.
+        // Downloads (CSV, text, PDF) accept any type; with "application/json" the server answers 406.
         headers: this.headers(body !== undefined, raw ? "*/*" : "application/json"),
         body: body !== undefined ? JSON.stringify(body) : undefined,
       });
