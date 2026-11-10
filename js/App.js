@@ -14,6 +14,7 @@ import { devicesView } from "./views/Devices.js";
 import { profilesView } from "./views/Profiles.js";
 import { settingsView } from "./views/Settings.js";
 import { billingView } from "./views/Billing.js";
+import { waitForServer } from "./core/ServerWake.js";
 import { adminView } from "./views/Admin.js";
 
 const root = document.getElementById("app");
@@ -46,7 +47,6 @@ async function show(view, route) {
   if (!shell) {
     shell = new Shell(root, ctx);
     await loadSettings();
-    liveStream.start();
     if (stale()) return;
   }
   shell.activate(view.name, view.title);
@@ -94,4 +94,21 @@ if (!session.isAuthenticated && !location.hash.startsWith("#/register") && !loca
     && !location.hash.startsWith("#/reset") && !location.hash.startsWith("#/verify-admin")) {
   location.hash = "#/login";
 }
-ctx.router.resolve();
+// Wait until the backend is awake before the first API call (see ServerWake.js).
+const wake = document.createElement("div");
+wake.className = "wake-overlay";
+wake.hidden = true;
+wake.setAttribute("role", "status");
+wake.innerHTML = `<div class="wake-card"><div class="spinner"></div><strong>Activando el servidor...</strong>
+  <p>El servidor gratuito se apaga cuando nadie lo usa y tarda hasta un minuto en arrancar. Espera un momento.</p></div>`;
+document.body.append(wake);
+waitForServer(() => { wake.hidden = false; }).then((up) => {
+  if (up) {
+    wake.remove();
+    ctx.router.resolve();
+    return;
+  }
+  wake.querySelector(".wake-card").innerHTML = `<strong>No se pudo conectar con el servidor</strong>
+    <p>Revisa tu conexión a internet e inténtalo de nuevo.</p><button class="btn btn-primary" data-wake-retry>Reintentar</button>`;
+  wake.querySelector("[data-wake-retry]").addEventListener("click", () => location.reload());
+});
