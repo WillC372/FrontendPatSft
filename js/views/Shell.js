@@ -11,6 +11,7 @@ import { confirmDialog, modal, toast } from "../ui/Components.js";
 const NAV = [
   ["dashboard", "Inicio", "home"],
   ["history", "Historial", "history"],
+  ["official", "Datos oficiales", "globe"],
   ["intelligence", "Inteligencia IA", "brain"],
   ["devices", "Conexión", "bluetooth"],
   ["profiles", "Perfiles", "profiles"],
@@ -184,6 +185,7 @@ export class Shell {
       title: "Más opciones",
       body: `<div class="quick-links">
         <a class="quick-link" href="#/profiles" data-close>${icon("profiles")}Perfiles de agua${icon("chevronRight")}</a>
+        <a class="quick-link" href="#/official" data-close>${icon("globe")}Datos oficiales (USGS)${icon("chevronRight")}</a>
         <a class="quick-link" href="#/sessions" data-close>${icon("clock")}Historial de sesiones${icon("chevronRight")}</a>
         <a class="quick-link" href="#/settings" data-close>${icon("settings")}Configuración${icon("chevronRight")}</a>
         ${session.user?.role === "ADMIN" ? `<a class="quick-link" href="#/admin" data-close>${icon("users")}Administración${icon("chevronRight")}</a>` : ""}

@@ -562,3 +562,17 @@ select.input.cam-select { width: auto; flex: none; padding-top: 8px; padding-bot
 @media (max-width: 380px) { .demo-buttons { grid-template-columns: 1fr; } .demo-btn { flex-direction: row; text-align: left; } }
 .demo-banner { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; margin-bottom: 16px; border-radius: 12px; font-size: 13.5px; background: var(--sim-bg); color: var(--text); border: 1px solid color-mix(in srgb, var(--sim) 45%, transparent); }
 .demo-banner svg { flex: 0 0 18px; width: 18px; height: 18px; color: var(--sim); }
+
+/* Official data (USGS) */
+.station-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.station-card { display: flex; flex-direction: column; gap: 6px; text-align: left; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--border); background: var(--surface-2); color: inherit; font: inherit; cursor: pointer; transition: border-color .15s, transform .15s; min-width: 0; }
+.station-card:hover, .station-card:focus-visible { border-color: var(--primary-2); transform: translateY(-1px); }
+.station-card.active { border-color: var(--primary-2); box-shadow: 0 0 0 1px var(--primary-2) inset; }
+.station-ph { font-family: var(--font-display); font-size: 26px; font-variant-numeric: tabular-nums; }
+.station-name { font-size: 13.5px; font-weight: 600; overflow-wrap: anywhere; }
+.station-detail { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+.extremes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.extremes li { display: grid; grid-template-columns: 44px 1fr auto; gap: 10px; align-items: baseline; font-size: 14px; }
+.extremes li strong { font-family: var(--font-display); font-size: 18px; font-variant-numeric: tabular-nums; }
+.extremes li span { overflow-wrap: anywhere; min-width: 0; }
+.small { font-size: 13px; }
