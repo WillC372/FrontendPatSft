@@ -4,7 +4,7 @@ import { icon } from "../ui/Icons.js";
 import { confirmDialog, emptyState, loading, toast } from "../ui/Components.js";
 import { bindReferenceMarks, chatCitations, withReferenceMarks } from "./Citations.js";
 
-const SUGGESTIONS = ["¿Cómo está mi agua esta semana?", "¿Por qué pudo bajar el pH?", "¿Qué dicen las normas sobre mi rango?"];
+const SUGGESTIONS = ["¿Cómo está mi agua esta semana?", "¿Qué pH es recomendable para una piscina?", "¿Cómo subo el pH de un acuario sin dañar a los peces?", "¿Cómo calibro un medidor de pH?"];
 
 function aiBubble(text, model, citations = [], extra = "") {
   const meta = `Generado por IA · ${esc(model || "")}${citations.length ? " · con citas verificadas" : ""}${extra}`;
@@ -49,7 +49,7 @@ export async function assistantPane(host) {
   bindReferenceMarks(chat);
 
   const greet = () => {
-    chat.innerHTML = `<div class="bubble ai">Hola, soy AquaSense Intelligence. Pregúntame sobre tus mediciones, tus perfiles o las normas. Recuerdo lo que hablamos en esta conversación.<small class="muted">Respondo con tus datos registrados y cito normas oficiales cuando aplican.</small></div>`;
+    chat.innerHTML = `<div class="bubble ai">Hola, soy AquaSense Intelligence. Pregúntame lo que quieras sobre el agua y su pH: tus mediciones, piscinas, acuarios, agua potable, riego, cómo corregir el pH, medidores y calibración, o cómo usar AquaSense. Recuerdo lo que hablamos en esta conversación.<small class="muted">Uso tus datos registrados, cito normas oficiales cuando aplican y no respondo temas ajenos al agua.</small></div>`;
   };
   const setMemory = (turns, omitted) => {
     memory.hidden = !turns;
