@@ -1,5 +1,6 @@
 import { session } from "./Session.js";
 import { bus } from "./EventBus.js";
+import { waitForServer } from "./ServerWake.js";
 
 export class ApiError extends Error {
   constructor(status, message, fields = {}) {
@@ -30,7 +31,7 @@ class ApiClient {
     return headers;
   }
 
-  async request(method, path, { body, query, raw = false } = {}) {
+  async request(method, path, { body, query, raw = false, retried = false } = {}) {
     let response;
     // A free hosted backend sleeps when idle: if the answer takes long, the UI explains why.
     const slow = setTimeout(() => bus.emit("api:slow"), 5000);
@@ -42,7 +43,15 @@ class ApiClient {
         body: body !== undefined ? JSON.stringify(body) : undefined,
       });
     } catch {
-      throw new ApiError(0, "No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.");
+      clearTimeout(slow);
+      // The server was waking up or restarting (an update, or the free plan's sleep). Wait for it and, for reads,
+      // repeat the request once; changes are not repeated automatically to avoid saving something twice.
+      bus.emit("api:slow");
+      const up = await waitForServer(() => {});
+      if (up && method === "GET" && !retried) return this.request(method, path, { body, query, raw, retried: true });
+      throw new ApiError(0, up
+        ? "Se perdió la conexión con el servidor por un momento. Vuelve a intentarlo."
+        : "No se pudo conectar con el servidor. Revisa tu conexión a internet e inténtalo de nuevo.");
     } finally {
       clearTimeout(slow);
     }
