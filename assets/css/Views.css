@@ -534,3 +534,16 @@ select.input.cam-select { width: auto; flex: none; padding-top: 8px; padding-bot
 .photo-camera { display: flex; flex-direction: column; gap: 10px; }
 .photo-camera[hidden] { display: none; }
 .photo-camera video { width: 100%; max-height: 360px; border-radius: 14px; background: #02060f; object-fit: cover; }
+
+/* Session history */
+.session-list { display: flex; flex-direction: column; gap: 12px; }
+.session-card { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface-2); }
+.session-card.current { border-color: color-mix(in srgb, var(--ok) 55%, var(--border)); }
+.session-card .small { font-size: 13px; }
+.session-card [data-open] { align-self: flex-start; }
+.session-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.session-actions .chip { display: inline-flex; gap: 6px; align-items: center; padding: 3px 10px; border-radius: 999px; font-size: 13px; background: var(--surface); border: 1px solid var(--border); }
+.session-timeline { list-style: none; margin: 0; padding: 0 0 0 4px; display: flex; flex-direction: column; gap: 8px; border-left: 2px solid var(--border); }
+.session-timeline li { display: flex; gap: 12px; padding-left: 12px; font-size: 14px; }
+.session-timeline time { flex: 0 0 auto; color: var(--muted); font-variant-numeric: tabular-nums; }
+.session-timeline small { display: block; overflow-wrap: anywhere; }

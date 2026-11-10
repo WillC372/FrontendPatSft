@@ -14,6 +14,7 @@ const NAV = [
   ["intelligence", "Inteligencia IA", "brain"],
   ["devices", "Conexión", "bluetooth"],
   ["profiles", "Perfiles", "profiles"],
+  ["sessions", "Sesiones", "clock"],
   ["settings", "Configuración", "settings"],
 ];
 const MOBILE = [["dashboard", "Inicio", "home"], ["history", "Historial", "history"], ["intelligence", "IA", "brain"], ["devices", "Equipo", "bluetooth"]];
@@ -174,6 +175,7 @@ export class Shell {
       title: "Más opciones",
       body: `<div class="quick-links">
         <a class="quick-link" href="#/profiles" data-close>${icon("profiles")}Perfiles de agua${icon("chevronRight")}</a>
+        <a class="quick-link" href="#/sessions" data-close>${icon("clock")}Historial de sesiones${icon("chevronRight")}</a>
         <a class="quick-link" href="#/settings" data-close>${icon("settings")}Configuración${icon("chevronRight")}</a>
         ${session.user?.role === "ADMIN" ? `<a class="quick-link" href="#/admin" data-close>${icon("users")}Administración${icon("chevronRight")}</a>` : ""}
         <button class="quick-link" data-logout-mobile style="width:100%">${icon("logout")}Cerrar sesión${icon("chevronRight")}</button></div>`,
@@ -182,7 +184,7 @@ export class Shell {
   }
 
   async logout() {
-    const ok = await confirmDialog("Cerrar sesión", "Se cerrara tu sesión en todos los dispositivos.", "Cerrar sesión");
+    const ok = await confirmDialog("Cerrar sesión", "Se cerrará esta sesión. Lo que hiciste queda guardado en tu historial de sesiones.", "Cerrar sesión");
     if (!ok) return;
     try { await api.post("/auth/logout"); } catch { /* session cleared locally anyway */ }
     liveStream.stop();

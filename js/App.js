@@ -16,6 +16,7 @@ import { settingsView } from "./views/Settings.js";
 import { billingView } from "./views/Billing.js";
 import { waitForServer } from "./core/ServerWake.js";
 import { adminView } from "./views/Admin.js";
+import { sessionsView } from "./views/Sessions.js";
 
 const root = document.getElementById("app");
 const ctx = { settings: null, router: null };
@@ -72,6 +73,7 @@ ctx.router = new Router(show)
   .add("profiles", profilesView)
   .add("settings", settingsView)
   .add("billing", billingView)
+  .add("sessions", sessionsView)
   .add("admin", adminView);
 
 let slowNoticeShown = false;

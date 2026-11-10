@@ -3,6 +3,7 @@ import { esc, fmt } from "../core/Format.js";
 import { session } from "../core/Session.js";
 import { icon } from "../ui/Icons.js";
 import { countUp, emptyState, loading, modal, toast } from "../ui/Components.js";
+import { sessionList } from "./Sessions.js";
 
 const PAGE_SIZE = 12;
 const SOURCES = { REAL: "Medidor", MANUAL: "Manual", PHOTO: "Foto IA", SIMULATED: "Simulador" };
@@ -129,6 +130,14 @@ async function manageUser(id, onChange) {
     onMount: (node, close) => {
       node.querySelector(".modal").classList.add("modal-wide");
       const host = node.querySelector("[data-detail]");
+      host.addEventListener("click", (event) => {
+        const open = event.target.closest("[data-sessions-open]");
+        if (!open) return;
+        const box = open.nextElementSibling;
+        open.remove();
+        box.hidden = false;
+        sessionList(box, `/admin/users/${id}/sessions`);
+      });
       const bind = () => {
         const send = async (button, path, body, okText) => {
           button.disabled = true;
@@ -284,6 +293,12 @@ function detailBody(d) {
       <section class="admin-action">
         <h3>${icon("history")}Actividad reciente</h3>
         ${activityList(d.activity, false)}
+      </section>
+
+      <section class="admin-action">
+        <h3>${icon("clock")}Historial de sesiones</h3>
+        <button class="btn btn-sm" data-sessions-open>Ver sus sesiones y lo que hizo en cada una</button>
+        <div data-sessions-box hidden></div>
       </section>
       <p class="muted admin-note">${icon("mail")}<span>Si el correo está configurado, el usuario recibe un aviso de cada cambio de plan, rol o estado.</span></p>
     </div>`;
