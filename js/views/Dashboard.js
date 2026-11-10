@@ -3,10 +3,11 @@ import { bus } from "../core/EventBus.js";
 import { session } from "../core/Session.js";
 import { esc, fmt } from "../core/Format.js";
 import { brainHolo, icon, PROFILE_ICONS } from "../ui/Icons.js";
-import { emptyState, loading, sourceBadge, statusBadge, toast } from "../ui/Components.js";
+import { emptyState, loading, sourceBadge, statusBadge, toast, withBusy } from "../ui/Components.js";
 import { createGauge, phScale } from "../ui/Gauge.js";
 import { animateWater } from "../ui/Water.js";
 import { manualEntry, measureWithDevice } from "./MeasureFlow.js";
+import { browserMeter } from "../core/BrowserMeter.js";
 import { photoReading } from "./PhotoFlow.js";
 
 const NATURE_TEXT = {
@@ -54,7 +55,8 @@ export const dashboardView = {
             <small class="muted num" data-gauge-meta>${latest ? `${esc(profile.name)} (${profile.idealMin.toFixed(1)} - ${profile.idealMax.toFixed(1)}) · ${fmt.relative(latest.measuredAt)}` : "Realiza tu primera medición"}</small>
           </div>
           <div class="gauge-actions">
-            ${connected ? `<button class="btn btn-primary btn-pill" data-measure>${icon("drop")}Medir ahora</button>
+            ${browserMeter.connected ? `<button class="btn btn-primary btn-pill" data-measure-usb>${icon("drop")}Medir ahora</button>`
+              : connected ? `<button class="btn btn-primary btn-pill" data-measure>${icon("drop")}Medir ahora</button>
               <button class="btn btn-pill" data-live>${icon(device.state === "LIVE" ? "pause" : "play")}${device.state === "LIVE" ? "Detener vivo" : "Tiempo real"}</button>`
               : `<a class="btn btn-primary btn-pill" href="#/devices">${icon("bluetooth")}Conectar medidor</a>`}
             <button class="btn btn-pill" data-photo>${icon("camera")}Leer foto</button>
@@ -128,6 +130,15 @@ export const dashboardView = {
     root.querySelector("[data-manual]").addEventListener("click", async () => {
       if (await manualEntry()) ctx.router.resolve();
     });
+    root.querySelector("[data-measure-usb]")?.addEventListener("click", (event) => withBusy(event.currentTarget, async () => {
+      try {
+        const saved = await browserMeter.measureAndSave();
+        toast(`Medición guardada: pH ${fmt.ph(saved.ph)} (${saved.statusLabel.toLowerCase()}).`, "ok");
+        ctx.router.resolve();
+      } catch (error) {
+        toast(error.message, "error");
+      }
+    }));
     root.querySelector("[data-measure]")?.addEventListener("click", async (event) => {
       const result = await measureWithDevice(event.currentTarget);
       if (result) ctx.router.resolve();

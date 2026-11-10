@@ -521,3 +521,16 @@ select.input.cam-select { width: auto; flex: none; padding-top: 8px; padding-bot
 .cam-log li svg { width: 16px; height: 16px; flex: none; color: var(--primary-2); }
 .cam-log li .num { color: var(--muted); min-width: 44px; }
 @media (max-width: 860px) { .cam-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- Meter connected to this computer (Web Serial) ---------- */
+.usb-form { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1.4fr); gap: 12px; margin-top: 12px; }
+.usb-help { font-size: 13px; margin-top: 10px; display: flex; gap: 6px; align-items: flex-start; }
+.usb-help svg { width: 16px; height: 16px; flex: none; margin-top: 2px; color: var(--primary-2); }
+.usb-connected { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 20px; margin-top: 8px; align-items: start; }
+.usb-lines { margin: 4px 0 0; padding: 10px 12px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--border); font-family: var(--font-mono); font-size: 12px; min-height: 48px; max-height: 140px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+.section-title { font-size: 17px; margin: 6px 0 0; }
+.section-title small { font-size: 13px; font-weight: 500; }
+@media (max-width: 860px) { .usb-form, .usb-connected { grid-template-columns: minmax(0, 1fr); } }
+.photo-camera { display: flex; flex-direction: column; gap: 10px; }
+.photo-camera[hidden] { display: none; }
+.photo-camera video { width: 100%; max-height: 360px; border-radius: 14px; background: #02060f; object-fit: cover; }

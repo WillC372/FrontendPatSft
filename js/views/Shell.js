@@ -3,6 +3,7 @@ import { bus } from "../core/EventBus.js";
 import { session } from "../core/Session.js";
 import { theme } from "../core/Theme.js";
 import { liveStream } from "../core/LiveStream.js";
+import { browserMeter } from "../core/BrowserMeter.js";
 import { esc, fmt } from "../core/Format.js";
 import { icon, logo } from "../ui/Icons.js";
 import { confirmDialog, modal, toast } from "../ui/Components.js";
@@ -84,7 +85,15 @@ export class Shell {
 
   renderDevice(status) {
     const pill = this.root.querySelector("[data-device-pill]");
+    if (browserMeter.connected) {
+      pill.innerHTML = `<span class="dot" style="color:var(--ok)"></span>
+        <div><strong style="color:var(--ok)">Medidor conectado</strong><small class="muted">${esc(browserMeter.name)}</small></div>${icon("usb")}`;
+      pill.querySelector("svg:last-child").style.cssText = "width:18px;height:18px;margin-left:auto;color:var(--primary-2)";
+      return;
+    }
     const connected = status.ownedByYou && status.state !== "DISCONNECTED";
+    // Live readings only exist for a meter connected to the server itself (local installation).
+    if (connected) liveStream.start(); else liveStream.stop();
     const color = status.state === "ERROR" ? "var(--crit)" : connected ? "var(--ok)" : "var(--muted)";
     pill.innerHTML = `<span class="dot ${status.state === "LIVE" ? "dot-live" : ""}" style="color:${color}"></span>
       <div><strong style="color:${color}">${connected ? (status.state === "ERROR" ? "Error de conexión" : "Dispositivo conectado") : "Sin dispositivo"}</strong>
@@ -147,6 +156,7 @@ export class Shell {
     this.root.querySelector("[data-more]").addEventListener("click", () => this.#moreMenu());
     this.#offs.push(bus.on("live:status", () => this.refreshDevice()));
     this.#offs.push(bus.on("device:changed", (status) => (status ? this.renderDevice(status) : this.refreshDevice())));
+    this.#offs.push(bus.on("meter:browser", () => this.refreshDevice()));
     this.#offs.push(bus.on("measurement:saved", () => this.refreshAlerts()));
     this.#offs.push(bus.on("alerts:changed", () => this.refreshAlerts()));
     this.#offs.push(bus.on("live:reading", (reading) => {

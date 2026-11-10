@@ -6,6 +6,7 @@ import { confirmDialog, emptyState, loading, modal, toast, withBusy } from "../u
 import { beaker } from "../ui/Illustrations.js";
 import { measureWithDevice } from "./MeasureFlow.js";
 import { cameraMeter } from "./CameraMeter.js";
+import { usbMeter } from "./UsbMeter.js";
 
 const PROTOCOLS = [
   ["AQUASENSE_ESP32", "Firmware AquaSense ESP32"],
@@ -18,7 +19,11 @@ export const devicesView = {
   title: "Conexión del dispositivo",
   async render(root, ctx) {
     root.innerHTML = `
-      <div class="row-between reveal"><div><h1>Conexión del dispositivo</h1><p class="muted">Empareja tu medidor de pH por USB o Bluetooth (perfil serie SPP), o léelo con la cámara si no tiene cable de datos.</p></div></div>
+      <div class="row-between reveal"><div><h1>Conexión del dispositivo</h1><p class="muted">Conecta tu medidor de pH a este computador por USB o Bluetooth, o léelo con la cámara si no tiene cable de datos.</p></div></div>
+      <section class="card glow reveal" data-usb-meter></section>
+      <section class="card reveal camera-meter" data-camera-meter></section>
+      <div class="stack" data-server-section hidden>
+      <h2 class="section-title">Medidor conectado al servidor <small class="muted">(solo cuando AquaSense corre en el mismo computador del medidor)</small></h2>
       <div class="grid grid-2">
         <section class="card glow reveal">
           <div class="card-head"><div class="card-title">${icon("bluetooth")}Dispositivos</div>
@@ -33,7 +38,7 @@ export const devicesView = {
           <section class="card reveal">${beaker()}</section>
         </div>
       </div>
-      <section class="card reveal camera-meter" data-camera-meter></section>
+      </div>
       <section class="card reveal">
         <div class="card-head"><div class="card-title">${icon("database")}Dispositivos registrados</div></div>
         <div data-registered>${loading()}</div>
@@ -100,9 +105,8 @@ export const devicesView = {
               ${d.simulated ? `<span class="badge badge-sim">SIMULADO</span>` : `<select class="input" data-protocol="${i}" style="width:auto" aria-label="Protocolo">${PROTOCOLS.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}</select>`}
               <button class="btn btn-sm btn-primary" data-connect="${i}" ${connectedPort ? "disabled" : ""}>Conectar</button>`}
           </div>`).join("");
-        if (devices.length === 1) {
-          list.insertAdjacentHTML("beforeend", `<p class="muted" style="font-size:13px">No se detectaron puertos serie en el servidor. Conecta el medidor por USB o empareja el Bluetooth y pulsa Actualizar.</p>`);
-        }
+        // A server in the cloud has no serial ports: this section only makes sense in a local installation.
+        root.querySelector("[data-server-section]").hidden = devices.length === 0 && !(status?.ownedByYou && status.state !== "DISCONNECTED");
         list.querySelectorAll("[data-connect]").forEach((button) => button.addEventListener("click", () => withBusy(button, async () => {
           const d = devices[Number(button.dataset.connect)];
           const protocol = d.simulated ? "SIMULATOR" : list.querySelector(`[data-protocol="${button.dataset.connect}"]`).value;
@@ -166,8 +170,9 @@ export const devicesView = {
 
     root.querySelector("[data-scan]").addEventListener("click", scan);
     const off = bus.on("live:status", () => renderStatus());
+    const stopUsb = usbMeter(root.querySelector("[data-usb-meter]"));
     const stopCamera = cameraMeter(root.querySelector("[data-camera-meter]"));
     await refresh();
-    return () => { off(); stopCamera(); };
+    return () => { off(); stopUsb(); stopCamera(); };
   },
 };
