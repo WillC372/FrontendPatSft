@@ -50,6 +50,7 @@ export class Shell {
               <div class="user-chip"><span class="avatar">${esc((user?.fullName || "?").charAt(0).toUpperCase())}</span><span class="user-name">${esc(user?.fullName?.split(" ")[0] || "")}</span></div>
             </div>
           </header>
+          ${user?.demo ? `<div class="demo-banner" role="note">${icon("info")}<span>Estás en una <strong>cuenta de demostración compartida</strong>${user.role === "ADMIN" ? " de administración (solo lectura)" : ""}. Lo que hagas es real y queda guardado, pero otras personas que usen este botón también lo ven. <a href="#/register" data-demo-register>Crea tu cuenta</a> para tener tus datos privados.</span></div>` : ""}
           <main class="page" id="page" tabindex="-1"></main>
         </div>
         <nav class="bottom-nav" aria-label="Navegación móvil">
@@ -154,6 +155,14 @@ export class Shell {
       }
     });
     this.root.querySelector("[data-logout]").addEventListener("click", () => this.logout());
+    // From a demonstration account, "Crea tu cuenta" closes that shared session and opens the registration form.
+    this.root.querySelector("[data-demo-register]")?.addEventListener("click", async (event) => {
+      event.preventDefault();
+      try { await api.post("/auth/logout"); } catch { /* the session is cleared locally anyway */ }
+      liveStream.stop();
+      session.clear();
+      this.ctx.router.go("register");
+    });
     this.root.querySelector("[data-more]").addEventListener("click", () => this.#moreMenu());
     this.#offs.push(bus.on("live:status", () => this.refreshDevice()));
     this.#offs.push(bus.on("device:changed", (status) => (status ? this.renderDevice(status) : this.refreshDevice())));

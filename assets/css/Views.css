@@ -547,3 +547,18 @@ select.input.cam-select { width: auto; flex: none; padding-top: 8px; padding-bot
 .session-timeline li { display: flex; gap: 12px; padding-left: 12px; font-size: 14px; }
 .session-timeline time { flex: 0 0 auto; color: var(--muted); font-variant-numeric: tabular-nums; }
 .session-timeline small { display: block; overflow-wrap: anywhere; }
+
+/* Demonstration access on the login screen */
+.demo-access { margin-top: 20px; }
+.demo-title { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+.demo-title::before, .demo-title::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+.demo-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.demo-btn { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 6px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-2); color: inherit; cursor: pointer; font: inherit; text-align: center; transition: border-color .15s, transform .15s; }
+.demo-btn:hover, .demo-btn:focus-visible { border-color: var(--primary-2); transform: translateY(-1px); }
+.demo-btn svg { width: 20px; height: 20px; color: var(--primary-2); }
+.demo-btn strong { display: block; font-size: 13px; }
+.demo-btn small { display: block; font-size: 10.5px; color: var(--muted); overflow-wrap: anywhere; }
+.demo-creds { margin: 8px 0 0; text-align: center; font-size: 12px; color: var(--muted); }
+@media (max-width: 380px) { .demo-buttons { grid-template-columns: 1fr; } .demo-btn { flex-direction: row; text-align: left; } }
+.demo-banner { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; margin-bottom: 16px; border-radius: 12px; font-size: 13.5px; background: var(--sim-bg); color: var(--text); border: 1px solid color-mix(in srgb, var(--sim) 45%, transparent); }
+.demo-banner svg { flex: 0 0 18px; width: 18px; height: 18px; color: var(--sim); }

@@ -66,7 +66,7 @@ function usersTable(page) {
   if (!page.items.length) return emptyState("users", "Sin resultados", "Ninguna cuenta coincide con la búsqueda o los filtros.");
   const rows = page.items.map((u) => `
     <tr data-user="${u.id}" class="${u.enabled ? "" : "row-off"}" tabindex="0" aria-label="Gestionar ${esc(u.fullName)}">
-      <td><div class="who"><span class="avatar">${initials(u.fullName)}</span><div><strong>${esc(u.fullName)}${u.self ? ` <small class="muted">(tú)</small>` : ""}</strong><small>${esc(u.email)}</small></div></div></td>
+      <td><div class="who"><span class="avatar">${initials(u.fullName)}</span><div><strong>${esc(u.fullName)}${u.self ? ` <small class="muted">(tú)</small>` : ""}${u.demo ? ` <span class="badge badge-sim">Demo</span>` : ""}</strong><small>${esc(u.email)}</small></div></div></td>
       <td>${roleBadge(u)}</td>
       <td><div class="plan-cell">${planBadge(u)}</div></td>
       <td>${statusBadge(u)}</td>
@@ -231,7 +231,7 @@ function detailBody(d) {
   return `
     <div class="admin-detail">
       <div class="who who-lg"><span class="avatar">${initials(u.fullName)}</span>
-        <div><strong>${esc(u.fullName)}${u.self ? ` <small class="muted">(tú)</small>` : ""}</strong><small>${esc(u.email)}</small>
+        <div><strong>${esc(u.fullName)}${u.self ? ` <small class="muted">(tú)</small>` : ""}${u.demo ? ` <span class="badge badge-sim">Demo</span>` : ""}</strong><small>${esc(u.email)}</small>
           <div class="row" style="margin-top:6px">${roleBadge(u)}${statusBadge(u)}</div></div></div>
       ${!u.enabled ? `<div class="banner banner-crit">${icon("ban")}<p>Desactivada${d.disabledAt ? ` el ${esc(longDate(d.disabledAt))}` : ""}.${d.disabledReason ? ` Motivo: ${esc(d.disabledReason)}` : ""}</p></div>` : ""}
 

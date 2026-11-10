@@ -106,11 +106,12 @@ export const settingsView = {
 
           <section class="card reveal danger-card" id="s-delete">
             <div class="card-head"><div class="card-title">${icon("trash")}Eliminar mi cuenta</div></div>
+            ${me.demo ? `<p class="muted">Esta es una cuenta de demostración compartida: no se puede eliminar. Crea tu propia cuenta para tener tus datos privados.</p>` : `
             <p class="muted">Se borran para siempre tu cuenta, tus mediciones, perfiles, informes, diagnósticos y conversaciones. No se puede deshacer.</p>
             <div class="row" style="margin-top:12px">
               <div class="input-wrap" style="flex:1 1 240px">${icon("lock")}<input class="input" type="password" data-delete-password placeholder="Tu contraseña" autocomplete="current-password" aria-label="Contraseña para confirmar"></div>
               <button class="btn btn-danger" data-delete-account>${icon("trash")}Eliminar mi cuenta</button>
-            </div>
+            </div>`}
           </section>
 
           <section class="card reveal" id="s-about">
@@ -142,7 +143,7 @@ export const settingsView = {
     }));
     root.querySelector("[data-notifications]").addEventListener("change", (e) => { draft.notificationsEnabled = e.target.checked; });
     root.querySelector("[data-autosave]").addEventListener("change", (e) => { draft.autoSave = e.target.checked; });
-    root.querySelector("[data-delete-account]").addEventListener("click", async (e) => {
+    root.querySelector("[data-delete-account]")?.addEventListener("click", async (e) => {
       const button = e.currentTarget;
       const password = root.querySelector("[data-delete-password]").value;
       if (!password) { toast("Escribe tu contraseña para confirmar.", "warn"); return; }

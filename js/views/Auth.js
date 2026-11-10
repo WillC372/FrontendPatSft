@@ -46,7 +46,7 @@ function bindPasswordToggles(root) {
   });
 }
 
-function mount(root, card, onSubmit) {
+function mount(root, card, onSubmit, afterMount) {
   root.innerHTML = layout(card);
   const stop = animateWater(root.querySelector("[data-waves]"), { layers: 4, bubbles: 40, height: 0.42 });
   bindPasswordToggles(root);
@@ -64,6 +64,7 @@ function mount(root, card, onSubmit) {
     }
   });
   form.querySelector("input")?.focus();
+  afterMount?.(root);
   return stop;
 }
 
@@ -81,6 +82,11 @@ export const loginView = {
         </div>
         <button class="btn btn-primary btn-block btn-pill" type="submit">Entrar ${icon("arrowRight")}</button>
       </form>
+      <section class="demo-access" data-demo hidden>
+        <div class="demo-title"><span>Acceso de demostración</span></div>
+        <div class="demo-buttons" data-demo-buttons></div>
+        <p class="demo-creds" data-demo-creds></p>
+      </section>
       <p class="auth-foot">¿No tienes cuenta? <a href="#/register">Regístrate aquí</a></p>`,
     async (data) => {
       const remember = data.rememberMe === "on";
@@ -89,9 +95,34 @@ export const loginView = {
       toast(`Bienvenido, ${auth.user.fullName.split(" ")[0]}.`, "ok");
       if (auth.notice) toast(auth.notice, "warn", 10000);
       ctx.router.go("dashboard");
-    });
+    }, showDemoAccounts);
   },
 };
+
+const DEMO_ICON = { USER: "user", PREMIUM: "star", ADMIN: "shield" };
+
+// One button per role of the case study. They are real accounts of the database with public credentials and limits
+// (they cannot be deleted or pay, and the administrator can only look); the button fills the form and logs in.
+async function showDemoAccounts(root) {
+  let accounts = [];
+  try { accounts = await api.get("/auth/demo-accounts"); } catch { return; }
+  const box = root.querySelector("[data-demo]");
+  if (!box || !accounts.length) return;
+  box.querySelector("[data-demo-buttons]").innerHTML = accounts.map((a) => `<button type="button" class="demo-btn" data-demo-key="${esc(a.key)}" title="${esc(a.description)}">
+      ${icon(DEMO_ICON[a.key] || "user")}<span><strong>${esc(a.label)}</strong><small>${esc(a.email)}</small></span></button>`).join("");
+  box.querySelector("[data-demo-creds]").textContent = `Contraseña de las cuentas de demostración: ${accounts[0].password}`;
+  box.hidden = false;
+  const form = root.querySelector("form");
+  box.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-demo-key]");
+    if (!button) return;
+    const account = accounts.find((a) => a.key === button.dataset.demoKey);
+    form.elements.email.value = account.email;
+    form.elements.password.value = account.password;
+    form.elements.rememberMe.checked = false;
+    form.requestSubmit();
+  });
+}
 
 export const registerView = {
   name: "register", title: "Crear cuenta", layout: "auth",
