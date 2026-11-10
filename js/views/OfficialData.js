@@ -63,8 +63,8 @@ export const officialDataView = {
         <a class="btn" href="${esc(data.sourceUrl)}" target="_blank" rel="noopener">${icon("globe")}Fuente: USGS</a>
       </div>
       <p class="muted small reveal">${icon("refresh").replace("<svg", '<svg style="width:14px;height:14px;vertical-align:-2px"')}
-        Actualizado ${data.dataUpdatedAt ? esc(fmt.relative(data.dataUpdatedAt)) : "--"} (cada 3 horas). Los valores recientes son provisionales hasta que el USGS los revisa.
-        ${data.lastImportOk ? "" : `<strong>${esc(data.lastImportMessage || "")}</strong>`}</p>
+        ${data.importing ? "Actualizando ahora desde el USGS." : ""} Actualizado ${data.dataUpdatedAt ? esc(fmt.relative(data.dataUpdatedAt)) : "--"} (cada 3 horas). Los valores recientes son provisionales hasta que el USGS los revisa.
+        ${data.lastImportMessage ? `<strong>${esc(data.lastImportMessage)}</strong>` : ""}</p>
 
       <section class="card reveal">
         <div class="card-head"><div class="card-title">${icon("activity")}Estaciones con pH en las últimas 24 horas</div></div>
