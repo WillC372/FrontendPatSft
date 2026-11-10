@@ -21,12 +21,11 @@ function phColor(ph) {
 
 export async function mlPane(host) {
   let days = 30;
-  let includeSimulated = false;
+  const includeSimulated = false;
   host.innerHTML = `
     <div class="dx-head"><div><h2>Aprendizaje automático local</h2>
       <p class="muted" style="max-width:64ch">Un modelo Isolation Forest aprende cómo se comporta normalmente tu agua (valor, cambios, velocidad y hora del día) y señala las mediciones que no encajan, aunque estén dentro del rango. Corre en el servidor: sin APIs externas y sin enviar tus datos.</p></div>
-      <div class="row"><div class="tabs"><button class="tab" data-d="7">7 días</button><button class="tab active" data-d="30">30 días</button></div>
-        <label class="check" title="Solo para pruebas"><input type="checkbox" data-sim>Incluir simulados</label></div></div>
+      <div class="row"><div class="tabs"><button class="tab" data-d="7">7 días</button><button class="tab active" data-d="30">30 días</button></div></div></div>
     <div data-body style="margin-top:14px">${loading("Entrenando el modelo...")}</div>`;
   const body = host.querySelector("[data-body]");
 
@@ -81,6 +80,5 @@ export async function mlPane(host) {
     days = Number(tab.dataset.d);
     load();
   }));
-  host.querySelector("[data-sim]").addEventListener("change", (e) => { includeSimulated = e.target.checked; load(); });
   await load();
 }

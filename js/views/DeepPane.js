@@ -36,11 +36,10 @@ function scoreRows(models, chosen) {
 }
 
 export async function deepPane(host) {
-  let includeSimulated = false;
+  const includeSimulated = false;
   host.innerHTML = `
     <div class="dx-head"><div><h2>Red neuronal de predicción (LSTM)</h2>
-      <p class="muted" style="max-width:66ch">Una red neuronal recurrente aprende de tu historial por horas y predice el pH de las próximas 12 horas. Antes de usarla, el sistema la compara con referencias simples en datos que nunca vio: si no es mejor, usa la referencia y lo dice.</p></div>
-      <label class="check" title="Solo para pruebas: el simulador no es agua real"><input type="checkbox" data-sim>Incluir simulados</label></div>
+      <p class="muted" style="max-width:66ch">Una red neuronal recurrente aprende de tu historial por horas y predice el pH de las próximas 12 horas. Antes de usarla, el sistema la compara con referencias simples en datos que nunca vio: si no es mejor, usa la referencia y lo dice.</p></div></div>
     <div data-body style="margin-top:14px">${loading("Entrenando la red neuronal...")}</div>`;
   const body = host.querySelector("[data-body]");
   const load = async () => {
@@ -54,7 +53,6 @@ export async function deepPane(host) {
     }
     render(body, r);
   };
-  host.querySelector("[data-sim]").addEventListener("change", (e) => { includeSimulated = e.target.checked; load(); });
   await load();
 }
 

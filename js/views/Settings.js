@@ -115,7 +115,7 @@ export const settingsView = {
 
           <section class="card reveal" id="s-about">
             <div class="row" style="gap:18px">${logo("brand-logo")}<div><h2>AquaSense AI</h2><p class="muted">v1.0.0 · Tecnología al servicio del agua</p></div></div>
-            <p style="margin-top:12px">Monitoreo de pH con medidor físico (USB o Bluetooth SPP), simulador identificado y análisis con AquaSense Intelligence: estadística, reglas de dominio e IA generativa.</p>
+            <p style="margin-top:12px">Monitoreo de pH con medidor físico (USB o Bluetooth), lectura por cámara o foto, registro manual y análisis con AquaSense Intelligence: estadística, reglas de dominio e IA generativa.</p>
             <p class="disclaimer" style="margin-top:12px">${icon("info")}El pH por sí solo no demuestra que el agua sea potable ni que esté libre de contaminantes.</p>
           </section>
         </div>
