@@ -88,12 +88,45 @@ export async function assistantPane(host) {
     greet();
     list.querySelectorAll("[data-cid]").forEach((x) => x.classList.remove("active"));
   };
+  // The answer appears as the model writes it (streaming); if the stream cannot be used, the normal request is made.
+  const answer = async (question) => {
+    const body = { question, ...(current ? { conversationId: current } : {}) };
+    let text = "";
+    let result = null;
+    let failure = null;
+    try {
+      await api.stream("/intelligence/chat/stream", body, (name, data) => {
+        if (name === "delta") {
+          text += data.t || "";
+          const live = chat.querySelector("[data-typing]");
+          if (!live) return;
+          live.classList.remove("typing");
+          // Reference marks become numbered buttons when the answer is complete; while it is written they are hidden.
+          live.textContent = text.replace(/\*\*/g, "").replace(/\[[a-z0-9]+(?:-[a-z0-9]+)*-?\]?$|\[[a-z0-9]+(?:-[a-z0-9]+)+\]/g, "");
+          chat.scrollTop = chat.scrollHeight;
+        } else if (name === "done") {
+          result = data;
+        } else if (name === "error") {
+          failure = data;
+        }
+      });
+    } catch (error) {
+      if (text || error.status) throw error;
+      return api.post("/intelligence/chat", body);
+    }
+    if (failure) throw new Error(failure.message || "La IA no pudo responder. Intenta de nuevo.");
+    if (!result) {
+      if (text) throw new Error("Se cortó la conexión mientras llegaba la respuesta. Vuelve a preguntar.");
+      return api.post("/intelligence/chat", body);
+    }
+    return result;
+  };
   const ask = async (question) => {
     if (!question.trim() || !status.configured) return;
     chat.insertAdjacentHTML("beforeend", `<div class="bubble user">${esc(question)}</div><div class="bubble ai typing" data-typing><span></span><span></span><span></span></div>`);
     chat.scrollTop = chat.scrollHeight;
     try {
-      const a = await api.post("/intelligence/chat", { question, ...(current ? { conversationId: current } : {}) });
+      const a = await answer(question);
       const extra = a.removedReferences ? ` · ${a.removedReferences} referencia(s) inexistente(s) eliminada(s)` : "";
       chat.querySelector("[data-typing]").outerHTML = aiBubble(a.answer, a.model, a.citations || [], extra);
       const isNew = current !== a.conversationId;

@@ -87,6 +87,55 @@ class ApiClient {
     return payload;
   }
 
+  /**
+   * POST that answers with Server-Sent Events. Calls {@code onEvent(name, data)} for each event as it arrives and
+   * resolves when the server closes the stream. Errors before the first event are thrown like {@code request}.
+   */
+  async stream(path, body, onEvent) {
+    let response;
+    try {
+      response = await fetch(this.url(path), {
+        method: "POST", headers: this.headers(true, "text/event-stream"), body: JSON.stringify(body),
+      });
+    } catch {
+      throw new ApiError(0, "No se pudo conectar con el servidor. Revisa tu conexión a internet e inténtalo de nuevo.");
+    }
+    if (response.status === 401 && session.isAuthenticated) {
+      session.clear();
+      bus.emit("session:expired");
+    }
+    if (!response.ok || !response.body) {
+      let payload = {};
+      try { payload = await response.json(); } catch { /* not json */ }
+      throw new ApiError(response.status, payload.message || `Error ${response.status}`, payload.fields || {});
+    }
+    const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+    let buffer = "";
+    const dispatch = (block) => {
+      let name = "message";
+      const data = [];
+      block.split("\n").forEach((line) => {
+        if (line.startsWith("event:")) name = line.slice(6).trim();
+        else if (line.startsWith("data:")) data.push(line.slice(5).replace(/^ /, ""));
+      });
+      if (!data.length) return;
+      let parsed = data.join("\n");
+      try { parsed = JSON.parse(parsed); } catch { /* plain text */ }
+      onEvent(name, parsed);
+    };
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += value.replace(/\r\n/g, "\n");
+      let end;
+      while ((end = buffer.indexOf("\n\n")) >= 0) {
+        dispatch(buffer.slice(0, end));
+        buffer = buffer.slice(end + 2);
+      }
+    }
+    if (buffer.trim()) dispatch(buffer);
+  }
+
   get(path, query) { return this.request("GET", path, { query }); }
   post(path, body, query) { return this.request("POST", path, { body, query }); }
   put(path, body) { return this.request("PUT", path, { body }); }
