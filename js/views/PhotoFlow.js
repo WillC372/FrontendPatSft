@@ -3,6 +3,7 @@ import { bus } from "../core/EventBus.js";
 import { esc, fmt } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { modal, toast } from "../ui/Components.js";
+import { openCamera } from "../core/CameraAccess.js";
 
 const MAX_SIDE = 1600;
 
@@ -71,6 +72,12 @@ export function photoReading() {
           ${icon("camera")}<strong>Toma una foto o elige una imagen</strong><small class="muted">JPEG o PNG, hasta 10 MB. La foto no se guarda.</small>
           <input type="file" accept="image/*" capture="environment" data-file aria-label="Foto de la prueba de pH">
         </label>
+        <button class="btn" type="button" data-use-camera>${icon("camera")}Usar la cámara de este equipo</button>
+        <div class="photo-camera" data-camera hidden>
+          <video playsinline muted data-camera-video></video>
+          <div class="row"><button class="btn btn-primary" type="button" data-shoot>${icon("camera")}Tomar foto</button>
+            <button class="btn btn-ghost" type="button" data-camera-cancel>Cancelar</button></div>
+        </div>
         <div class="photo-tips">
           <div>${icon("sun")}Luz natural o blanca, sin sombras.</div>
           <div>${icon("image")}La tira junto a su carta de colores.</div>
@@ -99,6 +106,33 @@ export function photoReading() {
       ["dragleave", "drop"].forEach((e) => drop.addEventListener(e, () => drop.classList.remove("over")));
       drop.addEventListener("drop", (ev) => { ev.preventDefault(); if (ev.dataTransfer.files[0]) analyze(ev.dataTransfer.files[0]); });
       node.querySelector("[data-file]").addEventListener("change", (ev) => { if (ev.target.files[0]) analyze(ev.target.files[0]); });
+      let cameraStream = null;
+      const cameraBox = node.querySelector("[data-camera]");
+      const cameraVideo = node.querySelector("[data-camera-video]");
+      const stopCamera = () => { cameraStream?.getTracks().forEach((t) => t.stop()); cameraStream = null; cameraBox.hidden = true; drop.style.display = ""; };
+      node.querySelector("[data-use-camera]").addEventListener("click", async () => {
+        try {
+          cameraStream = await openCamera();
+        } catch (error) {
+          toast(error.message, "error", 9000);
+          return;
+        }
+        cameraVideo.srcObject = cameraStream;
+        await cameraVideo.play().catch(() => {});
+        cameraBox.hidden = false;
+        drop.style.display = "none";
+      });
+      node.querySelector("[data-camera-cancel]").addEventListener("click", stopCamera);
+      node.querySelector("[data-shoot]").addEventListener("click", () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = cameraVideo.videoWidth;
+        canvas.height = cameraVideo.videoHeight;
+        canvas.getContext("2d").drawImage(cameraVideo, 0, 0);
+        stopCamera();
+        canvas.toBlob((blob) => blob && analyze(blob), "image/jpeg", 0.92);
+      });
+      new MutationObserver((_, observer) => { if (!node.isConnected) { stopCamera(); observer.disconnect(); } })
+        .observe(document.body, { childList: true });
 
       async function analyze(file) {
         let blob;

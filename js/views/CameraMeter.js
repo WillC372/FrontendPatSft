@@ -3,6 +3,7 @@ import { bus } from "../core/EventBus.js";
 import { esc, fmt } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { toast } from "../ui/Components.js";
+import { openCamera } from "../core/CameraAccess.js";
 
 // Camera link for meters without a data cable: the camera watches the meter display, the browser detects when the
 // number changes and settles, and only then sends one frame to the photo reading API (each reading uses AI quota).
@@ -192,18 +193,12 @@ export function cameraMeter(host) {
   }
 
   async function start(deviceId) {
-    if (!navigator.mediaDevices?.getUserMedia) {
-      toast("Este navegador no permite usar la cámara. Usa Chrome, Edge o Safari actualizados (con https).", "error");
-      return;
-    }
     try {
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: deviceId ? { deviceId: { exact: deviceId } } : { facingMode: { ideal: "environment" }, width: { ideal: 1280 } },
-        audio: false,
-      });
+      stream = await openCamera(deviceId);
     } catch (error) {
-      toast(error.name === "NotAllowedError" ? "Permiso de cámara denegado. Actívalo en el navegador para usar esta función."
-        : "No se pudo abrir la cámara.", "error");
+      setState("Sin cámara", "badge-warn");
+      $("[data-cam-off]").innerHTML = `${icon("alert")}<span>${esc(error.message)}</span>`;
+      toast(error.message, "error", 9000);
       return;
     }
     video.srcObject = stream;
