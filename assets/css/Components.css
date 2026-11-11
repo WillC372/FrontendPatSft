@@ -98,6 +98,10 @@ tbody tr:last-child td { border-bottom: 0; }
 .toast svg { width: 20px; height: 20px; flex: none; margin-top: 1px; }
 .toast-ok svg { color: var(--ok); } .toast-error svg { color: var(--crit); } .toast-warn svg { color: var(--warn); } .toast-info svg { color: var(--primary-2); }
 .toast.leaving { animation: fade-out .25s ease forwards; }
+.toast > div { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.toast-close { flex: none; display: grid; place-items: center; width: 26px; height: 26px; margin: -3px -6px -3px 0; padding: 0; border: 0; border-radius: 8px; background: transparent; color: var(--muted); cursor: pointer; }
+.toast-close:hover { background: var(--surface-2); color: var(--text); }
+.toast .toast-close svg { width: 16px; height: 16px; margin: 0; color: inherit; }
 @media (max-width: 960px) { .toasts { bottom: 96px; right: 12px; } }
 
 .skeleton { border-radius: 10px; background: linear-gradient(90deg, var(--track) 25%, rgba(140, 190, 255, 0.18) 50%, var(--track) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }

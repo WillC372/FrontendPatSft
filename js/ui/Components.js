@@ -3,17 +3,34 @@ import { esc } from "../core/Format.js";
 
 const TOAST_ICONS = { ok: "check", error: "error", warn: "alert", info: "info" };
 
+const MAX_TOASTS = 4;
+
 export function toast(message, type = "info", timeout = 4500) {
   const host = document.getElementById("toasts");
+  // The same text twice in a row (for example two failed requests) is shown once.
+  if ([...host.children].some((n) => !n.classList.contains("leaving") && n.dataset.text === message)) return;
   const node = document.createElement("div");
   node.className = `toast toast-${type}`;
+  node.dataset.text = message;
   node.setAttribute("role", type === "error" ? "alert" : "status");
-  node.innerHTML = `${icon(TOAST_ICONS[type] || "info")}<div>${esc(message)}</div>`;
-  host.append(node);
-  setTimeout(() => {
+  node.innerHTML = `${icon(TOAST_ICONS[type] || "info")}<div>${esc(message)}</div>
+    <button type="button" class="toast-close" aria-label="Cerrar aviso">${icon("close")}</button>`;
+  let timer;
+  const leave = () => {
+    if (node.classList.contains("leaving")) return;
+    clearTimeout(timer);
     node.classList.add("leaving");
     node.addEventListener("animationend", () => node.remove(), { once: true });
-  }, timeout);
+    setTimeout(() => node.remove(), 600);
+  };
+  node.querySelector(".toast-close").addEventListener("click", leave);
+  // While the pointer is over a notice it stays, so a long message can be read to the end.
+  node.addEventListener("pointerenter", () => clearTimeout(timer));
+  node.addEventListener("pointerleave", () => { timer = setTimeout(leave, 2000); });
+  host.append(node);
+  const visible = [...host.children].filter((n) => !n.classList.contains("leaving"));
+  visible.slice(0, Math.max(0, visible.length - MAX_TOASTS)).forEach((n) => n.querySelector(".toast-close")?.click());
+  timer = setTimeout(leave, timeout);
 }
 
 export function modal({ title, body, actions = [], onMount, dismissible = true }) {
