@@ -2,27 +2,11 @@ import { api } from "../core/Api.js";
 import { esc } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { confirmDialog, emptyState, loading, toast } from "../ui/Components.js";
+import { duration, period } from "./SessionText.js";
 
 const PAGE_SIZE = 10;
-const day = new Intl.DateTimeFormat("es", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
-const hour = new Intl.DateTimeFormat("es", { hour: "2-digit", minute: "2-digit" });
 const stamp = new Intl.DateTimeFormat("es", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 const BADGE = { OPEN: "badge-ok", ENDED: "badge-info", EXPIRED: "badge-warn" };
-
-function duration(minutes) {
-  if (minutes < 1) return "menos de 1 min";
-  if (minutes < 60) return `${minutes} min`;
-  const h = Math.floor(minutes / 60);
-  return `${h} h${minutes % 60 ? ` ${minutes % 60} min` : ""}`;
-}
-
-function period(s) {
-  const start = new Date(s.startedAt);
-  const end = new Date(s.endedAt || s.lastActivityAt);
-  const sameDay = start.toDateString() === end.toDateString();
-  const until = s.status === "OPEN" ? "ahora" : sameDay ? hour.format(end) : `${day.format(end)}, ${hour.format(end)}`;
-  return `${day.format(start)} · ${hour.format(start)} – ${until}`;
-}
 
 function card(s) {
   const done = Object.entries(s.actions || {});
