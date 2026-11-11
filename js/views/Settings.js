@@ -68,7 +68,7 @@ export const settingsView = {
             </div>
             <p class="muted" style="margin-top:10px;font-size:13px">"Automático" sigue la preferencia de tu sistema operativo. La elección se guarda en tu cuenta.</p>
             <div class="setting-row"><div><strong>Idioma</strong><p>Los textos están en español; la estructura admite otros idiomas.</p></div>
-              <select class="input" style="width:auto" data-language><option value="es" selected>Español</option></select></div>
+              <select class="input" style="width:auto" data-language aria-label="Idioma"><option value="es" selected>Español</option></select></div>
           </section>
 
           <section class="card reveal" id="s-measurement">
@@ -100,7 +100,7 @@ export const settingsView = {
 
           <section class="card reveal" id="s-activity">
             <div class="card-head"><div class="card-title">${icon("history")}Actividad reciente</div></div>
-            <div class="activity">${activity.length ? `<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Acción</th><th>Detalle</th></tr></thead><tbody>
+            <div class="activity" tabindex="0" role="region" aria-label="Actividad reciente, se desplaza">${activity.length ? `<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Acción</th><th>Detalle</th></tr></thead><tbody>
               ${activity.map((a) => `<tr><td class="num">${fmt.dateTime(a.createdAt)}</td><td class="mono" style="font-size:12px">${esc(a.action)}</td><td>${esc(a.detail)}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">Sin actividad.</p>`}</div>
           </section>
 
