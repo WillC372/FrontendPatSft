@@ -140,7 +140,7 @@ No hay compilación: la carpeta completa es el sitio. Para publicarla en un host
 
 ```bash
 npm run check   # sintaxis de los 50 archivos JS
-npm test        # 27 pruebas unitarias con node:test
+npm test        # 29 pruebas unitarias con node:test
 ```
 
 Las pruebas unitarias (`tests/`) cubren:
