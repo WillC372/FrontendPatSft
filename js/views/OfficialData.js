@@ -3,21 +3,7 @@ import { esc, fmt } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { emptyState, loading, toast } from "../ui/Components.js";
 import { barChart, lineChart } from "../ui/Charts.js";
-
-const LOW = 6.5;
-const HIGH = 8.5;
-const num = (v) => (v === null || v === undefined ? "--" : Number(v).toFixed(1).replace(".", ","));
-
-function band(ph) {
-  if (ph === null || ph === undefined) return { cls: "badge-info", text: "Sin dato" };
-  if (ph < LOW) return { cls: "badge-warn", text: "Bajo 6,5" };
-  if (ph > HIGH) return { cls: "badge-warn", text: "Sobre 8,5" };
-  return { cls: "badge-ok", text: "Entre 6,5 y 8,5" };
-}
-
-function approval(text) {
-  return text === "Approved" ? "Aprobado por el USGS" : text === "Provisional" ? "Provisional (sujeto a revisión del USGS)" : esc(text || "");
-}
+import { approval, band, HIGH, LOW, num } from "./OfficialText.js";
 
 function stationName(s) {
   return s.name ? esc(s.name) : `Estación ${esc(s.id)}`;
@@ -108,7 +94,7 @@ export const officialDataView = {
         if (selected !== id) return;
         detail.innerHTML = `
           <div class="row-between"><div><strong>${stationName(s.station)}</strong>
-            <div class="muted small">${esc(s.station.id)} · ${approval(s.station.approvalStatus)}</div></div>
+            <div class="muted small">${esc(s.station.id)} · ${esc(approval(s.station.approvalStatus))}</div></div>
             <div class="tabs" aria-label="Periodo">${[1, 7, 30].map((d) => `<button class="tab${d === s.days ? " active" : ""}" data-days="${d}">${d === 1 ? "24 h" : `${d} días`}</button>`).join("")}</div></div>
           <div class="stats" style="margin:12px 0"><div class="stat"><span>Promedio</span><strong>${num(s.averagePh)}</strong></div>
             <div class="stat"><span>Mínimo</span><strong>${num(s.minPh)}</strong></div><div class="stat"><span>Máximo</span><strong>${num(s.maxPh)}</strong></div></div>
