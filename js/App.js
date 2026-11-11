@@ -4,21 +4,24 @@ import { bus } from "./core/EventBus.js";
 import { api } from "./core/Api.js";
 import { theme } from "./core/Theme.js";
 import { liveStream } from "./core/LiveStream.js";
-import { enableRipples, enableToggleGroups, toast } from "./ui/Components.js";
+import { emptyState, enableRipples, enableToggleGroups, toast } from "./ui/Components.js";
 import { Shell } from "./views/Shell.js";
 import { loginView, registerView, forgotView, resetView, verifyAdminView } from "./views/Auth.js";
-import { dashboardView } from "./views/Dashboard.js";
-import { historyView } from "./views/History.js";
-import { intelligenceView } from "./views/Intelligence.js";
-import { devicesView } from "./views/Devices.js";
-import { profilesView } from "./views/Profiles.js";
-import { settingsView } from "./views/Settings.js";
-import { billingView } from "./views/Billing.js";
 import { waitForServer } from "./core/ServerWake.js";
 import { watchSessionExpiry } from "./core/SessionTimer.js";
-import { adminView } from "./views/Admin.js";
-import { sessionsView } from "./views/Sessions.js";
-import { officialDataView } from "./views/OfficialData.js";
+import { lazyView } from "./core/LazyView.js";
+
+// Screens of the signed-in application, loaded on first use.
+const dashboardView = lazyView({ name: "dashboard", title: "Inicio" }, () => import("./views/Dashboard.js"), "dashboardView");
+const historyView = lazyView({ name: "history", title: "Historial de mediciones" }, () => import("./views/History.js"), "historyView");
+const intelligenceView = lazyView({ name: "intelligence", title: "Centro de análisis IA" }, () => import("./views/Intelligence.js"), "intelligenceView");
+const devicesView = lazyView({ name: "devices", title: "Conexión del dispositivo" }, () => import("./views/Devices.js"), "devicesView");
+const profilesView = lazyView({ name: "profiles", title: "Perfiles de agua" }, () => import("./views/Profiles.js"), "profilesView");
+const settingsView = lazyView({ name: "settings", title: "Configuración" }, () => import("./views/Settings.js"), "settingsView");
+const billingView = lazyView({ name: "billing", title: "Plan y pagos" }, () => import("./views/Billing.js"), "billingView");
+const adminView = lazyView({ name: "admin", title: "Administración" }, () => import("./views/Admin.js"), "adminView");
+const sessionsView = lazyView({ name: "sessions", title: "Historial de sesiones" }, () => import("./views/Sessions.js"), "sessionsView");
+const officialDataView = lazyView({ name: "official", title: "Datos oficiales" }, () => import("./views/OfficialData.js"), "officialDataView");
 
 const root = document.getElementById("app");
 const ctx = { settings: null, router: null };
@@ -58,7 +61,19 @@ async function show(view, route) {
   page.classList.remove("page-enter");
   void page.offsetWidth;
   page.classList.add("page-enter");
-  const done = await view.render(page, { ...ctx, route, shell, stale });
+  let done;
+  try {
+    done = await view.render(page, { ...ctx, route, shell, stale });
+  } catch (error) {
+    // The code of the screen could not be downloaded (connection lost, or a new version was published meanwhile).
+    if (stale()) return;
+    page.innerHTML = emptyState("error", "No se pudo abrir esta pantalla",
+      "Revisa tu conexión y recarga la página. Si se publicó una versión nueva de AquaSense, recargar la descarga.",
+      `<button class="btn btn-primary" data-reload>Recargar</button>`);
+    page.querySelector("[data-reload]").addEventListener("click", () => location.reload());
+    console.warn("Screen could not be rendered:", error);
+    return;
+  }
   if (stale()) done?.(); else cleanup = done;
   // Keyboard and screen reader users continue at the new screen instead of the link they pressed.
   if (!stale() && document.activeElement?.closest?.(".sidebar, .bottom-nav, .quick-links")) page.focus({ preventScroll: true });
