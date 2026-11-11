@@ -95,6 +95,19 @@ bus.on("session:expired", () => {
 
 bus.on("settings:changed", (settings) => { ctx.settings = settings; });
 
+// Without internet nothing can be saved or asked to the AI: a fixed bar says so until the connection returns.
+const offline = document.createElement("div");
+offline.className = "offline-bar";
+offline.setAttribute("role", "status");
+offline.hidden = navigator.onLine !== false;
+offline.textContent = "Sin conexión a internet. Lo que hagas no se guardará hasta que vuelva la conexión.";
+document.body.append(offline);
+window.addEventListener("offline", () => { offline.hidden = false; });
+window.addEventListener("online", () => {
+  offline.hidden = true;
+  toast("Conexión recuperada.", "ok", 2500);
+});
+
 watchSessionExpiry({ onWarn: () => toast("Tu sesión vence en 5 minutos. Guarda lo que estés haciendo; luego tendrás que iniciar sesión de nuevo.", "warn", 15000) });
 
 enableRipples();
