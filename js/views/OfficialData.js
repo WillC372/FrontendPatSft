@@ -2,8 +2,20 @@ import { api } from "../core/Api.js";
 import { esc, fmt } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { emptyState, loading, toast } from "../ui/Components.js";
-import { barChart, lineChart } from "../ui/Charts.js";
+import { lineChart } from "../ui/Charts.js";
 import { approval, band, HIGH, LOW, num } from "./OfficialText.js";
+
+/** One bar split in three, readable at any width; the legend repeats the counts and percentages as text. */
+function distribution(host, parts) {
+  const total = parts.reduce((sum, p) => sum + p.value, 0) || 1;
+  const pct = (v) => Math.round((v / total) * 1000) / 10;
+  host.innerHTML = `
+    <div class="dist-bar" role="img" aria-label="${esc(parts.map((p) => `${p.label}: ${p.value} estaciones`).join(", "))}">
+      ${parts.filter((p) => p.value > 0).map((p) => `<span class="dist-${p.cls}" style="flex-grow:${p.value}"></span>`).join("")}
+    </div>
+    <ul class="dist-legend">${parts.map((p) => `<li><i class="dist-${p.cls}"></i><span>${esc(p.label)}</span>
+      <strong>${p.value}</strong><small class="muted">${String(pct(p.value)).replace(".", ",")} %</small></li>`).join("")}</ul>`;
+}
 
 function stationName(s) {
   return s.name ? esc(s.name) : `Estación ${esc(s.id)}`;
@@ -76,10 +88,10 @@ export const officialDataView = {
         <section class="card reveal"><div class="card-head"><div class="card-title">${icon("trend")}pH más alto ahora</div></div>
           <ul class="extremes">${data.highest.map(extremeRow).join("")}</ul></section>
       </div>`;
-    barChart(root.querySelector("[data-dist]"), [
-      { label: "Bajo 6,5", value: data.below, color: "var(--warn)" },
-      { label: "6,5 a 8,5", value: data.within, color: "var(--ok)" },
-      { label: "Sobre 8,5", value: data.above, color: "var(--warn)" },
+    distribution(root.querySelector("[data-dist]"), [
+      { label: "Bajo 6,5", value: data.below, cls: "low" },
+      { label: "Entre 6,5 y 8,5", value: data.within, cls: "mid" },
+      { label: "Sobre 8,5", value: data.above, cls: "high" },
     ]);
 
     const detail = root.querySelector("[data-detail]");

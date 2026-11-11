@@ -576,3 +576,14 @@ select.input.cam-select { width: auto; flex: none; padding-top: 8px; padding-bot
 .extremes li strong { font-family: var(--font-display); font-size: 18px; font-variant-numeric: tabular-nums; }
 .extremes li span { overflow-wrap: anywhere; min-width: 0; }
 .small { font-size: 13px; }
+.dist-bar { display: flex; gap: 3px; height: 18px; border-radius: 999px; overflow: hidden; background: var(--track); }
+.dist-bar span { min-width: 6px; flex-basis: 0; }
+.dist-low, .dist-high { background: var(--warn); }
+.dist-high { opacity: .7; }
+.dist-mid { background: var(--ok); }
+.dist-legend { list-style: none; margin: 12px 0 8px; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px 16px; }
+.dist-legend li { display: flex; align-items: baseline; gap: 8px; font-size: 14px; }
+.dist-legend i { flex: none; width: 10px; height: 10px; border-radius: 3px; transform: translateY(1px); }
+.dist-legend strong { margin-left: auto; font-variant-numeric: tabular-nums; }
+.dist-legend small { white-space: nowrap; min-width: 48px; text-align: right; }
+@media (max-width: 520px) { .dist-legend { grid-template-columns: 1fr; } }
