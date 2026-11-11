@@ -49,7 +49,8 @@
   .topbar { padding: 12px 16px; }
   .topbar .mobile-brand { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 700; }
   .topbar .mobile-brand svg { width: 28px; height: 28px; }
-  .topbar-title h1 { display: none; }
+  /* On phones the logo takes its place, but screen readers still get the title of the screen as its heading. */
+  .topbar-title h1 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .page { padding: 18px 16px 110px; gap: 16px; }
   .bottom-nav {
     position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 30; display: grid; grid-template-columns: repeat(5, 1fr);
