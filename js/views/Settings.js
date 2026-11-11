@@ -99,9 +99,9 @@ export const settingsView = {
           </section>` : ""}
 
           <section class="card reveal" id="s-activity">
-            <div class="card-head"><div class="card-title">${icon("history")}Actividad reciente</div></div>
+            <div class="card-head"><div class="card-title">${icon("history")}Actividad reciente</div><a class="btn btn-ghost btn-sm" href="#/sessions">${icon("clock")}Ver por sesión</a></div>
             <div class="activity">${activity.length ? `<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Acción</th><th>Detalle</th></tr></thead><tbody>
-              ${activity.map((a) => `<tr><td class="num">${fmt.dateTime(a.createdAt)}</td><td class="mono" style="font-size:12px">${esc(a.action)}</td><td>${esc(a.detail)}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">Sin actividad.</p>`}</div>
+              ${activity.map((a) => `<tr><td class="num">${fmt.dateTime(a.createdAt)}</td><td>${esc(a.label || a.action)}</td><td>${esc(a.detail)}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">Sin actividad.</p>`}</div>
           </section>
 
           <section class="card reveal danger-card" id="s-delete">
