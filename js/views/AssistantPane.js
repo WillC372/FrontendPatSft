@@ -6,10 +6,19 @@ import { bindReferenceMarks, chatCitations, withReferenceMarks } from "./Citatio
 
 const SUGGESTIONS = ["¿Cómo está mi agua esta semana?", "¿Qué pH es recomendable para una piscina?", "¿Cómo subo el pH de un acuario sin dañar a los peces?", "¿Cómo calibro un medidor de pH?"];
 
+/** Plain text of an answer for the clipboard: without reference ids, with the cited sources numbered at the end. */
+function copyText(text, citations) {
+  const order = new Map(citations.map((c, i) => [c.id, i + 1]));
+  const body = String(text).replace(/\*\*/g, "")
+    .replace(/\[([a-z0-9]+(?:-[a-z0-9]+)+)\]/g, (m, id) => (order.has(id) ? `[${order.get(id)}]` : "")).trim();
+  const sources = citations.map((c, i) => `[${i + 1}] ${c.organization}, ${c.title}${c.section ? ` (${c.section})` : ""}. ${c.url}`);
+  return sources.length ? `${body}\n\nFuentes:\n${sources.join("\n")}` : body;
+}
+
 function aiBubble(text, model, citations = [], extra = "") {
   const meta = `Generado por IA · ${esc(model || "")}${citations.length ? " · con citas verificadas" : ""}${extra}`;
-  return `<div class="bubble ai">${withReferenceMarks(String(text).replace(/\*\*/g, "").trim(), citations)}`
-    + `<small class="muted">${meta}</small>${chatCitations(citations)}</div>`;
+  return `<div class="bubble ai" data-copy-text="${esc(copyText(text, citations))}">${withReferenceMarks(String(text).replace(/\*\*/g, "").trim(), citations)}`
+    + `<small class="muted bubble-meta"><span>${meta}</span><button type="button" class="copy-btn" data-copy aria-label="Copiar respuesta" title="Copiar respuesta">${icon("copy")}</button></small>${chatCitations(citations)}</div>`;
 }
 
 /**
@@ -163,6 +172,16 @@ export async function assistantPane(host) {
     chat.scrollTop = chat.scrollHeight;
   };
   form.querySelector("[data-stop]").addEventListener("click", () => running?.abort());
+  chat.addEventListener("click", async (event) => {
+    const button = event.target.closest("[data-copy]");
+    if (!button) return;
+    try {
+      await navigator.clipboard.writeText(button.closest("[data-copy-text]").dataset.copyText);
+      toast("Respuesta copiada.", "ok", 2000);
+    } catch {
+      toast("El navegador no permitió copiar. Selecciona el texto y cópialo a mano.", "warn");
+    }
+  });
 
   list.addEventListener("click", async (event) => {
     const del = event.target.closest("[data-del]");
