@@ -116,12 +116,12 @@ export async function assistantPane(host) {
       }, signal);
     } catch (error) {
       if (error.name === "AbortError") throw Object.assign(new Error("stopped"), { stopped: true, text });
-      if (text || error.status) throw error;
+      if (text || error.status) throw Object.assign(error, { text });
       return api.post("/intelligence/chat", body);
     }
-    if (failure) throw new Error(failure.message || "La IA no pudo responder. Intenta de nuevo.");
+    if (failure) throw Object.assign(new Error(failure.message || "La IA no pudo responder. Intenta de nuevo."), { text });
     if (!result) {
-      if (text) throw new Error("Se cortó la conexión mientras llegaba la respuesta. Vuelve a preguntar.");
+      if (text) throw Object.assign(new Error("Se cortó la conexión mientras llegaba la respuesta. Vuelve a preguntar."), { text });
       return api.post("/intelligence/chat", body);
     }
     return result;
@@ -155,6 +155,9 @@ export async function assistantPane(host) {
       if (error.stopped) {
         // What was already written stays visible; the request to the server is cancelled.
         bubble.outerHTML = `<div class="bubble ai">${error.text ? esc(error.text.replace(/\*\*/g, "").trim()) : ""}<small class="muted">Respuesta detenida.</small></div>`;
+      } else if (error.text) {
+        // The answer stopped half way: what arrived stays, with the reason below it.
+        bubble.outerHTML = `<div class="bubble ai">${esc(liveText(error.text).trim())}<small class="muted">Respuesta incompleta: ${esc(error.message)}</small></div>`;
       } else {
         bubble.outerHTML = `<div class="bubble ai">${esc(error.message)}</div>`;
       }
