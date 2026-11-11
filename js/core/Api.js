@@ -1,6 +1,7 @@
 import { session } from "./Session.js";
 import { bus } from "./EventBus.js";
 import { waitForServer } from "./ServerWake.js";
+import { SseParser } from "./SseParser.js";
 
 export class ApiError extends Error {
   constructor(status, message, fields = {}) {
@@ -111,30 +112,13 @@ class ApiClient {
       throw new ApiError(response.status, payload.message || `Error ${response.status}`, payload.fields || {});
     }
     const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
-    let buffer = "";
-    const dispatch = (block) => {
-      let name = "message";
-      const data = [];
-      block.split("\n").forEach((line) => {
-        if (line.startsWith("event:")) name = line.slice(6).trim();
-        else if (line.startsWith("data:")) data.push(line.slice(5).replace(/^ /, ""));
-      });
-      if (!data.length) return;
-      let parsed = data.join("\n");
-      try { parsed = JSON.parse(parsed); } catch { /* plain text */ }
-      onEvent(name, parsed);
-    };
+    const parser = new SseParser();
     for (;;) {
       const { value, done } = await reader.read();
       if (done) break;
-      buffer += value.replace(/\r\n/g, "\n");
-      let end;
-      while ((end = buffer.indexOf("\n\n")) >= 0) {
-        dispatch(buffer.slice(0, end));
-        buffer = buffer.slice(end + 2);
-      }
+      parser.push(value).forEach((e) => onEvent(e.name, e.data));
     }
-    if (buffer.trim()) dispatch(buffer);
+    parser.end().forEach((e) => onEvent(e.name, e.data));
   }
 
   get(path, query) { return this.request("GET", path, { query }); }

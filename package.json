@@ -6,7 +6,10 @@
   "type": "module",
   "scripts": {
     "start": "node Server.mjs",
-    "check": "node scripts/CheckSyntax.mjs"
+    "check": "node scripts/CheckSyntax.mjs",
+    "test": "node --test \"tests/*.test.mjs\""
   },
-  "engines": { "node": ">=18" }
+  "engines": {
+    "node": ">=22"
+  }
 }
