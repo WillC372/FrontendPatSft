@@ -11,9 +11,16 @@ test("session durations", () => {
   assert.equal(duration(undefined), "menos de 1 min");
 });
 
-test("an open session ends in ahora", () => {
-  const text = period({ status: "OPEN", startedAt: "2026-11-10T15:00:00Z", lastActivityAt: "2026-11-10T15:30:00Z" });
+test("an open session in use ends in ahora", () => {
+  const text = period({ status: "OPEN", startedAt: "2026-11-10T15:00:00Z", lastActivityAt: "2026-11-10T15:30:00Z" },
+    Date.parse("2026-11-10T15:40:00Z"));
   assert.match(text, / – ahora$/);
+});
+
+test("an open session left without use says since when", () => {
+  const text = period({ status: "OPEN", startedAt: "2026-11-10T15:00:00Z", lastActivityAt: "2026-11-10T15:30:00Z" },
+    Date.parse("2026-11-10T19:00:00Z"));
+  assert.match(text, / – sin uso desde \d{2}:\d{2}$/);
 });
 
 test("a session that ended the same day shows only the end time", () => {

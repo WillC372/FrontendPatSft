@@ -2,19 +2,21 @@ import { api } from "../core/Api.js";
 import { esc } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { confirmDialog, emptyState, loading, toast } from "../ui/Components.js";
-import { duration, period } from "./SessionText.js";
+import { duration, IDLE_MS, period } from "./SessionText.js";
 
 const PAGE_SIZE = 10;
 const stamp = new Intl.DateTimeFormat("es", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 const BADGE = { OPEN: "badge-ok", ENDED: "badge-info", EXPIRED: "badge-warn" };
 
 function card(s) {
+  // Left open (for example, the tab was closed without signing out): it ends by itself when the token expires.
+  const idle = !s.current && s.status === "OPEN" && Date.now() - new Date(s.lastActivityAt).getTime() > IDLE_MS;
   const done = Object.entries(s.actions || {});
   return `<article class="session-card${s.current ? " current" : ""}" data-sid="${s.id}">
     <div class="row-between">
       <div><strong>${esc(period(s))}</strong>
         <div class="muted small">${esc(duration(s.durationMinutes))}${s.client ? ` · ${esc(s.client)}` : ""}${s.rememberMe ? " · sesión recordada" : ""}</div></div>
-      <div class="row"><span class="badge ${BADGE[s.status] || "badge-info"}">${esc(s.current ? "Sesión actual" : s.statusLabel)}</span></div>
+      <div class="row"><span class="badge ${idle ? "badge-warn" : BADGE[s.status] || "badge-info"}">${esc(s.current ? "Sesión actual" : idle ? "Abierta sin uso" : s.statusLabel)}</span></div>
     </div>
     <div class="session-actions">${done.length
       ? done.map(([label, n]) => `<span class="chip">${esc(label)} <b>${n}</b></span>`).join("")

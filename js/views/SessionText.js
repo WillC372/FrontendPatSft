@@ -12,14 +12,19 @@ export function duration(minutes) {
   return `${h} h${m % 60 ? ` ${m % 60} min` : ""}`;
 }
 
+/** An open session without activity for this long was probably left open (tab closed without signing out). */
+export const IDLE_MS = 30 * 60 * 1000;
+
 /**
- * "mar, 10 nov 2026 · 17:40 – 17:42". An open session ends in "ahora"; one that ended on another day shows that day.
- * An expired session ends at its last activity.
+ * "mar, 10 nov 2026 · 17:40 – 17:42". An open session in use ends in "ahora"; one left open shows when it was last
+ * used; one that ended on another day shows that day. An expired session ends at its last activity.
  */
-export function period(s) {
+export function period(s, now = Date.now()) {
   const start = new Date(s.startedAt);
   const end = new Date(s.endedAt || s.lastActivityAt);
   const sameDay = start.toDateString() === end.toDateString();
-  const until = s.status === "OPEN" ? "ahora" : sameDay ? hour.format(end) : `${day.format(end)}, ${hour.format(end)}`;
+  const at = sameDay ? hour.format(end) : `${day.format(end)}, ${hour.format(end)}`;
+  let until = at;
+  if (s.status === "OPEN") until = now - end.getTime() > IDLE_MS ? `sin uso desde ${at}` : "ahora";
   return `${day.format(start)} · ${hour.format(start)} – ${until}`;
 }
