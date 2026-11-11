@@ -22,6 +22,16 @@ const billingView = lazyView({ name: "billing", title: "Plan y pagos" }, () => i
 const adminView = lazyView({ name: "admin", title: "Administración" }, () => import("./views/Admin.js"), "adminView");
 const sessionsView = lazyView({ name: "sessions", title: "Historial de sesiones" }, () => import("./views/Sessions.js"), "sessionsView");
 const officialDataView = lazyView({ name: "official", title: "Datos oficiales" }, () => import("./views/OfficialData.js"), "officialDataView");
+const LAZY = Object.fromEntries([dashboardView, historyView, intelligenceView, devicesView, profilesView, settingsView, billingView,
+  adminView, sessionsView, officialDataView].map((v) => [v.name, v]));
+
+// Pointing at (or tabbing to) a link starts downloading its screen, so opening it feels immediate.
+const preloadFrom = (event) => {
+  const link = event.target.closest?.('a[href^="#/"]');
+  if (link) LAZY[link.getAttribute("href").slice(2).split(/[/?]/)[0]]?.preload();
+};
+document.addEventListener("pointerover", preloadFrom, { passive: true });
+document.addEventListener("focusin", preloadFrom);
 
 const root = document.getElementById("app");
 const ctx = { settings: null, router: null };
