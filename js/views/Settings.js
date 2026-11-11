@@ -75,7 +75,7 @@ export const settingsView = {
             <div class="card-head"><div class="card-title">${icon("bell")}Notificaciones y medición</div></div>
             <div class="setting-row"><div><strong>Notificaciones</strong><p>Avisos en pantalla cuando una lectura en vivo sea crítica.</p></div>
               <label class="switch"><input type="checkbox" data-notifications ${draft.notificationsEnabled ? "checked" : ""} aria-label="Notificaciones"><span></span></label></div>
-            <div class="setting-row"><div><strong>Guardar mediciones automáticamente</strong><p>Si está activo, cada medición con el medidor se guarda sin pedir confirmacion.</p></div>
+            <div class="setting-row"><div><strong>Guardar mediciones automáticamente</strong><p>Si está activo, cada medición con el medidor se guarda sin pedir confirmación.</p></div>
               <label class="switch"><input type="checkbox" data-autosave ${draft.autoSave ? "checked" : ""} aria-label="Guardar automáticamente"><span></span></label></div>
           </section>
 

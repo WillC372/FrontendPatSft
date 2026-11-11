@@ -71,7 +71,7 @@ export async function manualEntry() {
   return modal({
     title: "Registro manual",
     body: `<form class="stack" data-manual novalidate>
-        <p class="muted">Usa esta opcion si mediste con tiras o con un medidor sin conexión. Quedara marcado como "Manual".</p>
+        <p class="muted">Usa esta opción si mediste con tiras o con un medidor sin conexión. Quedará marcado como "Manual".</p>
         <div class="grid grid-2">
           <div class="field"><label for="mm-ph">Valor de pH</label><input class="input" id="mm-ph" name="ph" type="number" step="0.01" min="0" max="14" required placeholder="7.20"><div class="field-error" data-error-for="ph"></div></div>
           <div class="field"><label for="mm-t">Temperatura °C (opcional)</label><input class="input" id="mm-t" name="temperatureC" type="number" step="0.1" placeholder="24.0"></div>

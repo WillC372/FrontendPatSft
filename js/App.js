@@ -86,7 +86,7 @@ bus.on("api:slow", () => {
 });
 
 bus.on("session:expired", () => {
-  toast("Tu sesión expiro. Inicia sesión de nuevo.", "warn");
+  toast("Tu sesión expiró. Inicia sesión de nuevo.", "warn");
   ctx.router.go("login");
 });
 

@@ -82,7 +82,7 @@ export const devicesView = {
         await refresh();
       }));
       statusCard.querySelector("[data-disconnect]")?.addEventListener("click", async () => {
-        if (!(await confirmDialog("Desconectar medidor", "Se cerrara la conexión con el medidor.", "Desconectar"))) return;
+        if (!(await confirmDialog("Desconectar medidor", "Se cerrará la conexión con el medidor.", "Desconectar"))) return;
         try { await api.post("/devices/disconnect"); toast("Medidor desconectado.", "ok"); } catch (error) { toast(error.message, "error"); }
         await refresh();
       });

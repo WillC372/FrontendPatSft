@@ -88,7 +88,7 @@ export const profilesView = {
       }));
       root.querySelectorAll("[data-edit]").forEach((b) => b.addEventListener("click", async () => { if (await editProfile(find(b.dataset.edit))) load(); }));
       root.querySelectorAll("[data-delete]").forEach((b) => b.addEventListener("click", async () => {
-        if (!(await confirmDialog("Eliminar perfil", `Se eliminara "${find(b.dataset.delete).name}".`, "Eliminar", true))) return;
+        if (!(await confirmDialog("Eliminar perfil", `Se eliminará "${find(b.dataset.delete).name}".`, "Eliminar", true))) return;
         try { await api.delete(`/profiles/${b.dataset.delete}`); toast("Perfil eliminado.", "ok"); load(); } catch (e) { toast(e.message, "error"); }
       }));
       root.querySelector("[data-new]").addEventListener("click", async () => { if (await editProfile(null)) load(); });

@@ -43,7 +43,7 @@ export const historyView = {
           </div>
           <div class="row">
             <select class="input" data-source aria-label="Origen" style="width:auto">
-              <option value="">Todos los origenes</option><option value="REAL">Medidor físico</option><option value="MANUAL">Manual</option><option value="PHOTO">Foto con IA</option><option value="SIMULATED">Simulador</option>
+              <option value="">Todos los orígenes</option><option value="REAL">Medidor físico</option><option value="MANUAL">Manual</option><option value="PHOTO">Foto con IA</option><option value="SIMULATED">Simulador</option>
             </select>
             <select class="input" data-status aria-label="Estado" style="width:auto">
               <option value="">Todos los estados</option><option value="OPTIMAL">Óptimo</option><option value="CAUTION">Precaución</option><option value="CRITICAL">Crítico</option>
@@ -124,7 +124,7 @@ export const historyView = {
     }
 
     async function remove(id) {
-      if (!(await confirmDialog("Eliminar medición", "La medición se eliminara del historial. Esta acción no se puede deshacer.", "Eliminar", true))) return;
+      if (!(await confirmDialog("Eliminar medición", "La medición se eliminará del historial. Esta acción no se puede deshacer.", "Eliminar", true))) return;
       try {
         await api.delete(`/measurements/${id}`);
         toast("Medición eliminada.", "ok");
