@@ -91,13 +91,14 @@ class ApiClient {
    * POST that answers with Server-Sent Events. Calls {@code onEvent(name, data)} for each event as it arrives and
    * resolves when the server closes the stream. Errors before the first event are thrown like {@code request}.
    */
-  async stream(path, body, onEvent) {
+  async stream(path, body, onEvent, signal) {
     let response;
     try {
       response = await fetch(this.url(path), {
-        method: "POST", headers: this.headers(true, "text/event-stream"), body: JSON.stringify(body),
+        method: "POST", headers: this.headers(true, "text/event-stream"), body: JSON.stringify(body), signal,
       });
-    } catch {
+    } catch (error) {
+      if (error.name === "AbortError") throw error;
       throw new ApiError(0, "No se pudo conectar con el servidor. Revisa tu conexión a internet e inténtalo de nuevo.");
     }
     if (response.status === 401 && session.isAuthenticated) {

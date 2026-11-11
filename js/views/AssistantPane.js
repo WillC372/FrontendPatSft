@@ -20,6 +20,8 @@ export async function assistantPane(host) {
   let status;
   try { status = await api.get("/intelligence/ai-status"); } catch (error) { host.innerHTML = emptyState("error", "No disponible", error.message); return; }
   let current = null;
+  // Answer being written: only one at a time, and it can be stopped.
+  let running = null;
   host.innerHTML = `
     <div class="row-between"><h2>Asistente IA</h2>
       <span class="badge ${status.configured ? "badge-ok" : "badge-warn"}" data-quota>${status.configured ? `${status.usedToday}/${status.dailyQuota} consultas hoy` : "IA no configurada"}</span></div>
@@ -37,7 +39,8 @@ export async function assistantPane(host) {
         <div class="row" data-suggestions>${SUGGESTIONS.map((s) => `<button class="tab" data-q="${esc(s)}">${esc(s)}</button>`).join("")}</div>
         <form class="row" data-form>
           <input class="input" style="flex:1;min-width:200px" name="q" maxlength="500" placeholder="Escribe tu pregunta... puedes repreguntar sobre lo anterior" aria-label="Pregunta" ${status.configured ? "" : "disabled"}>
-          <button class="btn btn-primary" type="submit" ${status.configured ? "" : "disabled"}>${icon("send")}Enviar</button>
+          <button class="btn btn-primary" type="submit" data-send ${status.configured ? "" : "disabled"}>${icon("send")}Enviar</button>
+          <button class="btn" type="button" data-stop hidden>${icon("pause")}Detener</button>
         </form>
       </div>
     </div>`;
@@ -89,7 +92,7 @@ export async function assistantPane(host) {
     list.querySelectorAll("[data-cid]").forEach((x) => x.classList.remove("active"));
   };
   // The answer appears as the model writes it (streaming); if the stream cannot be used, the normal request is made.
-  const answer = async (question) => {
+  const answer = async (question, signal) => {
     const body = { question, ...(current ? { conversationId: current } : {}) };
     let text = "";
     let result = null;
@@ -109,8 +112,9 @@ export async function assistantPane(host) {
         } else if (name === "error") {
           failure = data;
         }
-      });
+      }, signal);
     } catch (error) {
+      if (error.name === "AbortError") throw Object.assign(new Error("stopped"), { stopped: true, text });
       if (text || error.status) throw error;
       return api.post("/intelligence/chat", body);
     }
@@ -121,12 +125,20 @@ export async function assistantPane(host) {
     }
     return result;
   };
+  const setRunning = (controller) => {
+    running = controller;
+    form.querySelector("[data-send]").hidden = Boolean(controller);
+    form.querySelector("[data-stop]").hidden = !controller;
+    host.querySelectorAll("[data-q]").forEach((b) => { b.disabled = Boolean(controller); });
+  };
   const ask = async (question) => {
-    if (!question.trim() || !status.configured) return;
+    if (!question.trim() || !status.configured || running) return;
     chat.insertAdjacentHTML("beforeend", `<div class="bubble user">${esc(question)}</div><div class="bubble ai typing" data-typing><span></span><span></span><span></span></div>`);
     chat.scrollTop = chat.scrollHeight;
+    const controller = new AbortController();
+    setRunning(controller);
     try {
-      const a = await answer(question);
+      const a = await answer(question, controller.signal);
       const extra = a.removedReferences ? ` · ${a.removedReferences} referencia(s) inexistente(s) eliminada(s)` : "";
       chat.querySelector("[data-typing]").outerHTML = aiBubble(a.answer, a.model, a.citations || [], extra);
       const isNew = current !== a.conversationId;
@@ -138,10 +150,19 @@ export async function assistantPane(host) {
       status.usedToday += 1;
       quota.textContent = `${status.usedToday}/${status.dailyQuota} consultas hoy`;
     } catch (error) {
-      chat.querySelector("[data-typing]").outerHTML = `<div class="bubble ai">${esc(error.message)}</div>`;
+      const bubble = chat.querySelector("[data-typing]");
+      if (error.stopped) {
+        // What was already written stays visible; the request to the server is cancelled.
+        bubble.outerHTML = `<div class="bubble ai">${error.text ? esc(error.text.replace(/\*\*/g, "").trim()) : ""}<small class="muted">Respuesta detenida.</small></div>`;
+      } else {
+        bubble.outerHTML = `<div class="bubble ai">${esc(error.message)}</div>`;
+      }
+    } finally {
+      setRunning(null);
     }
     chat.scrollTop = chat.scrollHeight;
   };
+  form.querySelector("[data-stop]").addEventListener("click", () => running?.abort());
 
   list.addEventListener("click", async (event) => {
     const del = event.target.closest("[data-del]");
