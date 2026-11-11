@@ -12,14 +12,14 @@ function layout(card) {
         <canvas data-waves></canvas>
         <div class="auth-hero-content">
           ${logo()}
-          <h1>AquaSense <span>AI</span></h1>
+          <p class="auth-hero-title">AquaSense <span>AI</span></p>
           <p>Monitorea · Analiza · Cuida</p>
           <div class="auth-hero-features">
             <div>${icon("drop")}Mide</div><div>${icon("brain")}Analiza</div><div>${icon("shield")}Cuida</div>
           </div>
         </div>
       </section>
-      <section class="auth-panel"><div class="card glow auth-card">${card}</div></section>
+      <main class="auth-panel"><div class="card glow auth-card">${card}</div></main>
     </div>`;
 }
 
@@ -72,7 +72,7 @@ export const loginView = {
   name: "login", title: "Iniciar sesión", layout: "auth",
   render(root, ctx) {
     return mount(root, `
-      <h2>Iniciar sesión</h2><p class="card-sub">Accede a tu cuenta para continuar</p>
+      <h1>Iniciar sesión</h1><p class="card-sub">Accede a tu cuenta para continuar</p>
       <form class="auth-form" novalidate>
         ${inputField({ name: "email", label: "Correo electrónico", type: "email", iconName: "user", autocomplete: "email", placeholder: "tu@correo.com" })}
         ${inputField({ name: "password", label: "Contraseña", type: "password", iconName: "lock", autocomplete: "current-password", placeholder: "Tu contraseña", toggle: true })}
@@ -128,7 +128,7 @@ export const registerView = {
   name: "register", title: "Crear cuenta", layout: "auth",
   render(root, ctx) {
     return mount(root, `
-      <h2>Crear cuenta</h2><p class="card-sub">Empieza a monitorear la calidad de tu agua</p>
+      <h1>Crear cuenta</h1><p class="card-sub">Empieza a monitorear la calidad de tu agua</p>
       <form class="auth-form" novalidate>
         ${inputField({ name: "fullName", label: "Nombre completo", iconName: "user", autocomplete: "name", placeholder: "Tu nombre" })}
         ${inputField({ name: "email", label: "Correo electrónico", type: "email", iconName: "mail", autocomplete: "email", placeholder: "tu@correo.com" })}
@@ -155,7 +155,7 @@ export const forgotView = {
   name: "forgot-password", title: "Recuperar contraseña", layout: "auth",
   render(root) {
     return mount(root, `
-      <h2>Recuperar contraseña</h2><p class="card-sub">Te enviaremos un enlace para restablecerla</p>
+      <h1>Recuperar contraseña</h1><p class="card-sub">Te enviaremos un enlace para restablecerla</p>
       <form class="auth-form" novalidate>
         ${inputField({ name: "email", label: "Correo electrónico", type: "email", iconName: "mail", autocomplete: "email", placeholder: "tu@correo.com" })}
         <button class="btn btn-primary btn-block btn-pill" type="submit">Enviar enlace ${icon("send")}</button>
@@ -183,12 +183,12 @@ export const resetView = {
   render(root, ctx) {
     const token = ctx.route.query.token;
     if (!token) {
-      root.innerHTML = layout(`<h2>Enlace inválido</h2><p class="card-sub">El enlace no contiene un token. Solicita uno nuevo.</p>
+      root.innerHTML = layout(`<h1>Enlace inválido</h1><p class="card-sub">El enlace no contiene un token. Solicita uno nuevo.</p>
         <a class="btn btn-primary btn-block" href="#/forgot-password">Solicitar enlace</a>`);
       return animateWater(root.querySelector("[data-waves]"));
     }
     return mount(root, `
-      <h2>Nueva contraseña</h2><p class="card-sub">Elige una contraseña segura</p>
+      <h1>Nueva contraseña</h1><p class="card-sub">Elige una contraseña segura</p>
       <form class="auth-form" novalidate>
         ${inputField({ name: "newPassword", label: "Nueva contraseña", type: "password", iconName: "lock", autocomplete: "new-password", placeholder: "Mínimo 8 caracteres, letras y números", toggle: true })}
         <button class="btn btn-primary btn-block btn-pill" type="submit">Guardar contraseña</button>
@@ -208,12 +208,12 @@ export const verifyAdminView = {
   render(root, ctx) {
     const token = ctx.route.query.token;
     if (!token) {
-      root.innerHTML = layout(`<h2>Enlace inválido</h2><p class="card-sub">El enlace no contiene un código. Inicia sesión para recibir uno nuevo.</p>
+      root.innerHTML = layout(`<h1>Enlace inválido</h1><p class="card-sub">El enlace no contiene un código. Inicia sesión para recibir uno nuevo.</p>
         <a class="btn btn-primary btn-block" href="#/login">Iniciar sesión</a>`);
       return animateWater(root.querySelector("[data-waves]"));
     }
     return mount(root, `
-      <h2>Confirmar administrador</h2><p class="card-sub">Activa los permisos de administrador de esta cuenta</p>
+      <h1>Confirmar administrador</h1><p class="card-sub">Activa los permisos de administrador de esta cuenta</p>
       <form class="auth-form" novalidate>
         <p class="muted" style="font-size:14px">Confirma solo si tú creaste la cuenta con este correo. Después tendrás que iniciar sesión de nuevo.</p>
         <button class="btn btn-primary btn-block btn-pill" type="submit">${icon("shield")}Confirmar</button>
