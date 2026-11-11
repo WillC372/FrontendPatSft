@@ -73,10 +73,19 @@ class ApiClient {
 
   async upload(path, formData) {
     let response;
+    const slow = setTimeout(() => bus.emit("api:slow"), 5000);
     try {
       response = await fetch(this.url(path), { method: "POST", headers: this.headers(false), body: formData });
     } catch {
-      throw new ApiError(0, "No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.");
+      // As with other changes, the upload is not repeated by itself (it would use another AI query): the server is
+      // awakened and the user is asked to send it again.
+      bus.emit("api:slow");
+      const up = await waitForServer(() => {});
+      throw new ApiError(0, up
+        ? "Se perdió la conexión con el servidor mientras se enviaba la foto. Vuelve a enviarla."
+        : "No se pudo conectar con el servidor. Revisa tu conexión a internet e inténtalo de nuevo.");
+    } finally {
+      clearTimeout(slow);
     }
     if (response.status === 401 && session.isAuthenticated) {
       session.clear();
