@@ -109,7 +109,7 @@ export const officialDataView = {
         detail.innerHTML = `
           <div class="row-between"><div><strong>${stationName(s.station)}</strong>
             <div class="muted small">${esc(s.station.id)} · ${approval(s.station.approvalStatus)}</div></div>
-            <div class="tabs" role="tablist">${[1, 7, 30].map((d) => `<button class="tab${d === s.days ? " active" : ""}" data-days="${d}">${d === 1 ? "24 h" : `${d} días`}</button>`).join("")}</div></div>
+            <div class="tabs" aria-label="Periodo">${[1, 7, 30].map((d) => `<button class="tab${d === s.days ? " active" : ""}" data-days="${d}">${d === 1 ? "24 h" : `${d} días`}</button>`).join("")}</div></div>
           <div class="stats" style="margin:12px 0"><div class="stat"><span>Promedio</span><strong>${num(s.averagePh)}</strong></div>
             <div class="stat"><span>Mínimo</span><strong>${num(s.minPh)}</strong></div><div class="stat"><span>Máximo</span><strong>${num(s.maxPh)}</strong></div></div>
           <div data-chart></div>

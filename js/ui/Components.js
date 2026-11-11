@@ -147,3 +147,27 @@ export function countUp(node, to, { decimals = 2, duration = 900, from } = {}) {
   };
   requestAnimationFrame(step);
 }
+
+/**
+ * The period and scope selectors (".tabs" without role="tablist") are groups of toggle buttons: this keeps
+ * role="group" on the container and aria-pressed on each button in sync with the "active" class that the views
+ * set, so screen readers say which option is selected. Real tab lists (role="tablist") are left as they are.
+ */
+export function enableToggleGroups(root = document.body) {
+  const sync = (scope) => {
+    scope.querySelectorAll?.(".tabs:not([role=tablist])").forEach((group) => {
+      if (!group.hasAttribute("role")) group.setAttribute("role", "group");
+      group.querySelectorAll(":scope > .tab").forEach((b) => b.setAttribute("aria-pressed", String(b.classList.contains("active"))));
+    });
+  };
+  new MutationObserver((mutations) => {
+    for (const m of mutations) {
+      if (m.type === "attributes" && m.target.classList?.contains("tab") && m.target.parentElement?.matches(".tabs:not([role=tablist])")) {
+        m.target.setAttribute("aria-pressed", String(m.target.classList.contains("active")));
+      } else if (m.type === "childList") {
+        m.addedNodes.forEach((n) => { if (n.nodeType === 1) sync(n.matches?.(".tabs") ? n.parentElement || n : n); });
+      }
+    }
+  }).observe(root, { subtree: true, childList: true, attributes: true, attributeFilter: ["class"] });
+  sync(root);
+}

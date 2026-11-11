@@ -4,7 +4,7 @@ import { bus } from "./core/EventBus.js";
 import { api } from "./core/Api.js";
 import { theme } from "./core/Theme.js";
 import { liveStream } from "./core/LiveStream.js";
-import { enableRipples, toast } from "./ui/Components.js";
+import { enableRipples, enableToggleGroups, toast } from "./ui/Components.js";
 import { Shell } from "./views/Shell.js";
 import { loginView, registerView, forgotView, resetView, verifyAdminView } from "./views/Auth.js";
 import { dashboardView } from "./views/Dashboard.js";
@@ -95,6 +95,7 @@ bus.on("session:expired", () => {
 bus.on("settings:changed", (settings) => { ctx.settings = settings; });
 
 enableRipples();
+enableToggleGroups();
 theme.apply(theme.preference);
 if (!session.isAuthenticated && !location.hash.startsWith("#/register") && !location.hash.startsWith("#/forgot")
     && !location.hash.startsWith("#/reset") && !location.hash.startsWith("#/verify-admin")) {
