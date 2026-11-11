@@ -28,7 +28,9 @@ export const dashboardView = {
       if (ctx.stale()) return null;
     } catch (error) {
       root.innerHTML = emptyState("error", "No se pudo cargar el panel", error.message,
-        `<button class="btn btn-primary" onclick="location.reload()">${icon("refresh")}Reintentar</button>`);
+        `<button class="btn btn-primary" data-retry>${icon("refresh")}Reintentar</button>`);
+      // Tries again by opening the screen again, without reloading the whole page.
+      root.querySelector("[data-retry]").addEventListener("click", () => ctx.router.resolve());
       return null;
     }
     const firstName = (data.fullName || session.user?.fullName || "").split(" ")[0];
