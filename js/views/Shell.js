@@ -51,7 +51,7 @@ export class Shell {
               <div class="user-chip"><span class="avatar">${esc((user?.fullName || "?").charAt(0).toUpperCase())}</span><span class="user-name">${esc(user?.fullName?.split(" ")[0] || "")}</span></div>
             </div>
           </header>
-          ${user?.demo ? `<div class="demo-banner" role="note">${icon("info")}<span>Estás en una <strong>cuenta de demostración compartida</strong>${user.role === "ADMIN" ? " de administración (solo lectura)" : ""}. Lo que hagas es real y queda guardado, pero otras personas que usen este botón también lo ven. <a href="#/register" data-demo-register>Crea tu cuenta</a> para tener tus datos privados.</span></div>` : ""}
+          ${user?.demo ? `<aside class="demo-banner" aria-label="Cuenta de demostración">${icon("info")}<span>Estás en una <strong>cuenta de demostración compartida</strong>${user.role === "ADMIN" ? " de administración (solo lectura)" : ""}. Lo que hagas es real y queda guardado, pero otras personas que usen este botón también lo ven. <a href="#/register" data-demo-register>Crea tu cuenta</a> para tener tus datos privados.</span></aside>` : ""}
           <main class="page" id="page" tabindex="-1"></main>
         </div>
         <nav class="bottom-nav" aria-label="Navegación móvil">
