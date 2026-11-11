@@ -26,8 +26,9 @@
   <script type="module" src="js/App.js"></script>
 </head>
 <body>
-  <div id="app" aria-live="polite"></div>
-  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+  <div id="app"></div>
+  <!-- Each toast carries its own role (status or alert), so the container is not a live region itself. -->
+  <div class="toasts" id="toasts"></div>
   <noscript>AquaSense AI necesita JavaScript habilitado.</noscript>
 </body>
 </html>

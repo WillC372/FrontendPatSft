@@ -59,6 +59,8 @@ async function show(view, route) {
   page.classList.add("page-enter");
   const done = await view.render(page, { ...ctx, route, shell, stale });
   if (stale()) done?.(); else cleanup = done;
+  // Keyboard and screen reader users continue at the new screen instead of the link they pressed.
+  if (!stale() && document.activeElement?.closest?.(".sidebar, .bottom-nav, .quick-links")) page.focus({ preventScroll: true });
 }
 
 ctx.router = new Router(show)
