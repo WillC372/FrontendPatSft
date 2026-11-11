@@ -6,9 +6,14 @@ const WHO = { id: "who-ph-1", organization: "OMS", title: "Guías para la calida
 const CDC = { id: "cdc-mahc-2024-ph", organization: "CDC", title: "Model Aquatic Health Code", section: "", url: "https://www.cdc.gov/y" };
 
 test("while it is written, bold marks and reference ids are hidden, also one cut in half", () => {
-  assert.equal(liveText("El **pH** ideal [who-ph-1] es 7."), "El pH ideal  es 7.");
+  assert.equal(liveText("El **pH** ideal [who-ph-1] es 7."), "El pH ideal es 7.");
   assert.equal(liveText("Entre 7,2 y 7,8 [cdc-ma"), "Entre 7,2 y 7,8 ");
   assert.equal(liveText("Entre 7,2 y 7,8 [cdc-mahc-"), "Entre 7,2 y 7,8 ");
+});
+
+test("ids in parentheses or grouped are hidden while writing, ordinary parentheses stay", () => {
+  assert.equal(liveText("Entre 7.0 y 7.8 (mahc-ph-range). Ver [epa-ph-smcl, mahc-ph-range]."), "Entre 7.0 y 7.8. Ver.");
+  assert.equal(liveText("En miligramos (mg-l) y pH (unidades)"), "En miligramos (mg-l) y pH (unidades)");
 });
 
 test("ordinary brackets and numbers are kept while writing", () => {
