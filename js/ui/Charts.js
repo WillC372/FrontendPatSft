@@ -5,6 +5,27 @@ const H = 280;
 const PAD = { l: 44, r: 18, t: 18, b: 34 };
 let uid = 0;
 
+const watched = new WeakSet();
+
+/**
+ * The charts are drawn on a fixed canvas (viewBox) and scaled to the width of the screen, so on a phone their text
+ * would shrink to 5 px. --chart-k grows the text in the same proportion the chart shrinks, so labels stay at about
+ * 11 px on any width, also after rotating the phone.
+ */
+function readable(host) {
+  const apply = () => {
+    const svg = host.querySelector("svg");
+    const canvas = svg?.viewBox?.baseVal?.width;
+    const shown = svg?.getBoundingClientRect().width;
+    if (canvas && shown) host.style.setProperty("--chart-k", Math.max(1, Math.min(2.6, canvas / shown)).toFixed(3));
+  };
+  apply();
+  if (!watched.has(host) && typeof ResizeObserver !== "undefined") {
+    watched.add(host);
+    new ResizeObserver(apply).observe(host);
+  }
+}
+
 function scale(domainMin, domainMax, rangeMin, rangeMax) {
   const span = domainMax - domainMin || 1;
   return (v) => rangeMin + ((v - domainMin) / span) * (rangeMax - rangeMin);
@@ -12,6 +33,8 @@ function scale(domainMin, domainMax, rangeMin, rangeMax) {
 
 // SVG line chart: pH series, ideal range band, forecast with uncertainty and anomalies.
 export function lineChart(host, { points = [], band, forecast = [], anomalies = [], label = "pH", bandLabel = "Rango 95 %" }) {
+  // Drawn at the width it is shown (between 300 and 720), so on a phone the text keeps its size and does not overlap.
+  const w = Math.round(Math.max(300, Math.min(W, host.clientWidth || host.parentElement?.clientWidth || W)));
   const id = ++uid;
   const all = [...points.map((p) => p.v), ...forecast.flatMap((f) => [f.lo, f.hi]), ...(band ? [band.min, band.max] : [])];
   const times = [...points.map((p) => p.t.getTime()), ...forecast.map((f) => f.t.getTime())];
@@ -20,11 +43,14 @@ export function lineChart(host, { points = [], band, forecast = [], anomalies = 
   const step = yMax - yMin > 4 ? 1 : 0.5;
   const tMin = Math.min(...times);
   const tMax = Math.max(...times) === tMin ? tMin + 3600000 : Math.max(...times);
-  const x = scale(tMin, tMax, PAD.l, W - PAD.r);
+  const x = scale(tMin, tMax, PAD.l, w - PAD.r);
   const y = scale(yMin, yMax, H - PAD.b, PAD.t);
 
   const yTicks = Array.from({ length: Math.round((yMax - yMin) / step) + 1 }, (_, i) => yMin + i * step);
-  const xTicks = Array.from({ length: 6 }, (_, i) => new Date(tMin + ((tMax - tMin) * i) / 5));
+  const tickCount = w < 420 ? 4 : 6;
+  // With many points per pixel the dots hide the line: only the readings out of range keep their dot.
+  const dense = points.length > w / 5;
+  const xTicks = Array.from({ length: tickCount }, (_, i) => new Date(tMin + ((tMax - tMin) * i) / (tickCount - 1)));
   const sameDay = tMax - tMin < 86400000 * 1.5;
 
   const linePath = points.map((p, i) => `${i ? "L" : "M"}${x(p.t.getTime()).toFixed(1)},${y(p.v).toFixed(1)}`).join(" ");
@@ -37,27 +63,28 @@ export function lineChart(host, { points = [], band, forecast = [], anomalies = 
     ? `${fc.map((p, i) => `${i ? "L" : "M"}${x(p.t.getTime()).toFixed(1)},${y(p.hi).toFixed(1)}`).join(" ")} ${[...fc].reverse().map((p) => `L${x(p.t.getTime()).toFixed(1)},${y(p.lo).toFixed(1)}`).join(" ")} Z` : "";
 
   host.classList.add("chart");
+  queueMicrotask(() => readable(host));
   host.innerHTML = `
-    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica de ${esc(label)}">
+    <svg viewBox="0 0 ${w} ${H}" role="img" aria-label="Gráfica de ${esc(label)}">
       <defs>
         <linearGradient id="area${id}" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#22c7f0" stop-opacity=".35"/><stop offset="1" stop-color="#22c7f0" stop-opacity="0"/>
         </linearGradient>
-        <clipPath id="clip${id}"><rect x="${PAD.l}" y="${PAD.t - 6}" width="${W - PAD.l - PAD.r}" height="${H - PAD.t - PAD.b + 12}"/></clipPath>
+        <clipPath id="clip${id}"><rect x="${PAD.l}" y="${PAD.t - 6}" width="${w - PAD.l - PAD.r}" height="${H - PAD.t - PAD.b + 12}"/></clipPath>
       </defs>
-      ${yTicks.map((v) => `<line class="grid-line" x1="${PAD.l}" x2="${W - PAD.r}" y1="${y(v)}" y2="${y(v)}"/>
+      ${yTicks.map((v) => `<line class="grid-line" x1="${PAD.l}" x2="${w - PAD.r}" y1="${y(v)}" y2="${y(v)}"/>
         <text class="axis-label" x="${PAD.l - 8}" y="${y(v) + 4}" text-anchor="end">${v.toFixed(1)}</text>`).join("")}
-      ${xTicks.map((d) => `<text class="axis-label" x="${x(d.getTime())}" y="${H - 10}" text-anchor="middle">${sameDay ? fmt.time(d) : fmt.day(d)}</text>`).join("")}
+      ${xTicks.map((d, i) => `<text class="axis-label" x="${x(d.getTime())}" y="${H - 10}" text-anchor="${i === xTicks.length - 1 ? "end" : "middle"}">${sameDay ? fmt.time(d) : fmt.day(d)}</text>`).join("")}
       <g clip-path="url(#clip${id})">
-        ${band ? `<rect class="ideal-band" x="${PAD.l}" width="${W - PAD.l - PAD.r}" y="${y(Math.min(band.max, yMax))}" height="${Math.max(0, y(Math.max(band.min, yMin)) - y(Math.min(band.max, yMax)))}"/>` : ""}
+        ${band ? `<rect class="ideal-band" x="${PAD.l}" width="${w - PAD.l - PAD.r}" y="${y(Math.min(band.max, yMax))}" height="${Math.max(0, y(Math.max(band.min, yMin)) - y(Math.min(band.max, yMax)))}"/>` : ""}
         ${forecast.length ? `<path class="forecast-band" d="${fBand}"/><path class="forecast-line" d="${fLine}"/>` : ""}
         ${points.length > 1 ? `<path class="series-area" fill="url(#area${id})" d="${areaPath}"/>` : ""}
         ${points.length > 1 ? `<path class="series-line" d="${linePath}"/>` : ""}
       </g>
-      ${points.map((p) => `<circle class="series-dot dot-${p.status || ""}" cx="${x(p.t.getTime())}" cy="${y(p.v)}" r="${points.length > 60 ? 2.5 : 4.5}"/>`).join("")}
+      ${points.filter((p) => !dense || p.status === "CAUTION" || p.status === "CRITICAL").map((p) => `<circle class="series-dot dot-${p.status || ""}" cx="${x(p.t.getTime())}" cy="${y(p.v)}" r="${points.length > 60 ? 2.5 : 4.5}"/>`).join("")}
       ${anomalies.map((a) => `<circle class="anomaly-ring" cx="${x(a.t.getTime())}" cy="${y(a.v)}" r="7"/>`).join("")}
       ${forecast.length ? `<circle cx="${x(forecast.at(-1).t.getTime())}" cy="${y(forecast.at(-1).v)}" r="5" fill="var(--sim)"/>` : ""}
-      <rect data-overlay x="${PAD.l}" y="${PAD.t}" width="${W - PAD.l - PAD.r}" height="${H - PAD.t - PAD.b}" fill="transparent"/>
+      <rect data-overlay x="${PAD.l}" y="${PAD.t}" width="${w - PAD.l - PAD.r}" height="${H - PAD.t - PAD.b}" fill="transparent"/>
     </svg>
     <div class="chart-tooltip" hidden></div>`;
 
@@ -78,10 +105,10 @@ export function lineChart(host, { points = [], band, forecast = [], anomalies = 
   svg.querySelector("[data-overlay]").addEventListener("pointermove", (event) => {
     if (!candidates.length) return;
     const box = svg.getBoundingClientRect();
-    const vx = ((event.clientX - box.left) / box.width) * W;
+    const vx = ((event.clientX - box.left) / box.width) * w;
     const nearest = candidates.reduce((best, p) => (Math.abs(x(p.t.getTime()) - vx) < Math.abs(x(best.t.getTime()) - vx) ? p : best));
     tooltip.hidden = false;
-    tooltip.style.left = `${(x(nearest.t.getTime()) / W) * box.width}px`;
+    tooltip.style.left = `${(x(nearest.t.getTime()) / w) * box.width}px`;
     tooltip.style.top = `${(y(nearest.v) / H) * box.height}px`;
     tooltip.innerHTML = `<strong>pH ${fmt.ph(nearest.v)}</strong>${nearest.kind} · ${fmt.dateTime(nearest.t.toISOString())}`
       + (nearest.lo !== undefined && nearest.kind === "Predicción" ? `<br>${bandLabel}: ${fmt.ph(nearest.lo)} - ${fmt.ph(nearest.hi)}` : "");
@@ -95,6 +122,7 @@ export function barChart(host, bars) {
   const bw = (W - PAD.l - PAD.r) / bars.length;
   const y = scale(0, max, H - PAD.b, PAD.t);
   host.classList.add("chart");
+  queueMicrotask(() => readable(host));
   host.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Distribución de mediciones">
     ${[0, 0.5, 1].map((f) => `<line class="grid-line" x1="${PAD.l}" x2="${W - PAD.r}" y1="${y(max * f)}" y2="${y(max * f)}"/>
       <text class="axis-label" x="${PAD.l - 8}" y="${y(max * f) + 4}" text-anchor="end">${Math.round(max * f)}</text>`).join("")}
@@ -120,6 +148,7 @@ export function scoreChart(host, items, threshold) {
   const firstT = items[0]?.t;
   const lastT = items.at(-1)?.t;
   host.classList.add("chart");
+  queueMicrotask(() => readable(host));
   host.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Puntaje de anomalía por medición">
     ${ticks.map((v) => `<line class="grid-line" x1="${PAD.l}" x2="${W - PAD.r}" y1="${y(v)}" y2="${y(v)}"/>
       <text class="axis-label" x="${PAD.l - 8}" y="${y(v) + 4}" text-anchor="end">${v.toFixed(1)}</text>`).join("")}
@@ -145,6 +174,7 @@ export function usageChart(host, days) {
   const y = scale(0, max, H - PAD.b, PAD.t);
   const every = Math.max(1, Math.ceil(days.length / 8));
   host.classList.add("chart");
+  queueMicrotask(() => readable(host));
   host.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Llamadas de IA por día">
     ${[0, 0.5, 1].map((f) => `<line class="grid-line" x1="${PAD.l}" x2="${W - PAD.r}" y1="${y(max * f)}" y2="${y(max * f)}"/>
       <text class="axis-label" x="${PAD.l - 8}" y="${y(max * f) + 4}" text-anchor="end">${Math.round(max * f)}</text>`).join("")}
@@ -173,6 +203,7 @@ export function lossChart(host, train, validation, bestEpoch) {
   const path = (series) => series.map((v, i) => `${i ? "L" : "M"}${x(i + 1).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
   const ticks = [0, 0.5, 1].map((f) => min + (max - min) * f);
   host.classList.add("chart");
+  queueMicrotask(() => readable(host));
   host.innerHTML = `<svg viewBox="0 0 ${LW} ${LH}" role="img" aria-label="Curva de aprendizaje">
     ${ticks.map((v) => `<line class="grid-line" x1="${PAD.l}" x2="${LW - PAD.r}" y1="${y(v)}" y2="${y(v)}"/>
       <text class="axis-label" x="${PAD.l - 8}" y="${y(v) + 4}" text-anchor="end">${v.toFixed(2)}</text>`).join("")}

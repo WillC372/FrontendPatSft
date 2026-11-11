@@ -72,10 +72,12 @@
 .quick-link:hover { transform: translateX(3px); border-color: var(--border-strong); }
 
 /* Charts */
-.chart { position: relative; width: 100%; min-height: 240px; }
+.chart { position: relative; width: 100%; }
+/* Space for the chart while it loads; once drawn, it takes the height of its drawing. */
+.chart:not(:has(svg)) { min-height: 240px; }
 .chart svg { width: 100%; height: auto; display: block; overflow: visible; }
 .chart .grid-line { stroke: var(--grid); }
-.chart .axis-label { fill: var(--muted); font-size: 11px; font-family: var(--font-body); }
+.chart .axis-label { fill: var(--muted); font-size: calc(11px * var(--chart-k, 1)); font-family: var(--font-body); }
 .chart .series-line { fill: none; stroke: var(--primary-2); stroke-width: 2.5; filter: drop-shadow(0 0 6px rgba(34,199,240,.6)); }
 .chart .series-dot { fill: var(--surface-solid); stroke: var(--primary-2); stroke-width: 2.5; }
 .chart .dot-CAUTION { stroke: var(--warn); } .chart .dot-CRITICAL { stroke: var(--crit); fill: var(--crit); }
