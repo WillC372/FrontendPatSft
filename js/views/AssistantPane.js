@@ -140,8 +140,17 @@ export async function assistantPane(host) {
     form.querySelector("[data-stop]").hidden = !controller;
     host.querySelectorAll("[data-q]").forEach((b) => { b.disabled = Boolean(controller); });
   };
-  const ask = async (question) => {
-    if (!question.trim() || !status.configured || running) return;
+  /** Returns false when the question was not sent (empty, AI off, or another answer still being written). */
+  const ask = (question) => {
+    if (!question.trim() || !status.configured) return false;
+    if (running) {
+      toast("Espera a que termine la respuesta actual o pulsa Detener.", "info", 3000);
+      return false;
+    }
+    send(question);
+    return true;
+  };
+  const send = async (question) => {
     chat.insertAdjacentHTML("beforeend", `<div class="bubble user">${esc(question)}</div><div class="bubble ai typing" data-typing><span></span><span></span><span></span></div>`);
     chat.scrollTop = chat.scrollHeight;
     const controller = new AbortController();
@@ -150,14 +159,16 @@ export async function assistantPane(host) {
       const a = await answer(question, controller.signal);
       const extra = a.removedReferences ? ` · ${a.removedReferences} referencia(s) inexistente(s) eliminada(s)` : "";
       chat.querySelector("[data-typing]").outerHTML = aiBubble(a.answer, a.model, a.citations || [], extra);
+      // The answer is complete: the next question can be sent while the side list refreshes.
+      setRunning(null);
       const isNew = current !== a.conversationId;
       current = a.conversationId;
       title.textContent = a.conversationTitle;
       setMemory(a.memoryTurns + 2, a.omittedTurns);
-      if (isNew) await loadList(); else list.querySelector(`[data-cid="${current}"] small`)?.replaceChildren(document.createTextNode("Actualizada ahora"));
       const quota = host.querySelector("[data-quota]");
       status.usedToday += 1;
       quota.textContent = `${status.usedToday}/${status.dailyQuota} consultas hoy`;
+      if (isNew) loadList().catch(() => {}); else list.querySelector(`[data-cid="${current}"] small`)?.replaceChildren(document.createTextNode("Actualizada ahora"));
     } catch (error) {
       const bubble = chat.querySelector("[data-typing]");
       if (error.stopped) {
@@ -170,7 +181,7 @@ export async function assistantPane(host) {
         bubble.outerHTML = `<div class="bubble ai">${esc(error.message)}</div>`;
       }
     } finally {
-      setRunning(null);
+      if (running === controller) setRunning(null);
     }
     chat.scrollTop = chat.scrollHeight;
   };
@@ -209,9 +220,8 @@ export async function assistantPane(host) {
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const input = form.querySelector("input");
-    const q = input.value;
-    input.value = "";
-    ask(q);
+    // The text is cleared only if the question was sent, so a question typed too early is not lost.
+    if (ask(input.value)) input.value = "";
   });
   host.querySelectorAll("[data-q]").forEach((b) => b.addEventListener("click", () => ask(b.dataset.q)));
   greet();
