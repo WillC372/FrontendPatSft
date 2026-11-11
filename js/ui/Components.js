@@ -36,7 +36,30 @@ export function modal({ title, body, actions = [], onMount, dismissible = true }
       previous?.focus?.();
       resolve(value);
     };
-    const onKey = (event) => { if (event.key === "Escape" && dismissible) close(null); };
+    const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    const onKey = (event) => {
+      // With a dialog opened from another one, only the top one reacts.
+      const open = document.querySelectorAll(".modal-backdrop");
+      if (open[open.length - 1] !== backdrop) return;
+      if (event.key === "Escape" && dismissible) {
+        event.stopPropagation();
+        close(null);
+        return;
+      }
+      if (event.key !== "Tab") return;
+      // Keep keyboard focus inside the dialog while it is open.
+      const items = [...backdrop.querySelectorAll(FOCUSABLE)].filter((el) => el.offsetParent !== null);
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && (document.activeElement === first || !backdrop.contains(document.activeElement))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !backdrop.contains(document.activeElement))) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
     backdrop.addEventListener("click", async (event) => {
       if (dismissible && (event.target === backdrop || event.target.closest("[data-close]"))) close(null);
       const button = event.target.closest("[data-action]");
