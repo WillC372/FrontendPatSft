@@ -38,7 +38,13 @@ Presentar la información y recoger las acciones del usuario. **Toda la lógica 
 - **Configuración**: tema automático, claro u oscuro (persistente), notificaciones, guardado automático, cuenta y plan, actividad.
 - Diseño adaptable: barra lateral en escritorio y navegación inferior en móvil. Respeta "reducir movimiento".
 - **Sesión y conexión**: avisa 5 minutos antes de que venza la sesión y, al vencer, vuelve al inicio de sesión sin esperar a que falle una petición. Sin internet, una franja lo indica hasta que vuelve la conexión.
-- **Accesibilidad**: revisada con axe-core en la app publicada. Región principal y encabezado en cada pantalla, niveles de encabezado en orden, foco atrapado dentro de los diálogos (Escape cierra solo el de arriba), selectores de periodo anunciados como grupos de botones con su opción marcada, avisos que se pueden cerrar y el foco pasa al contenido al cambiar de pantalla.
+- **Accesibilidad**: revisada con axe-core en 16 pantallas, en tema claro y oscuro, en computador y en teléfono, sin hallazgos (11 nov 2026). Incluye:
+  - región principal y encabezado en cada pantalla, también en el teléfono, donde el título de la barra superior queda oculto a la vista pero se lee;
+  - niveles de encabezado en orden y foco atrapado dentro de los diálogos (Escape cierra solo el de arriba);
+  - selectores de periodo anunciados como grupos de botones con su opción marcada;
+  - tablas que no caben, alcanzables con el teclado;
+  - avisos que se pueden cerrar, y el foco pasa al contenido al cambiar de pantalla.
+- **Gráficas legibles en el teléfono**: las gráficas de líneas se dibujan al ancho real de la pantalla, así el texto conserva su tamaño; en series densas solo se marcan los puntos fuera de rango. La distribución de los datos oficiales es una barra dividida con su leyenda.
 
 Los datos simulados siempre llevan la etiqueta **SIMULADO**.
 
