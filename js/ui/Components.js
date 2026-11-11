@@ -211,3 +211,37 @@ export function enableToggleGroups(root = document.body) {
   }).observe(root, { subtree: true, childList: true, attributes: true, attributeFilter: ["class"] });
   sync(root);
 }
+
+/**
+ * A table wider (or taller) than its box scrolls inside it; keyboard users can only scroll it if it can take focus.
+ * Tables that do not fit get tabindex, role="region" and a label; the others stay out of the tab order. Checked when
+ * tables appear and when the window changes size.
+ */
+export function enableScrollableTables(root = document.body) {
+  const check = (wrap) => {
+    const scrolls = wrap.scrollWidth > wrap.clientWidth + 1 || wrap.scrollHeight > wrap.clientHeight + 1;
+    if (scrolls) {
+      wrap.setAttribute("tabindex", "0");
+      wrap.setAttribute("role", "region");
+      if (!wrap.hasAttribute("aria-label")) {
+        const title = wrap.closest("section, .card, .modal")?.querySelector("h1, h2, h3, .card-title")?.textContent.trim();
+        wrap.setAttribute("aria-label", `${title || "Tabla"} (se desplaza)`);
+      }
+    } else if (wrap.getAttribute("role") === "region") {
+      wrap.removeAttribute("tabindex");
+      wrap.removeAttribute("role");
+    }
+  };
+  const all = () => root.querySelectorAll(".table-wrap").forEach(check);
+  let pending = false;
+  const later = () => {
+    if (pending) return;
+    pending = true;
+    requestAnimationFrame(() => { pending = false; all(); });
+  };
+  new MutationObserver((mutations) => {
+    if (mutations.some((m) => [...m.addedNodes].some((n) => n.nodeType === 1 && (n.matches(".table-wrap") || n.querySelector?.(".table-wrap"))))) later();
+  }).observe(root, { subtree: true, childList: true });
+  window.addEventListener("resize", later, { passive: true });
+  all();
+}

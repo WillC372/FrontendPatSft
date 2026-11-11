@@ -4,7 +4,7 @@ import { bus } from "./core/EventBus.js";
 import { api } from "./core/Api.js";
 import { theme } from "./core/Theme.js";
 import { liveStream } from "./core/LiveStream.js";
-import { emptyState, enableRipples, enableToggleGroups, toast } from "./ui/Components.js";
+import { emptyState, enableRipples, enableScrollableTables, enableToggleGroups, toast } from "./ui/Components.js";
 import { Shell } from "./views/Shell.js";
 import { loginView, registerView, forgotView, resetView, verifyAdminView } from "./views/Auth.js";
 import { waitForServer } from "./core/ServerWake.js";
@@ -137,6 +137,7 @@ watchSessionExpiry({ onWarn: () => toast("Tu sesión vence en 5 minutos. Guarda 
 
 enableRipples();
 enableToggleGroups();
+enableScrollableTables();
 theme.apply(theme.preference);
 if (!session.isAuthenticated && !location.hash.startsWith("#/register") && !location.hash.startsWith("#/forgot")
     && !location.hash.startsWith("#/reset") && !location.hash.startsWith("#/verify-admin")) {
