@@ -180,7 +180,7 @@ export async function assistantPane(host) {
   host.querySelector("[data-clear]").addEventListener("click", async () => {
     if (!(await confirmDialog("Borrar todas", "Se borrarán todas tus conversaciones con el asistente.", "Borrar todo", true))) return;
     const r = await api.delete("/intelligence/chat/conversations");
-    toast(`${r.deleted} conversaciones borradas.`, "success");
+    toast(r.deleted === 1 ? "1 conversación borrada." : `${r.deleted} conversaciones borradas.`, "ok");
     reset();
     await loadList();
   });
