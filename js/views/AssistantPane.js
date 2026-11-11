@@ -3,17 +3,9 @@ import { esc, fmt } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { confirmDialog, emptyState, loading, toast } from "../ui/Components.js";
 import { bindReferenceMarks, chatCitations, withReferenceMarks } from "./Citations.js";
+import { copyText, liveText } from "./AnswerText.js";
 
 const SUGGESTIONS = ["¿Cómo está mi agua esta semana?", "¿Qué pH es recomendable para una piscina?", "¿Cómo subo el pH de un acuario sin dañar a los peces?", "¿Cómo calibro un medidor de pH?"];
-
-/** Plain text of an answer for the clipboard: without reference ids, with the cited sources numbered at the end. */
-function copyText(text, citations) {
-  const order = new Map(citations.map((c, i) => [c.id, i + 1]));
-  const body = String(text).replace(/\*\*/g, "")
-    .replace(/\[([a-z0-9]+(?:-[a-z0-9]+)+)\]/g, (m, id) => (order.has(id) ? `[${order.get(id)}]` : "")).trim();
-  const sources = citations.map((c, i) => `[${i + 1}] ${c.organization}, ${c.title}${c.section ? ` (${c.section})` : ""}. ${c.url}`);
-  return sources.length ? `${body}\n\nFuentes:\n${sources.join("\n")}` : body;
-}
 
 function aiBubble(text, model, citations = [], extra = "") {
   const meta = `Generado por IA · ${esc(model || "")}${citations.length ? " · con citas verificadas" : ""}${extra}`;
@@ -114,7 +106,7 @@ export async function assistantPane(host) {
           if (!live) return;
           live.classList.remove("typing");
           // Reference marks become numbered buttons when the answer is complete; while it is written they are hidden.
-          live.textContent = text.replace(/\*\*/g, "").replace(/\[[a-z0-9]+(?:-[a-z0-9]+)*-?\]?$|\[[a-z0-9]+(?:-[a-z0-9]+)+\]/g, "");
+          live.textContent = liveText(text);
           chat.scrollTop = chat.scrollHeight;
         } else if (name === "done") {
           result = data;
