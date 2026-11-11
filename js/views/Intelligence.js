@@ -407,7 +407,7 @@ export const intelligenceView = {
     root.innerHTML = `
       <div class="ia-layout">
         <nav class="card ia-menu" aria-label="Funciones de IA">
-          <div class="ia-menu-head">${brainHolo()}<h3>Análisis inteligente</h3><small class="muted">Estadística, reglas de dominio e IA</small></div>
+          <div class="ia-menu-head">${brainHolo()}<h2 class="h-sm">Análisis inteligente</h2><small class="muted">Estadística, reglas de dominio e IA</small></div>
           ${PANES.map(([key, label, ic]) => `<button data-pane="${key}">${icon(ic)}${label}</button>`).join("")}
         </nav>
         <section class="card glow" data-pane-host style="min-height:420px"></section>

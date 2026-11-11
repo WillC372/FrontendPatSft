@@ -77,7 +77,7 @@ export function loading(text = "Cargando...") {
 }
 
 export function emptyState(iconName, title, text, action = "") {
-  return `<div class="empty">${icon(iconName)}<h3>${esc(title)}</h3><p>${esc(text)}</p>${action}</div>`;
+  return `<div class="empty">${icon(iconName)}<h2 class="h-sm">${esc(title)}</h2><p>${esc(text)}</p>${action}</div>`;
 }
 
 export function statusBadge(status, label) {

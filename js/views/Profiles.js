@@ -64,7 +64,7 @@ export const profilesView = {
             <article class="profile-card ${p.active ? "active" : ""} reveal">
               <div class="row-between"><div class="profile-icon">${icon(PROFILE_ICONS[p.type] || "profiles")}</div>
                 ${p.active ? `<span class="badge badge-ok">${icon("check")}Activo</span>` : p.systemProfile ? `<span class="badge badge-info">Sistema</span>` : `<span class="badge badge-sim">Personalizado</span>`}</div>
-              <h3>${esc(p.name)}</h3>
+              <h2 class="h-sm">${esc(p.name)}</h2>
               <div class="range num">${p.idealMin.toFixed(1)} – ${p.idealMax.toFixed(1)}</div>
               <small class="muted num">Precaución ${p.cautionMin.toFixed(1)} – ${p.cautionMax.toFixed(1)} · fuera: crítico</small>
               <p>${esc(p.description)}</p>

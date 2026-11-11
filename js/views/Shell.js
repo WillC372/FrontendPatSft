@@ -118,7 +118,7 @@ export class Shell {
   #renderAlertPanel() {
     const panel = this.root.querySelector("[data-alerts]");
     const alerts = this.alerts || [];
-    panel.innerHTML = `<div class="row-between" style="margin-bottom:8px"><h3>Alertas</h3>
+    panel.innerHTML = `<div class="row-between" style="margin-bottom:8px"><h2 class="h-sm">Alertas</h2>
         ${alerts.length ? `<button class="link-btn" data-read-all>Marcar como leidas</button>` : ""}</div>
       ${alerts.length ? alerts.slice(0, 8).map((a) => `<div class="alert-item ${esc(a.severity)}">${icon(a.severity === "CRITICAL" ? "error" : "alert")}
         <div><strong>${esc(a.title)}</strong><p>${esc(a.message)}</p><small class="muted">${fmt.relative(a.createdAt)}</small></div></div>`).join("")

@@ -83,7 +83,7 @@ export const dashboardView = {
 
         <section class="card glow ai-panel span-wide reveal">
           <div class="card-head"><div class="card-title">${icon("sparkle")}AquaSense Intelligence</div><span class="badge badge-info">IA</span></div>
-          <h3 style="text-align:center">Análisis inteligente</h3>
+          <h2 class="h-sm" style="text-align:center">Análisis inteligente</h2>
           <div class="ai-panel-body">
             <div class="brain-holo"><div class="beam"></div>${brainHolo()}<div class="pedestal"></div></div>
             <div class="check-list">${overview.hasData ? overview.checks.map((c) => `<div class="${c.ok ? "ok" : "bad"}">${icon(c.ok ? "check" : "alert")}${esc(c.label)}</div>`).join("")
