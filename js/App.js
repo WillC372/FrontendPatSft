@@ -15,6 +15,7 @@ import { profilesView } from "./views/Profiles.js";
 import { settingsView } from "./views/Settings.js";
 import { billingView } from "./views/Billing.js";
 import { waitForServer } from "./core/ServerWake.js";
+import { watchSessionExpiry } from "./core/SessionTimer.js";
 import { adminView } from "./views/Admin.js";
 import { sessionsView } from "./views/Sessions.js";
 import { officialDataView } from "./views/OfficialData.js";
@@ -93,6 +94,8 @@ bus.on("session:expired", () => {
 });
 
 bus.on("settings:changed", (settings) => { ctx.settings = settings; });
+
+watchSessionExpiry({ onWarn: () => toast("Tu sesión vence en 5 minutos. Guarda lo que estés haciendo; luego tendrás que iniciar sesión de nuevo.", "warn", 15000) });
 
 enableRipples();
 enableToggleGroups();

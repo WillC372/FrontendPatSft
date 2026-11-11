@@ -45,6 +45,7 @@ class SessionStore {
 
   get token() { return this.isAuthenticated ? this.#session.token : null; }
   get user() { return this.#session?.user ?? null; }
+  get expiresAt() { return this.#session?.expiresAt ?? null; }
   get isAuthenticated() { return Boolean(this.#session?.token) && !this.isExpired(); }
 }
 
