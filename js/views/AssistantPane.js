@@ -108,6 +108,14 @@ export async function assistantPane(host) {
           // Reference marks become numbered buttons when the answer is complete; while it is written they are hidden.
           live.textContent = liveText(text);
           chat.scrollTop = chat.scrollHeight;
+        } else if (name === "restart") {
+          // The first model froze half way and another one writes the answer from the start.
+          text = "";
+          const live = chat.querySelector("[data-typing]");
+          if (live) {
+            live.classList.add("typing");
+            live.innerHTML = "<span></span><span></span><span></span>";
+          }
         } else if (name === "done") {
           result = data;
         } else if (name === "error") {
