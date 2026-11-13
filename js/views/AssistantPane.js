@@ -195,7 +195,7 @@ export async function assistantPane(host) {
     try {
       const conversation = await api.get(`/intelligence/chat/conversations/${current}`);
       const file = new Blob([conversationText(conversation)], { type: "text/plain;charset=utf-8" });
-      const name = `aquasense-conversacion-${(conversation.title || "chat").toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "chat"}.txt`;
+      const name = `aquasense-conversacion-${(conversation.title || "chat").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "chat"}.txt`;
       const link = Object.assign(document.createElement("a"), { href: URL.createObjectURL(file), download: name });
       document.body.append(link);
       link.click();
