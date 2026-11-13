@@ -4,6 +4,8 @@ import { session } from "../core/Session.js";
 import { theme } from "../core/Theme.js";
 import { esc, fmt } from "../core/Format.js";
 import { icon, logo } from "../ui/Icons.js";
+import { avatarMarkup, avatarUrl } from "../core/Avatar.js";
+import { openAccountDialog } from "./AccountDialog.js";
 import { confirmDialog, emptyState, loading, toast, withBusy } from "../ui/Components.js";
 
 const SECTIONS = [["appearance", "Apariencia", "sun"], ["measurement", "Notificaciones y medición", "bell"], ["account", "Cuenta y plan", "user"], ["activity", "Actividad", "history"], ["about", "Acerca de", "info"]];
@@ -84,6 +86,8 @@ export const settingsView = {
           <section class="card reveal" id="s-account">
             <div class="card-head"><div class="card-title">${icon("user")}Cuenta y plan</div>
               <span class="badge ${me.plan === "PREMIUM" ? "badge-info" : "badge-ok"}">${me.plan === "PREMIUM" ? "Premium" : "Gratuito"}</span></div>
+            <div class="account-row"><span data-settings-avatar>${avatarMarkup(me, null, "avatar-lg")}</span>
+              <button type="button" class="btn btn-sm" data-change-photo>${icon("camera")}${me.demo ? "Ver foto de perfil" : "Foto de perfil"}</button></div>
             <dl class="kv"><dt>Nombre</dt><dd>${esc(me.fullName)}</dd><dt>Correo</dt><dd>${esc(me.email)}</dd><dt>Rol</dt><dd>${me.role === "ADMIN" ? "Administrador" : "Usuario"}</dd>
               <dt>Miembro desde</dt><dd>${fmt.dateTime(me.createdAt)}</dd>
               <dt>Análisis histórico</dt><dd>Hasta ${ai.maxAnalysisDays} días</dd>
@@ -143,6 +147,16 @@ export const settingsView = {
     }));
     root.querySelector("[data-notifications]").addEventListener("change", (e) => { draft.notificationsEnabled = e.target.checked; });
     root.querySelector("[data-autosave]").addEventListener("change", (e) => { draft.autoSave = e.target.checked; });
+    const settingsAvatar = async () => {
+      const current = session.user || me;
+      const slot = root.querySelector("[data-settings-avatar]");
+      if (slot) slot.innerHTML = avatarMarkup(current, await avatarUrl(current), "avatar-lg");
+    };
+    settingsAvatar();
+    root.querySelector("[data-change-photo]").addEventListener("click", async () => {
+      await openAccountDialog();
+      settingsAvatar();
+    });
     root.querySelector("[data-delete-account]")?.addEventListener("click", async (e) => {
       const button = e.currentTarget;
       const password = root.querySelector("[data-delete-password]").value;
