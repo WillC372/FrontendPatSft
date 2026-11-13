@@ -74,9 +74,9 @@ export async function manualEntry() {
         <p class="muted">Usa esta opción si mediste con tiras o con un medidor sin conexión. Quedará marcado como "Manual".</p>
         <div class="grid grid-2">
           <div class="field"><label for="mm-ph">Valor de pH</label><input class="input" id="mm-ph" name="ph" type="number" step="0.01" min="0" max="14" required placeholder="7.20"><div class="field-error" data-error-for="ph"></div></div>
-          <div class="field"><label for="mm-t">Temperatura °C (opcional)</label><input class="input" id="mm-t" name="temperatureC" type="number" step="0.1" placeholder="24.0"></div>
+          <div class="field"><label for="mm-t">Temperatura °C (opcional)</label><input class="input" id="mm-t" name="temperatureC" type="number" step="0.1" min="-5" max="100" placeholder="24.0"><div class="field-error" data-error-for="temperatureC"></div></div>
         </div>
-        <div class="field"><label for="mm-at">Fecha y hora</label><input class="input" id="mm-at" name="measuredAt" type="datetime-local" value="${now}"><div class="field-error" data-error-for="measuredAt"></div></div>
+        <div class="field"><label for="mm-at">Fecha y hora</label><input class="input" id="mm-at" name="measuredAt" type="datetime-local" value="${now}" max="${now}"><div class="field-error" data-error-for="measuredAt"></div></div>
         <div class="field"><label for="mm-note">Nota (opcional)</label><input class="input" id="mm-note" name="note" maxlength="300"></div>
       </form>`,
     actions: [
@@ -89,6 +89,16 @@ export async function manualEntry() {
           const ph = Number.parseFloat(data.ph);
           if (Number.isNaN(ph) || ph < 0 || ph > 14) {
             showFieldErrors(form, { ph: "Escribe un valor entre 0 y 14." });
+            return false;
+          }
+          // The server rejects future dates; the form says so at once (one minute of margin for clock differences).
+          if (data.measuredAt && new Date(data.measuredAt).getTime() > Date.now() + 60000) {
+            showFieldErrors(form, { measuredAt: "La fecha no puede estar en el futuro." });
+            return false;
+          }
+          const temperature = data.temperatureC ? Number.parseFloat(data.temperatureC) : null;
+          if (temperature !== null && (Number.isNaN(temperature) || temperature < -5 || temperature > 100)) {
+            showFieldErrors(form, { temperatureC: "Escribe una temperatura entre -5 y 100 °C." });
             return false;
           }
           try {
