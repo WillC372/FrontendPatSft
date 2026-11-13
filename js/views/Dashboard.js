@@ -81,6 +81,11 @@ export const dashboardView = {
             <div class="row"><span class="profile-icon">${icon(PROFILE_ICONS[profile.type] || "profiles")}</span><div><strong>Uso: ${esc(profile.name)}</strong>
               <div class="muted num">Rango recomendado ${profile.idealMin.toFixed(1)} - ${profile.idealMax.toFixed(1)}</div></div></div>
           </section>
+          <section class="card reveal" data-reference hidden>
+            <div class="card-head"><div class="card-title">${icon("globe")}Referencia oficial</div>
+              <a class="btn btn-sm btn-pill" href="#/official">Ver ${icon("chevronRight")}</a></div>
+            <div data-reference-body></div>
+          </section>
         </div>
 
         <section class="card glow ai-panel span-wide reveal">
@@ -115,6 +120,24 @@ export const dashboardView = {
 
       <div class="tip-bar reveal">${icon("bulb")}<p><strong>Consejo:</strong> ${esc(data.tip)}</p></div>
       <p class="disclaimer">${icon("info")}${esc(data.disclaimer)}</p>`;
+
+    // Official data as a reference next to the user's value: the typical pH of the rivers the USGS measured today.
+    api.get("/reference/summary").then((ref) => {
+      if (ctx.stale() || !ref.stationsReporting || ref.medianPh === null) return;
+      const card = root.querySelector("[data-reference]");
+      const median = Number(ref.medianPh);
+      const comma = (v) => Number(v).toFixed(1).replace(".", ",");
+      let compare = "";
+      if (latest) {
+        const diff = latest.ph - median;
+        compare = Math.abs(diff) < 0.25 ? "Tu última medición está cerca de ese valor típico."
+          : `Tu última medición (${comma(latest.ph)}) está ${comma(Math.abs(diff))} ${diff > 0 ? "por encima" : "por debajo"} de ese valor típico.`;
+      }
+      card.querySelector("[data-reference-body]").innerHTML = `<div class="row"><strong class="reference-value">${comma(median)}</strong>
+        <div><div>pH típico de ${ref.stationsReporting} ríos y arroyos de EE. UU. hoy</div><small class="muted">Fuente: USGS. Es una referencia general, no un límite para tu uso.</small></div></div>
+        ${compare ? `<p class="muted small" style="margin-top:8px">${compare}</p>` : ""}`;
+      card.hidden = false;
+    }).catch(() => { /* without official data the card stays hidden */ });
 
     api.get("/intelligence/diagnosis/latest").then((dx) => {
       const holder = root.querySelector("[data-last-dx]");
