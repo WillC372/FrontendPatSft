@@ -32,6 +32,7 @@ export class Shell {
     const user = session.user;
     root.innerHTML = `
       <div class="shell">
+        <button type="button" class="skip-link" data-skip>Saltar al contenido</button>
         <aside class="sidebar" aria-label="Navegación principal">
           <div class="brand">${logo()}<div class="brand-name">AquaSense <span>AI</span></div><div class="brand-tag">Analiza · Cuida · Previene</div></div>
           <nav class="nav">${NAV.map(([r, label, ic]) => `<a class="nav-link" data-route="${r}" href="#/${r}">${icon(ic)}${label}</a>`).join("")}
@@ -158,6 +159,11 @@ export class Shell {
       }
     });
     this.root.querySelector("[data-logout]").addEventListener("click", () => this.logout());
+    // Keyboard users skip the menu (a "#page" link would change the screen, because the router uses the hash).
+    this.root.querySelector("[data-skip]").addEventListener("click", () => {
+      this.page.focus();
+      this.page.scrollIntoView({ block: "start" });
+    });
     this.root.querySelector("[data-account]").addEventListener("click", () => openAccountDialog());
     // The photo is downloaded after the frame is drawn, and again whenever the user changes it.
     const showAvatar = async (current) => {

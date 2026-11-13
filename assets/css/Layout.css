@@ -76,3 +76,7 @@
 @media (max-width: 1280px) { .grid-dashboard { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .grid-dashboard .span-wide { grid-column: 1 / -1; } }
 @media (max-width: 760px) { .grid-dashboard, .grid-2, .grid-3 { grid-template-columns: minmax(0, 1fr); } }
 .page:focus { outline: none; }
+
+/* First stop of the keyboard: hidden until it receives focus. */
+.skip-link { position: fixed; left: 12px; top: -60px; z-index: 100; padding: 10px 16px; border-radius: 10px; border: 2px solid var(--primary-2); background: var(--surface-solid); color: var(--text); font: inherit; font-weight: 700; cursor: pointer; transition: top .15s; }
+.skip-link:focus { top: 12px; }
