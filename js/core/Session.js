@@ -25,6 +25,13 @@ class SessionStore {
     bus.emit("session:changed", this.#session);
   }
 
+  /** New token of the current session (after a password change), kept where the session already was. */
+  renew(auth) {
+    let remembered = false;
+    try { remembered = Boolean(localStorage.getItem(KEY)); } catch { /* storage unavailable */ }
+    this.save(auth, remembered);
+  }
+
   updateUser(user) {
     if (!this.#session) return;
     this.#session.user = user;

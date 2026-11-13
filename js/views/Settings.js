@@ -6,7 +6,7 @@ import { esc, fmt } from "../core/Format.js";
 import { icon, logo } from "../ui/Icons.js";
 import { avatarMarkup, avatarUrl } from "../core/Avatar.js";
 import { openAccountDialog } from "./AccountDialog.js";
-import { confirmDialog, emptyState, loading, toast, withBusy } from "../ui/Components.js";
+import { confirmDialog, emptyState, loading, showFieldErrors, toast, withBusy } from "../ui/Components.js";
 
 const SECTIONS = [["appearance", "Apariencia", "sun"], ["measurement", "Notificaciones y medición", "bell"], ["account", "Cuenta y plan", "user"], ["activity", "Actividad", "history"], ["about", "Acerca de", "info"]];
 
@@ -88,7 +88,7 @@ export const settingsView = {
               <span class="badge ${me.plan === "PREMIUM" ? "badge-info" : "badge-ok"}">${me.plan === "PREMIUM" ? "Premium" : "Gratuito"}</span></div>
             <div class="account-row"><span data-settings-avatar>${avatarMarkup(me, null, "avatar-lg")}</span>
               <button type="button" class="btn btn-sm" data-change-photo>${icon("camera")}${me.demo ? "Ver foto de perfil" : "Foto de perfil"}</button></div>
-            <dl class="kv"><dt>Nombre</dt><dd>${esc(me.fullName)}</dd><dt>Correo</dt><dd>${esc(me.email)}</dd><dt>Rol</dt><dd>${me.role === "ADMIN" ? "Administrador" : "Usuario"}</dd>
+            <dl class="kv"><dt>Nombre</dt><dd data-name-view><span data-name-text>${esc(me.fullName)}</span>${me.demo ? "" : ` <button type="button" class="btn btn-ghost btn-sm" data-edit-name aria-label="Cambiar el nombre">${icon("edit")}</button>`}</dd><dt>Correo</dt><dd>${esc(me.email)}</dd><dt>Rol</dt><dd>${me.role === "ADMIN" ? "Administrador" : "Usuario"}</dd>
               <dt>Miembro desde</dt><dd>${fmt.dateTime(me.createdAt)}</dd>
               <dt>Análisis histórico</dt><dd>Hasta ${ai.maxAnalysisDays} días</dd>
               <dt>Consultas IA hoy</dt><dd>${ai.configured ? `${ai.usedToday} de ${ai.dailyQuota}` : "IA no configurada en el servidor"}</dd></dl>
@@ -107,6 +107,19 @@ export const settingsView = {
             <div class="activity">${activity.length ? `<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Acción</th><th>Detalle</th></tr></thead><tbody>
               ${activity.map((a) => `<tr><td class="num">${fmt.dateTime(a.createdAt)}</td><td>${esc(a.label || a.action)}</td><td>${esc(a.detail)}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">Sin actividad.</p>`}</div>
           </section>
+
+          ${me.demo ? "" : `<section class="card reveal" id="s-security">
+            <div class="card-head"><div class="card-title">${icon("lock")}Seguridad</div></div>
+            <form class="stack" data-password-form novalidate>
+              <p class="muted">Al cambiar la contraseña se cierran tus sesiones en otros equipos; esta sigue abierta.</p>
+              <div class="grid grid-3">
+                <div class="field"><label for="pw-current">Contraseña actual</label><input class="input" id="pw-current" name="currentPassword" type="password" autocomplete="current-password" required><div class="field-error" data-error-for="currentPassword"></div></div>
+                <div class="field"><label for="pw-new">Nueva contraseña</label><input class="input" id="pw-new" name="newPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="Mínimo 8, letras y números"><div class="field-error" data-error-for="newPassword"></div></div>
+                <div class="field"><label for="pw-confirm">Repite la nueva</label><input class="input" id="pw-confirm" name="confirm" type="password" autocomplete="new-password" required><div class="field-error" data-error-for="confirm"></div></div>
+              </div>
+              <div class="row"><button class="btn btn-primary" type="submit">${icon("lock")}Cambiar contraseña</button></div>
+            </form>
+          </section>`}
 
           <section class="card reveal danger-card" id="s-delete">
             <div class="card-head"><div class="card-title">${icon("trash")}Eliminar mi cuenta</div></div>
@@ -156,6 +169,60 @@ export const settingsView = {
     root.querySelector("[data-change-photo]").addEventListener("click", async () => {
       await openAccountDialog();
       settingsAvatar();
+    });
+    const startEditName = () => {
+      const view = root.querySelector("[data-name-view]");
+      const current = session.user?.fullName || me.fullName;
+      view.innerHTML = `<form class="row name-form" data-name-form novalidate>
+          <input class="input" name="fullName" maxlength="120" value="${esc(current)}" aria-label="Nombre" required>
+          <button class="btn btn-primary btn-sm" type="submit">Guardar</button><button class="btn btn-ghost btn-sm" type="button" data-cancel-name>Cancelar</button></form>`;
+      const form = view.querySelector("form");
+      const restore = (name) => {
+        view.innerHTML = `<span data-name-text>${esc(name)}</span> <button type="button" class="btn btn-ghost btn-sm" data-edit-name aria-label="Cambiar el nombre">${icon("edit")}</button>`;
+        view.querySelector("[data-edit-name]").addEventListener("click", startEditName);
+      };
+      form.querySelector("input").focus();
+      form.querySelector("[data-cancel-name]").addEventListener("click", () => restore(current));
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const fullName = form.fullName.value.trim();
+        if (!fullName) {
+          toast("Escribe tu nombre.", "warn");
+          return;
+        }
+        try {
+          const updated = await api.put("/users/me", { fullName });
+          session.updateUser(updated);
+          toast("Nombre actualizado.", "ok");
+          restore(updated.fullName);
+        } catch (error) {
+          toast(error.message, "error");
+        }
+      });
+    };
+    root.querySelector("[data-edit-name]")?.addEventListener("click", startEditName);
+    root.querySelector("[data-password-form]")?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const data = Object.fromEntries(new FormData(form));
+      showFieldErrors(form);
+      if (data.newPassword !== data.confirm) {
+        showFieldErrors(form, { confirm: "Las contraseñas no coinciden." });
+        return;
+      }
+      const button = form.querySelector("button[type=submit]");
+      try {
+        await withBusy(button, async () => {
+          const auth = await api.post("/users/me/password", { currentPassword: data.currentPassword, newPassword: data.newPassword });
+          session.renew(auth);
+        });
+        form.reset();
+        toast("Contraseña cambiada. Se cerraron tus sesiones en otros equipos.", "ok", 6000);
+      } catch (error) {
+        if (error.fields && Object.keys(error.fields).length) showFieldErrors(form, error.fields);
+        else if (/actual/.test(error.message)) showFieldErrors(form, { currentPassword: error.message });
+        toast(error.message, "error");
+      }
     });
     root.querySelector("[data-delete-account]")?.addEventListener("click", async (e) => {
       const button = e.currentTarget;

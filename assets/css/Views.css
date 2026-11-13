@@ -590,3 +590,5 @@ select.input.cam-select { width: auto; flex: none; padding-top: 8px; padding-bot
 .dist-legend small { white-space: nowrap; min-width: 48px; text-align: right; }
 @media (max-width: 520px) { .dist-legend { grid-template-columns: 1fr; } }
 .detail-status { margin: 0 0 8px; font-size: 14px; }
+.name-form { gap: 6px; flex-wrap: nowrap; } .name-form .input { min-width: 0; flex: 1 1 160px; padding: 6px 10px; }
+.reference-value { font-family: var(--font-display); font-size: 30px; line-height: 1; min-width: 56px; }
