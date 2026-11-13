@@ -14,6 +14,16 @@ export const historyView = {
   title: "Historial de mediciones",
   async render(root, ctx) {
     const state = { days: 7, from: null, to: null, source: "", status: "", page: 0, chart: null };
+    // The period and filters chosen stay while the session lasts (sessionStorage), so leaving and coming back keeps them.
+    const FILTERS = "aquasense.history.filters";
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(FILTERS) || "null");
+      if (saved && ([7, 30, "custom"].includes(saved.days))) Object.assign(state, { days: saved.days, from: saved.from || null, to: saved.to || null,
+        source: saved.source || "", status: saved.status || "" });
+    } catch { /* storage unavailable: defaults */ }
+    const remember = () => {
+      try { sessionStorage.setItem(FILTERS, JSON.stringify({ days: state.days, from: state.from, to: state.to, source: state.source, status: state.status })); } catch { /* ignore */ }
+    };
     let profile;
     try {
       profile = await api.get("/profiles/active");
@@ -189,6 +199,7 @@ export const historyView = {
     }
 
     function refresh() {
+      remember();
       state.page = 0;
       loadTable();
       if (state.chart) drawChart(state.chart);
@@ -242,6 +253,13 @@ export const historyView = {
         button.disabled = false;
       }
     });
+    // Shows the remembered choice in the controls.
+    root.querySelectorAll("[data-days]").forEach((t) => t.classList.toggle("active", String(state.days) === t.dataset.days));
+    root.querySelector("[data-custom]").hidden = state.days !== "custom";
+    if (state.from) root.querySelector("#h-from").value = state.from;
+    if (state.to) root.querySelector("#h-to").value = state.to;
+    root.querySelector("[data-source]").value = state.source;
+    root.querySelector("[data-status]").value = state.status;
     const off = bus.on("measurement:saved", refresh);
     loadTable();
     return off;
