@@ -3,7 +3,9 @@ import { esc } from "../core/Format.js";
 import { icon, PROFILE_ICONS } from "../ui/Icons.js";
 import { confirmDialog, emptyState, loading, modal, showFieldErrors, toast } from "../ui/Components.js";
 
-function profileForm(p = {}) {
+function profileForm(profile) {
+  // "Personalizado" opens the form with null: a default parameter (p = {}) only covers undefined, so null broke it.
+  const p = profile || {};
   const v = (key, fallback = "") => esc(p[key] ?? fallback);
   return `<form class="stack" data-profile-form novalidate>
     <div class="field"><label for="p-name">Nombre</label><input class="input" id="p-name" name="name" maxlength="80" value="${v("name")}" required><div class="field-error" data-error-for="name"></div></div>
