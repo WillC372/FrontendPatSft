@@ -52,6 +52,11 @@ export function lineChart(host, { points = [], band, forecast = [], anomalies = 
   const dense = points.length > w / 5;
   const xTicks = Array.from({ length: tickCount }, (_, i) => new Date(tMin + ((tMax - tMin) * i) / (tickCount - 1)));
   const sameDay = tMax - tMin < 86400000 * 1.5;
+  // Measurements a few minutes apart need seconds; and a label equal to the previous one is not repeated.
+  const withSeconds = tMax - tMin < 10 * 60000;
+  const tick = (d) => (withSeconds ? d.toLocaleTimeString("es", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+    : sameDay ? fmt.time(d) : fmt.day(d));
+  const tickLabels = xTicks.map(tick).map((text, i, all) => (i > 0 && text === all[i - 1] ? "" : text));
 
   const linePath = points.map((p, i) => `${i ? "L" : "M"}${x(p.t.getTime()).toFixed(1)},${y(p.v).toFixed(1)}`).join(" ");
   const areaPath = points.length
@@ -74,7 +79,7 @@ export function lineChart(host, { points = [], band, forecast = [], anomalies = 
       </defs>
       ${yTicks.map((v) => `<line class="grid-line" x1="${PAD.l}" x2="${w - PAD.r}" y1="${y(v)}" y2="${y(v)}"/>
         <text class="axis-label" x="${PAD.l - 8}" y="${y(v) + 4}" text-anchor="end">${v.toFixed(1)}</text>`).join("")}
-      ${xTicks.map((d, i) => `<text class="axis-label" x="${x(d.getTime())}" y="${H - 10}" text-anchor="${i === xTicks.length - 1 ? "end" : "middle"}">${sameDay ? fmt.time(d) : fmt.day(d)}</text>`).join("")}
+      ${xTicks.map((d, i) => `<text class="axis-label" x="${x(d.getTime())}" y="${H - 10}" text-anchor="${i === xTicks.length - 1 ? "end" : "middle"}">${tickLabels[i]}</text>`).join("")}
       <g clip-path="url(#clip${id})">
         ${band ? `<rect class="ideal-band" x="${PAD.l}" width="${w - PAD.l - PAD.r}" y="${y(Math.min(band.max, yMax))}" height="${Math.max(0, y(Math.max(band.min, yMin)) - y(Math.min(band.max, yMax)))}"/>` : ""}
         ${forecast.length ? `<path class="forecast-band" d="${fBand}"/><path class="forecast-line" d="${fLine}"/>` : ""}
