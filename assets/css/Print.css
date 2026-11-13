@@ -1,0 +1,24 @@
+/* Printing a screen (Ctrl+P): only its content, in black on white, without menus, buttons or effects. */
+@media print {
+  :root, :root[data-theme] {
+    --bg: #fff; --bg-2: #fff; --surface: #fff; --surface-2: #fff; --surface-solid: #fff;
+    --text: #111; --text-soft: #333; --muted: #555; --border: #bbb; --grid: #ddd;
+  }
+  html, body { background: #fff !important; color: #111; }
+  body::before, body::after { display: none !important; }
+  .sidebar, .topbar, .bottom-nav, .demo-banner, .toasts, .offline-bar, .skip-link, .wake-overlay,
+  .btn, button, .tabs, .modal-backdrop, .ia-menu, .gauge-actions, .splash, [data-chart] .chart-tooltip { display: none !important; }
+  .shell { display: block; }
+  .page { padding: 0; gap: 12px; }
+  .card, .stat, .session-card, .station-card, .profile-card {
+    background: #fff !important; box-shadow: none !important; backdrop-filter: none !important;
+    border: 1px solid #bbb !important; break-inside: avoid;
+  }
+  .reveal, .page-enter { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .table-wrap { overflow: visible !important; }
+  table { width: 100%; border-collapse: collapse; font-size: 11pt; }
+  th, td { border-bottom: 1px solid #ccc; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 9pt; color: #555; }
+  .chart svg { max-height: 8cm; }
+  .input, select, input { background: #fff !important; color: #111 !important; border: 1px solid #bbb !important; box-shadow: none !important; }
+}
