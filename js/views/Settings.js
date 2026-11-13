@@ -46,9 +46,17 @@ export const settingsView = {
     let me;
     let ai;
     let activity;
+    let current;
     try {
-      [settings, me, ai, activity] = await Promise.all([api.get("/users/me/settings"), api.get("/users/me"),
+      let whoami;
+      [settings, whoami, ai, activity] = await Promise.all([api.get("/users/me/settings"), api.get("/auth/me").catch((error) => {
+          // A server not yet updated has no /auth/me: the account alone, without the session.
+          if (error.status === 404) return api.get("/users/me").then((user) => ({ user, session: null }));
+          throw error;
+        }),
         api.get("/intelligence/ai-status"), api.get("/users/me/activity")]);
+      me = whoami.user;
+      current = whoami.session;
       if (ctx.stale()) return null;
     } catch (error) {
       root.innerHTML = emptyState("error", "No se pudo cargar la configuración", error.message);
@@ -90,6 +98,7 @@ export const settingsView = {
               <button type="button" class="btn btn-sm" data-change-photo>${icon("camera")}${me.demo ? "Ver foto de perfil" : "Foto de perfil"}</button></div>
             <dl class="kv"><dt>Nombre</dt><dd data-name-view><span data-name-text>${esc(me.fullName)}</span>${me.demo ? "" : ` <button type="button" class="btn btn-ghost btn-sm" data-edit-name aria-label="Cambiar el nombre">${icon("edit")}</button>`}</dd><dt>Correo</dt><dd>${esc(me.email)}</dd><dt>Rol</dt><dd>${me.role === "ADMIN" ? "Administrador" : "Usuario"}</dd>
               <dt>Miembro desde</dt><dd>${fmt.dateTime(me.createdAt)}</dd>
+              ${current ? `<dt>Sesión actual</dt><dd>Desde ${fmt.dateTime(current.startedAt)} · vence ${fmt.dateTime(current.expiresAt)}${current.rememberMe ? " (recordada)" : ""}</dd>` : ""}
               <dt>Análisis histórico</dt><dd>Hasta ${ai.maxAnalysisDays} días</dd>
               <dt>Consultas IA hoy</dt><dd>${ai.configured ? `${ai.usedToday} de ${ai.dailyQuota}` : "IA no configurada en el servidor"}</dd></dl>
             ${me.premiumUntil ? `<p class="muted" style="margin-top:10px">Premium activo hasta el ${new Intl.DateTimeFormat("es-CO", { dateStyle: "long" }).format(new Date(me.premiumUntil))}.</p>` : ""}
