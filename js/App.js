@@ -115,7 +115,8 @@ bus.on("api:slow", () => {
 });
 
 bus.on("session:expired", () => {
-  toast("Tu sesión expiró. Inicia sesión de nuevo.", "warn");
+  toast("Tu sesión expiró. Inicia sesión de nuevo; volverás a esta pantalla.", "warn");
+  ctx.router.rememberReturn();
   ctx.router.go("login");
 });
 
@@ -154,6 +155,8 @@ setInterval(() => refreshRelativeTimes(), 60000);
 theme.apply(theme.preference);
 if (!session.isAuthenticated && !location.hash.startsWith("#/register") && !location.hash.startsWith("#/forgot")
     && !location.hash.startsWith("#/reset") && !location.hash.startsWith("#/verify-admin")) {
+  // A link to a screen opened without a session: after signing in, the user lands on it.
+  ctx.router.rememberReturn();
   location.hash = "#/login";
 }
 // Wait until the backend is awake before the first API call (see ServerWake.js).

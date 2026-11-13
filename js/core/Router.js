@@ -1,5 +1,7 @@
 import { session } from "./Session.js";
 
+const RETURN_KEY = "aquasense.return";
+
 // Hash router: maps every route to a view and protects the ones that require a session.
 export class Router {
   #routes = new Map();
@@ -27,6 +29,29 @@ export class Router {
     location.hash = `#/${name}`;
   }
 
+  /** Remembers the screen to return to after signing in (only screens of the signed-in app). */
+  rememberReturn(hash = location.hash) {
+    const target = String(hash || "").replace(/^#\/?/, "");
+    const route = this.#routes.get(target.split(/[/?]/)[0]);
+    if (!target || !route || route.isPublic) return;
+    try { sessionStorage.setItem(RETURN_KEY, target); } catch { /* storage unavailable */ }
+  }
+
+  /** After signing out on purpose, the next person to sign in starts at the dashboard. */
+  clearReturn() {
+    try { sessionStorage.removeItem(RETURN_KEY); } catch { /* storage unavailable */ }
+  }
+
+  /** The screen remembered before signing in, once; the dashboard otherwise. */
+  takeReturn() {
+    let target = null;
+    try {
+      target = sessionStorage.getItem(RETURN_KEY);
+      sessionStorage.removeItem(RETURN_KEY);
+    } catch { /* storage unavailable */ }
+    return target && this.#routes.has(target.split(/[/?]/)[0]) ? target : this.#fallback;
+  }
+
   resolve() {
     const target = this.current();
     let route = this.#routes.get(target.name);
@@ -35,6 +60,7 @@ export class Router {
       return;
     }
     if (!route.isPublic && !session.isAuthenticated) {
+      this.rememberReturn();
       this.go("login");
       return;
     }

@@ -219,6 +219,7 @@ export class Shell {
     try { await api.post("/auth/logout"); } catch { /* session cleared locally anyway */ }
     liveStream.stop();
     session.clear();
+    this.ctx.router.clearReturn();
     toast("Sesión cerrada.", "ok");
     this.ctx.router.go("login");
   }
