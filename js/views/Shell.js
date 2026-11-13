@@ -4,7 +4,7 @@ import { session } from "../core/Session.js";
 import { theme } from "../core/Theme.js";
 import { liveStream } from "../core/LiveStream.js";
 import { browserMeter } from "../core/BrowserMeter.js";
-import { esc, fmt } from "../core/Format.js";
+import { esc, fmt, relativeTime } from "../core/Format.js";
 import { icon, logo } from "../ui/Icons.js";
 import { avatarMarkup, avatarUrl, forgetAvatar } from "../core/Avatar.js";
 import { openAccountDialog } from "./AccountDialog.js";
@@ -124,7 +124,7 @@ export class Shell {
     panel.innerHTML = `<div class="row-between" style="margin-bottom:8px"><h2 class="h-sm">Alertas</h2>
         ${alerts.length ? `<button class="link-btn" data-read-all>Marcar como leidas</button>` : ""}</div>
       ${alerts.length ? alerts.slice(0, 8).map((a) => `<div class="alert-item ${esc(a.severity)}">${icon(a.severity === "CRITICAL" ? "error" : "alert")}
-        <div><strong>${esc(a.title)}</strong><p>${esc(a.message)}</p><small class="muted">${fmt.relative(a.createdAt)}</small></div></div>`).join("")
+        <div><strong>${esc(a.title)}</strong><p>${esc(a.message)}</p><small class="muted">${relativeTime(a.createdAt)}</small></div></div>`).join("")
         : `<p class="muted" style="padding:10px">No tienes alertas pendientes.</p>`}`;
     panel.querySelector("[data-read-all]")?.addEventListener("click", async () => {
       await api.post("/alerts/read-all");

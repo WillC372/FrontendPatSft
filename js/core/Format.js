@@ -23,3 +23,19 @@ export function esc(value) {
 }
 
 export const STATUS_CLASS = { OPTIMAL: "ok", CAUTION: "warn", CRITICAL: "crit" };
+
+/**
+ * "hace 5 min" as a <time> element: the full date is its tooltip, and refreshRelativeTimes() keeps the text current
+ * while the screen stays open.
+ */
+export function relativeTime(iso) {
+  if (!iso) return "--";
+  return `<time data-relative datetime="${esc(iso)}" title="${esc(fmt.dateTime(iso))}">${esc(fmt.relative(iso))}</time>`;
+}
+
+export function refreshRelativeTimes(root = document) {
+  root.querySelectorAll("time[data-relative]").forEach((t) => {
+    const text = fmt.relative(t.getAttribute("datetime"));
+    if (t.textContent !== text) t.textContent = text;
+  });
+}

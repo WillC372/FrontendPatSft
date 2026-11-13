@@ -1,7 +1,7 @@
 import { api } from "../core/Api.js";
 import { bus } from "../core/EventBus.js";
 import { session } from "../core/Session.js";
-import { esc, fmt } from "../core/Format.js";
+import { esc, fmt, relativeTime } from "../core/Format.js";
 import { brainHolo, icon, PROFILE_ICONS } from "../ui/Icons.js";
 import { emptyState, loading, sourceBadge, statusBadge, toast, withBusy } from "../ui/Components.js";
 import { createGauge, phScale } from "../ui/Gauge.js";
@@ -54,7 +54,7 @@ export const dashboardView = {
           <div data-gauge style="width:100%;display:grid;place-items:center"></div>
           <div class="gauge-meta">
             <div data-gauge-status>${latest ? statusBadge(latest.status, latest.statusLabel) : `<span class="badge badge-info">Sin mediciones</span>`}</div>
-            <small class="muted num" data-gauge-meta>${latest ? `${esc(profile.name)} (${profile.idealMin.toFixed(1)} - ${profile.idealMax.toFixed(1)}) · ${fmt.relative(latest.measuredAt)}` : "Realiza tu primera medición"}</small>
+            <small class="muted num" data-gauge-meta>${latest ? `${esc(profile.name)} (${profile.idealMin.toFixed(1)} - ${profile.idealMax.toFixed(1)}) · ${relativeTime(latest.measuredAt)}` : "Realiza tu primera medición"}</small>
           </div>
           <div class="gauge-actions">
             ${browserMeter.connected ? `<button class="btn btn-primary btn-pill" data-measure-usb>${icon("drop")}Medir ahora</button>`
@@ -113,7 +113,7 @@ export const dashboardView = {
         </section>
         <section class="card reveal">
           <div class="card-head"><div class="card-title">${icon("bell")}Alertas recientes</div><span class="badge ${data.unreadAlerts ? "badge-warn" : "badge-ok"}">${data.unreadAlerts} sin leer</span></div>
-          ${data.recentAlerts.length ? data.recentAlerts.map((a) => `<div class="alert-item ${esc(a.severity)}">${icon(a.severity === "CRITICAL" ? "error" : "alert")}<div><strong>${esc(a.title)}</strong><p>${esc(a.message)}</p><small class="muted">${fmt.relative(a.createdAt)}</small></div></div>`).join("")
+          ${data.recentAlerts.length ? data.recentAlerts.map((a) => `<div class="alert-item ${esc(a.severity)}">${icon(a.severity === "CRITICAL" ? "error" : "alert")}<div><strong>${esc(a.title)}</strong><p>${esc(a.message)}</p><small class="muted">${relativeTime(a.createdAt)}</small></div></div>`).join("")
             : `<div class="banner banner-ok">${icon("shield")}<p>No tienes alertas pendientes.</p></div>`}
         </section>
       </div>
@@ -143,7 +143,7 @@ export const dashboardView = {
       const holder = root.querySelector("[data-last-dx]");
       if (!dx || !holder) return;
       holder.innerHTML = `<a class="ai-last" href="#/intelligence/diagnosis"><span class="dot risk-${dx.riskLevel}"></span>
-        <span>Último diagnóstico: <strong>riesgo ${esc(dx.riskLabel.toLowerCase())}</strong> · ${dx.source === "AI" ? esc(dx.provider) : "reglas"} · ${fmt.relative(dx.createdAt)}</span>${icon("chevronRight")}</a>`;
+        <span>Último diagnóstico: <strong>riesgo ${esc(dx.riskLabel.toLowerCase())}</strong> · ${dx.source === "AI" ? esc(dx.provider) : "reglas"} · ${relativeTime(dx.createdAt)}</span>${icon("chevronRight")}</a>`;
     }).catch(() => {});
     const gauge = createGauge(root.querySelector("[data-gauge]"));
     gauge.set(latest?.ph ?? null);

@@ -1,5 +1,5 @@
 import { api } from "../core/Api.js";
-import { esc, fmt } from "../core/Format.js";
+import { esc, fmt, relativeTime } from "../core/Format.js";
 import { session } from "../core/Session.js";
 import { icon } from "../ui/Icons.js";
 import { countUp, emptyState, loading, modal, toast } from "../ui/Components.js";
@@ -71,7 +71,7 @@ function usersTable(page) {
       <td><div class="plan-cell">${planBadge(u)}</div></td>
       <td>${statusBadge(u)}</td>
       <td class="num" data-label="mediciones">${int(u.measurements)}</td>
-      <td>${u.lastLoginAt ? `<span title="${esc(fmt.dateTime(u.lastLoginAt))}">${esc(fmt.relative(u.lastLoginAt))}</span>` : `<span class="muted">Nunca</span>`}</td>
+      <td>${u.lastLoginAt ? `${relativeTime(u.lastLoginAt)}` : `<span class="muted">Nunca</span>`}</td>
       <td class="num">${fmt.dateTime(u.createdAt)}</td>
       <td><button class="btn btn-ghost icon-btn manage-btn" data-manage="${u.id}" aria-label="Gestionar ${esc(u.fullName)}" title="Gestionar">${icon("chevronRight")}</button></td>
     </tr>`).join("");

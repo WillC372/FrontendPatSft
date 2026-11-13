@@ -31,3 +31,11 @@ test("text from the server or the user cannot inject HTML", () => {
   assert.equal(esc(null), "");
   assert.equal(esc(7.5), "7.5");
 });
+
+test("relative times are marked up so they can be refreshed, with the full date as tooltip", async () => {
+  const { relativeTime } = await import("../js/core/Format.js");
+  const iso = new Date(Date.now() - 5 * 60000).toISOString();
+  const html = relativeTime(iso);
+  assert.match(html, /^<time data-relative datetime="[^"]+" title="[^"]+">hace 5 min<\/time>$/);
+  assert.equal(relativeTime(null), "--");
+});

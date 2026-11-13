@@ -1,5 +1,5 @@
 import { api } from "../core/Api.js";
-import { esc, fmt } from "../core/Format.js";
+import { esc, fmt, relativeTime } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { emptyState, loading } from "../ui/Components.js";
 import { lineChart, scoreChart } from "../ui/Charts.js";
@@ -49,7 +49,7 @@ export async function mlPane(host) {
         <div class="stat"><span>Entrenado con</span><strong>${d.trainingSize}</strong><small class="muted">mediciones · ${d.trainingSpanDays} días</small></div>
         <div class="stat"><span>Árboles</span><strong>${d.treeCount}</strong><small class="muted">muestra de ${d.sampleSize}</small></div>
         <div class="stat"><span>Umbral</span><strong>${d.threshold.toFixed(2)}</strong><small class="muted">~${Math.round(d.contamination * 100)} % más inusual</small></div>
-        <div class="stat"><span>Entrenamiento</span><strong>${d.trainingMillis} ms</strong><small class="muted">${fmt.relative(d.trainedAt)}</small></div>
+        <div class="stat"><span>Entrenamiento</span><strong>${d.trainingMillis} ms</strong><small class="muted">${relativeTime(d.trainedAt)}</small></div>
       </div>
       <p class="muted" style="margin-top:10px;font-size:13px">${esc(d.method)}${d.includeSimulated ? " Incluye datos simulados (solo pruebas)." : ""}</p>
       <section class="card" style="margin-top:16px"><div class="card-head"><div class="card-title">${icon("activity")}Puntaje de rareza por medición</div><small class="muted">${d.points.length} mediciones en ${d.periodDays} días</small></div>

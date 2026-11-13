@@ -1,6 +1,6 @@
 import { api } from "../core/Api.js";
 import { bus } from "../core/EventBus.js";
-import { esc, fmt } from "../core/Format.js";
+import { esc, fmt, relativeTime } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { confirmDialog, emptyState, loading, modal, toast, withBusy } from "../ui/Components.js";
 import { beaker } from "../ui/Illustrations.js";
@@ -65,7 +65,7 @@ export const devicesView = {
         ${active ? `
           ${status.simulated ? `<div class="banner banner-sim" style="margin-bottom:12px">${icon("flask")}<p>Estás usando el simulador. Sus lecturas se guardan como SIMULADAS y no representan agua real.</p></div>` : ""}
           <dl class="kv"><dt>Dispositivo</dt><dd>${esc(status.deviceName)}</dd><dt>Protocolo</dt><dd>${esc(status.protocolLabel)}</dd>
-            <dt>Puerto</dt><dd class="mono">${esc(status.port)}</dd><dt>Conectado</dt><dd>${fmt.relative(status.connectedAt)}</dd>
+            <dt>Puerto</dt><dd class="mono">${esc(status.port)}</dd><dt>Conectado</dt><dd>${relativeTime(status.connectedAt)}</dd>
             ${status.lastError ? `<dt>Último error</dt><dd style="color:var(--crit)">${esc(status.lastError)}</dd>` : ""}</dl>
           <div class="row" style="margin-top:16px">
             ${status.state !== "ERROR" ? `<button class="btn btn-primary" data-measure>${icon("drop")}Medir</button>

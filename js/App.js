@@ -9,6 +9,7 @@ import { Shell } from "./views/Shell.js";
 import { loginView, registerView, forgotView, resetView, verifyAdminView } from "./views/Auth.js";
 import { waitForServer } from "./core/ServerWake.js";
 import { watchSessionExpiry } from "./core/SessionTimer.js";
+import { refreshRelativeTimes } from "./core/Format.js";
 import { lazyView } from "./core/LazyView.js";
 
 // Screens of the signed-in application, loaded on first use.
@@ -148,6 +149,8 @@ window.addEventListener("error", (event) => { if (event.error) unexpected(event.
 enableToggleGroups();
 enableScrollableTables();
 enableCapsLockHints();
+// "hace 5 min" stays current while a screen is open.
+setInterval(() => refreshRelativeTimes(), 60000);
 theme.apply(theme.preference);
 if (!session.isAuthenticated && !location.hash.startsWith("#/register") && !location.hash.startsWith("#/forgot")
     && !location.hash.startsWith("#/reset") && !location.hash.startsWith("#/verify-admin")) {

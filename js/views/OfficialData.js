@@ -1,5 +1,5 @@
 import { api } from "../core/Api.js";
-import { esc, fmt } from "../core/Format.js";
+import { esc, fmt, relativeTime } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { emptyState, loading, toast } from "../ui/Components.js";
 import { lineChart } from "../ui/Charts.js";
@@ -26,7 +26,7 @@ function stationCard(s) {
   return `<button type="button" class="station-card" data-station="${esc(s.id)}">
     <div class="row-between"><strong class="station-ph">${num(s.lastPh)}</strong><span class="badge ${b.cls}">${b.text}</span></div>
     <span class="station-name">${stationName(s)}</span>
-    <small class="muted">${esc(s.state || "")}${s.lastTime ? ` · ${esc(fmt.relative(s.lastTime))}` : ""}</small>
+    <small class="muted">${esc(s.state || "")}${s.lastTime ? ` · ${relativeTime(s.lastTime)}` : ""}</small>
   </button>`;
 }
 
@@ -61,7 +61,7 @@ export const officialDataView = {
         <a class="btn" href="${esc(data.sourceUrl)}" target="_blank" rel="noopener">${icon("globe")}Fuente: USGS</a>
       </div>
       <p class="muted small reveal">${icon("refresh").replace("<svg", '<svg style="width:14px;height:14px;vertical-align:-2px"')}
-        ${data.importing ? "Actualizando ahora desde el USGS." : ""} Actualizado ${data.dataUpdatedAt ? esc(fmt.relative(data.dataUpdatedAt)) : "--"} (cada 3 horas). Los valores recientes son provisionales hasta que el USGS los revisa.
+        ${data.importing ? "Actualizando ahora desde el USGS." : ""} Actualizado ${relativeTime(data.dataUpdatedAt)} (cada 3 horas). Los valores recientes son provisionales hasta que el USGS los revisa.
         ${data.lastImportMessage ? `<strong>${esc(data.lastImportMessage)}</strong>` : ""}</p>
 
       <section class="card reveal">
