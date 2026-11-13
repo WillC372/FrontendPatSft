@@ -4,7 +4,7 @@ import { bus } from "./core/EventBus.js";
 import { api, ApiError } from "./core/Api.js";
 import { theme } from "./core/Theme.js";
 import { liveStream } from "./core/LiveStream.js";
-import { emptyState, enableRipples, enableScrollableTables, enableToggleGroups, toast } from "./ui/Components.js";
+import { emptyState, enableCapsLockHints, enableRipples, enableScrollableTables, enableToggleGroups, toast } from "./ui/Components.js";
 import { Shell } from "./views/Shell.js";
 import { loginView, registerView, forgotView, resetView, verifyAdminView } from "./views/Auth.js";
 import { waitForServer } from "./core/ServerWake.js";
@@ -147,6 +147,7 @@ window.addEventListener("unhandledrejection", (event) => unexpected(event.reason
 window.addEventListener("error", (event) => { if (event.error) unexpected(event.error); });
 enableToggleGroups();
 enableScrollableTables();
+enableCapsLockHints();
 theme.apply(theme.preference);
 if (!session.isAuthenticated && !location.hash.startsWith("#/register") && !location.hash.startsWith("#/forgot")
     && !location.hash.startsWith("#/reset") && !location.hash.startsWith("#/verify-admin")) {

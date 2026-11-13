@@ -1,5 +1,6 @@
 import { icon } from "./Icons.js";
 import { esc } from "../core/Format.js";
+import { checkPassword } from "../core/PasswordRules.js";
 
 const TOAST_ICONS = { ok: "check", error: "error", warn: "alert", info: "info" };
 
@@ -244,4 +245,50 @@ export function enableScrollableTables(root = document.body) {
   }).observe(root, { subtree: true, childList: true });
   window.addEventListener("resize", later, { passive: true });
   all();
+}
+
+/**
+ * Live checklist of the password rules under a new-password field, so the user sees what is missing while typing
+ * instead of after sending the form.
+ */
+export function passwordChecklist(input) {
+  if (!input || input.dataset.rules) return;
+  input.dataset.rules = "1";
+  const list = document.createElement("ul");
+  list.className = "pw-rules";
+  list.id = `${input.id || input.name}-rules`;
+  list.setAttribute("aria-live", "polite");
+  input.setAttribute("aria-describedby", `${input.getAttribute("aria-describedby") || ""} ${list.id}`.trim());
+  (input.closest(".input-wrap") || input).after(list);
+  const render = () => {
+    list.innerHTML = checkPassword(input.value).map((r) => `<li class="${r.ok ? "ok" : ""}">${icon(r.ok ? "check" : "info")}<span>${esc(r.text)}</span></li>`).join("");
+  };
+  input.addEventListener("input", render);
+  render();
+}
+
+/** Warns, next to a password field, when Caps Lock is on (a frequent cause of "contraseña incorrecta"). */
+export function enableCapsLockHints(root = document) {
+  const update = (event) => {
+    const input = event.target;
+    if (!(input instanceof HTMLInputElement) || !["password", "text"].includes(input.type) || !/password/i.test(input.autocomplete || input.name)) return;
+    const on = typeof event.getModifierState === "function" && event.getModifierState("CapsLock");
+    const anchor = input.closest(".input-wrap") || input;
+    let hint = anchor.nextElementSibling?.classList.contains("caps-hint") ? anchor.nextElementSibling : null;
+    if (on && !hint) {
+      hint = document.createElement("small");
+      hint.className = "caps-hint";
+      hint.setAttribute("role", "status");
+      hint.textContent = "Bloq Mayús está activado";
+      anchor.after(hint);
+    } else if (!on && hint) {
+      hint.remove();
+    }
+  };
+  root.addEventListener("keydown", update, true);
+  root.addEventListener("keyup", update, true);
+  root.addEventListener("focusout", (event) => {
+    const anchor = event.target?.closest?.(".input-wrap") || event.target;
+    if (anchor?.nextElementSibling?.classList?.contains("caps-hint")) anchor.nextElementSibling.remove();
+  }, true);
 }
