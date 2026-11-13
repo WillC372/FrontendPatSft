@@ -1,7 +1,7 @@
 import { api, ApiError } from "../core/Api.js";
 import { session } from "../core/Session.js";
 import { icon, logo } from "../ui/Icons.js";
-import { showFieldErrors, toast, withBusy } from "../ui/Components.js";
+import { passwordChecklist, showFieldErrors, toast, withBusy } from "../ui/Components.js";
 import { animateWater } from "../ui/Water.js";
 import { esc } from "../core/Format.js";
 
@@ -147,7 +147,7 @@ export const registerView = {
       toast("Cuenta creada. ¡Bienvenido a AquaSense AI!", "ok");
       if (auth.notice) toast(auth.notice, "warn", 10000);
       ctx.router.go("dashboard");
-    });
+    }, (host) => passwordChecklist(host.querySelector("#f-password")));
   },
 };
 
@@ -198,7 +198,7 @@ export const resetView = {
       session.clear();
       toast(response.message, "ok");
       ctx.router.go("login");
-    });
+    }, (host) => passwordChecklist(host.querySelector("#f-newPassword")));
   },
 };
 

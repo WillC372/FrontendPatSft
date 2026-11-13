@@ -6,7 +6,7 @@ import { esc, fmt } from "../core/Format.js";
 import { icon, logo } from "../ui/Icons.js";
 import { avatarMarkup, avatarUrl } from "../core/Avatar.js";
 import { openAccountDialog } from "./AccountDialog.js";
-import { confirmDialog, emptyState, loading, showFieldErrors, toast, withBusy } from "../ui/Components.js";
+import { confirmDialog, emptyState, loading, passwordChecklist, showFieldErrors, toast, withBusy } from "../ui/Components.js";
 
 const SECTIONS = [["appearance", "Apariencia", "sun"], ["measurement", "Notificaciones y medición", "bell"], ["account", "Cuenta y plan", "user"], ["activity", "Actividad", "history"], ["about", "Acerca de", "info"]];
 
@@ -201,6 +201,7 @@ export const settingsView = {
       });
     };
     root.querySelector("[data-edit-name]")?.addEventListener("click", startEditName);
+    passwordChecklist(root.querySelector("#pw-new"));
     root.querySelector("[data-password-form]")?.addEventListener("submit", async (event) => {
       event.preventDefault();
       const form = event.currentTarget;
@@ -217,6 +218,7 @@ export const settingsView = {
           session.renew(auth);
         });
         form.reset();
+        form.querySelector("#pw-new").dispatchEvent(new Event("input"));
         toast("Contraseña cambiada. Se cerraron tus sesiones en otros equipos.", "ok", 6000);
       } catch (error) {
         if (error.fields && Object.keys(error.fields).length) showFieldErrors(form, error.fields);
