@@ -589,3 +589,4 @@ select.input.cam-select { width: auto; flex: none; padding-top: 8px; padding-bot
 .dist-legend strong { margin-left: auto; font-variant-numeric: tabular-nums; }
 .dist-legend small { white-space: nowrap; min-width: 48px; text-align: right; }
 @media (max-width: 520px) { .dist-legend { grid-template-columns: 1fr; } }
+.detail-status { margin: 0 0 8px; font-size: 14px; }

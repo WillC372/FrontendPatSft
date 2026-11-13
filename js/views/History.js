@@ -2,7 +2,7 @@ import { api } from "../core/Api.js";
 import { bus } from "../core/EventBus.js";
 import { esc, fmt } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
-import { confirmDialog, emptyState, loading, sourceBadge, toast } from "../ui/Components.js";
+import { confirmDialog, emptyState, loading, modal, sourceBadge, toast } from "../ui/Components.js";
 import { barChart, lineChart } from "../ui/Charts.js";
 import { manualEntry } from "./MeasureFlow.js";
 import { photoReading } from "./PhotoFlow.js";
@@ -115,12 +115,33 @@ export const historyView = {
         pager.querySelector("[data-next]").onclick = () => { state.page++; loadTable(); };
         tableHost.querySelectorAll("[data-delete]").forEach((b) => b.addEventListener("click", () => remove(b.dataset.delete)));
         tableHost.querySelectorAll("[data-detail]").forEach((b) => b.addEventListener("click", () => {
-          const m = result.content.find((x) => String(x.id) === b.dataset.detail);
-          toast(`${m.explanation}${m.note ? ` Nota: ${m.note}` : ""}`, "info", 8000);
+          showDetail(result.content.find((x) => String(x.id) === b.dataset.detail));
         }));
       } catch (error) {
         tableHost.innerHTML = emptyState("error", "No se pudo cargar", error.message);
       }
+    }
+
+    // Everything recorded about one measurement, in a dialog that stays open while it is read.
+    function showDetail(m) {
+      const row = (label, value) => (value === null || value === undefined || value === "" ? "" : `<dt>${label}</dt><dd>${value}</dd>`);
+      modal({
+        title: `Medición de pH ${fmt.ph(m.ph)}`,
+        body: `<p class="detail-status"><span class="status-cell status-${esc(m.status)}"><span class="dot"></span>${esc(m.statusLabel)}</span> · ${esc(m.natureLabel || "")}</p>
+          <p>${esc(m.explanation)}</p>
+          <dl class="kv">
+            ${row("Fecha y hora", esc(fmt.dateTime(m.measuredAt)))}
+            ${row("pH", `<strong class="mono">${fmt.ph(m.ph)}</strong>`)}
+            ${row("Temperatura", m.temperatureC === null || m.temperatureC === undefined ? "" : `${Number(m.temperatureC).toFixed(1)} °C`)}
+            ${row("Origen", sourceBadge(m.source))}
+            ${row("Medidor", esc(m.deviceName || ""))}
+            ${row("Perfil", esc(m.profileName))}
+            ${row("Validación", esc(m.validationLabel))}
+            ${row("Observaciones", esc(m.validationNotes || ""))}
+            ${row("Nota", esc(m.note || ""))}
+          </dl>`,
+        actions: [{ label: "Cerrar", className: "btn-ghost", value: null }],
+      });
     }
 
     async function remove(id) {
