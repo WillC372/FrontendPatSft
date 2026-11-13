@@ -114,6 +114,10 @@ tbody tr:last-child td { border-bottom: 0; }
 
 .banner { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 14px; border: 1px solid; }
 .banner svg { width: 26px; height: 26px; flex: none; }
+/* A button inside a notice keeps its full text: it moves below the text when the line is too narrow. */
+.banner { flex-wrap: wrap; }
+.banner > p { flex: 1 1 240px; min-width: 0; }
+.banner > .btn { flex: none; }
 .banner-ok { background: var(--ok-bg); border-color: color-mix(in srgb, var(--ok) 45%, transparent); color: var(--text); }
 .banner-ok svg { color: var(--ok); }
 .banner-warn { background: var(--warn-bg); border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
