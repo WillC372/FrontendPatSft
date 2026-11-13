@@ -32,8 +32,22 @@ class ApiClient {
     return headers;
   }
 
+  /**
+   * A 401 ends the session only if it answered the token in use: a request sent with an older token (for example
+   * just before a password change renewed it) must not sign out the user who already has a new one.
+   */
+  #unauthorized(sentToken) {
+    if (session.isAuthenticated && session.token === sentToken) {
+      session.clear();
+      bus.emit("session:expired");
+      return true;
+    }
+    return false;
+  }
+
   async request(method, path, { body, query, raw = false, retried = false } = {}) {
     let response;
+    const sentToken = session.token;
     // A free hosted backend sleeps when idle: if the answer takes long, the UI explains why.
     const slow = setTimeout(() => bus.emit("api:slow"), 5000);
     try {
@@ -56,9 +70,9 @@ class ApiClient {
     } finally {
       clearTimeout(slow);
     }
-    if (response.status === 401 && session.isAuthenticated) {
-      session.clear();
-      bus.emit("session:expired");
+    if (response.status === 401 && !this.#unauthorized(sentToken) && session.token && session.token !== sentToken && method === "GET" && !retried) {
+      // The token changed while this read was on its way: it is repeated with the new one.
+      return this.request(method, path, { body, query, raw, retried: true });
     }
     if (!response.ok) {
       let payload = {};
@@ -73,6 +87,7 @@ class ApiClient {
 
   async upload(path, formData, method = "POST") {
     let response;
+    const sentToken = session.token;
     const slow = setTimeout(() => bus.emit("api:slow"), 5000);
     try {
       response = await fetch(this.url(path), { method, headers: this.headers(false), body: formData });
@@ -87,10 +102,7 @@ class ApiClient {
     } finally {
       clearTimeout(slow);
     }
-    if (response.status === 401 && session.isAuthenticated) {
-      session.clear();
-      bus.emit("session:expired");
-    }
+    if (response.status === 401) this.#unauthorized(sentToken);
     let payload = {};
     try { payload = await response.json(); } catch { /* empty body */ }
     if (!response.ok) throw new ApiError(response.status, payload.message || `Error ${response.status}`, payload.fields || {});
@@ -103,6 +115,7 @@ class ApiClient {
    */
   async stream(path, body, onEvent, signal) {
     let response;
+    const sentToken = session.token;
     try {
       response = await fetch(this.url(path), {
         method: "POST", headers: this.headers(true, "text/event-stream"), body: JSON.stringify(body), signal,
@@ -111,10 +124,7 @@ class ApiClient {
       if (error.name === "AbortError") throw error;
       throw new ApiError(0, "No se pudo conectar con el servidor. Revisa tu conexión a internet e inténtalo de nuevo.");
     }
-    if (response.status === 401 && session.isAuthenticated) {
-      session.clear();
-      bus.emit("session:expired");
-    }
+    if (response.status === 401) this.#unauthorized(sentToken);
     if (!response.ok || !response.body) {
       let payload = {};
       try { payload = await response.json(); } catch { /* not json */ }
