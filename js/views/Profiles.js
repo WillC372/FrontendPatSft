@@ -2,6 +2,7 @@ import { api, ApiError } from "../core/Api.js";
 import { esc } from "../core/Format.js";
 import { icon, PROFILE_ICONS } from "../ui/Icons.js";
 import { confirmDialog, emptyState, loading, modal, showFieldErrors, toast } from "../ui/Components.js";
+import { rangeProblems } from "./ProfileRules.js";
 
 function profileForm(profile) {
   // "Personalizado" opens the form with null: a default parameter (p = {}) only covers undefined, so null broke it.
@@ -30,7 +31,15 @@ async function editProfile(existing) {
       { label: "Guardar", className: "btn-primary", icon: "check", handler: async (node) => {
         const form = node.querySelector("[data-profile-form]");
         const d = Object.fromEntries(new FormData(form));
-        const body = { ...d, idealMin: Number(d.idealMin), idealMax: Number(d.idealMax), cautionMin: Number(d.cautionMin), cautionMax: Number(d.cautionMax) };
+        // An empty field is missing, not 0 (Number("") would be 0).
+        const num = (v) => (String(v ?? "").trim() === "" ? Number.NaN : Number(v));
+        const body = { ...d, idealMin: num(d.idealMin), idealMax: num(d.idealMax), cautionMin: num(d.cautionMin), cautionMax: num(d.cautionMax) };
+        const problems = rangeProblems(body);
+        showFieldErrors(form, problems);
+        if (Object.keys(problems).length) {
+          form.querySelector(`[name="${Object.keys(problems)[0]}"]`)?.focus();
+          return false;
+        }
         try {
           const saved = existing ? await api.put(`/profiles/${existing.id}`, body) : await api.post("/profiles", body);
           toast("Perfil guardado.", "ok");
