@@ -157,7 +157,9 @@ if (!session.isAuthenticated && !location.hash.startsWith("#/register") && !loca
     && !location.hash.startsWith("#/reset") && !location.hash.startsWith("#/verify-admin")) {
   // A link to a screen opened without a session: after signing in, the user lands on it.
   ctx.router.rememberReturn();
-  location.hash = "#/login";
+  // Without firing hashchange: the router draws the screen once, after the server is awake (assigning location.hash
+  // drew the login twice and asked the server for its data twice).
+  history.replaceState(null, "", "#/login");
 }
 // Wait until the backend is awake before the first API call (see ServerWake.js).
 const wake = document.createElement("div");
