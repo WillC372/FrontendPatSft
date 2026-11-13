@@ -125,6 +125,23 @@ export const officialDataView = {
     };
     root.querySelectorAll("[data-station]").forEach((b) => b.addEventListener("click", () => show(b.dataset.station)));
     if (data.featured.length) show(data.featured[0].id);
-    return null;
+    // While the server imports new data, check every 20 s and show the new data when the import ends.
+    let timer = null;
+    if (data.importing) {
+      timer = setInterval(async () => {
+        try {
+          const next = await api.get("/reference/summary");
+          if (!next.importing) {
+            clearInterval(timer);
+            timer = null;
+            if (!ctx.stale()) {
+              toast("Datos oficiales actualizados.", "ok", 3000);
+              ctx.router.resolve();
+            }
+          }
+        } catch { /* try again on the next tick */ }
+      }, 20000);
+    }
+    return () => { if (timer) clearInterval(timer); };
   },
 };
