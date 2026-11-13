@@ -38,8 +38,17 @@ Presentar la información y recoger las acciones del usuario. **Toda la lógica 
 - **Perfiles**: activar, duplicar, crear, editar y borrar perfiles con rangos y fuente.
 - **Configuración**: tema automático, claro u oscuro (persistente), notificaciones, guardado automático, cuenta y plan, actividad.
 - Diseño adaptable: barra lateral en escritorio y navegación inferior en móvil. Respeta "reducir movimiento".
+- **Cuenta**: cambiar el nombre y la contraseña desde Configuración. La contraseña pide la actual, muestra las reglas mientras se escribe y avisa si Bloq Mayús está activado; al cambiarla se cierran las demás sesiones y esta sigue abierta con el token nuevo.
+- **Volver donde estabas**: si la sesión vence, o se abre el enlace de una pantalla sin haber iniciado sesión, al entrar se vuelve a esa pantalla.
+- **Instalable**: con su manifiesto e íconos, el navegador ofrece "Instalar" o "Agregar a la pantalla de inicio"; la app abre en su propia ventana.
+- **Historial**: recuerda el periodo y los filtros durante la sesión; "Exportar CSV" descarga exactamente lo que muestra la tabla, y "Ver detalle" abre todos los datos de la medición.
+- **Inicio**: tarjeta "Referencia oficial" con el pH típico de los ríos que midió hoy el USGS y la distancia de tu última medición a ese valor.
+- **Formularios**: los rangos de un perfil personalizado, las fechas futuras y las temperaturas imposibles se marcan en su campo antes de enviar.
+- **Impresión**: al imprimir una pantalla (Ctrl+P) sale solo su contenido, en negro sobre blanco.
+- **Asistente**: "Descargar" guarda la conversación como texto, con las fuentes de cada respuesta.
 - **Sesión y conexión**: avisa 5 minutos antes de que venza la sesión y, al vencer, vuelve al inicio de sesión sin esperar a que falle una petición. Sin internet, una franja lo indica hasta que vuelve la conexión.
-- **Accesibilidad**: revisada con axe-core en 16 pantallas, en tema claro y oscuro, en computador y en teléfono, sin hallazgos (11 nov 2026). Incluye:
+- **Errores inesperados**: si algo falla sin que la pantalla lo maneje, aparece un aviso en lugar de no pasar nada.
+- **Accesibilidad**: enlace "Saltar al contenido" como primera parada del teclado; revisada con axe-core en 16 pantallas, en tema claro y oscuro, en computador y en teléfono, sin hallazgos (11 nov 2026). Incluye:
   - región principal y encabezado en cada pantalla, también en el teléfono, donde el título de la barra superior queda oculto a la vista pero se lee;
   - niveles de encabezado en orden y foco atrapado dentro de los diálogos (Escape cierra solo el de arriba);
   - selectores de periodo anunciados como grupos de botones con su opción marcada;
@@ -140,8 +149,8 @@ No hay compilación: la carpeta completa es el sitio. Para publicarla en un host
 ## Pruebas
 
 ```bash
-npm run check   # sintaxis de los 50 archivos JS
-npm test        # 29 pruebas unitarias con node:test
+npm run check   # sintaxis de los 54 archivos JS
+npm test        # 36 pruebas unitarias con node:test
 ```
 
 Las pruebas unitarias (`tests/`) cubren:
@@ -151,6 +160,7 @@ Las pruebas unitarias (`tests/`) cubren:
 - El texto de las respuestas del asistente (en vivo y al copiar).
 - Los formatos y el escapado de HTML.
 - Los textos del historial de sesiones y de los datos oficiales.
+- Las reglas de la contraseña y de los rangos de un perfil.
 
 GitHub Actions ejecuta las dos órdenes en cada push (`.github/workflows/Checks.yml`).
 
