@@ -71,11 +71,11 @@ class ApiClient {
     return text ? JSON.parse(text) : null;
   }
 
-  async upload(path, formData) {
+  async upload(path, formData, method = "POST") {
     let response;
     const slow = setTimeout(() => bus.emit("api:slow"), 5000);
     try {
-      response = await fetch(this.url(path), { method: "POST", headers: this.headers(false), body: formData });
+      response = await fetch(this.url(path), { method, headers: this.headers(false), body: formData });
     } catch {
       // As with other changes, the upload is not repeated by itself (it would use another AI query): the server is
       // awakened and the user is asked to send it again.

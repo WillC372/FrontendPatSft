@@ -6,6 +6,8 @@ import { liveStream } from "../core/LiveStream.js";
 import { browserMeter } from "../core/BrowserMeter.js";
 import { esc, fmt } from "../core/Format.js";
 import { icon, logo } from "../ui/Icons.js";
+import { avatarMarkup, avatarUrl, forgetAvatar } from "../core/Avatar.js";
+import { openAccountDialog } from "./AccountDialog.js";
 import { confirmDialog, modal, toast } from "../ui/Components.js";
 
 const NAV = [
@@ -48,7 +50,7 @@ export class Shell {
                 <button class="btn btn-ghost icon-btn" data-bell aria-label="Alertas" aria-expanded="false">${icon("bell")}<span class="count" data-count hidden></span></button>
                 <div class="dropdown" data-alerts hidden></div>
               </div>
-              <div class="user-chip"><span class="avatar">${esc((user?.fullName || "?").charAt(0).toUpperCase())}</span><span class="user-name">${esc(user?.fullName?.split(" ")[0] || "")}</span></div>
+              <button type="button" class="user-chip" data-account aria-label="Tu cuenta y foto de perfil"><span data-avatar>${avatarMarkup(user, null)}</span><span class="user-name">${esc(user?.fullName?.split(" ")[0] || "")}</span></button>
             </div>
           </header>
           ${user?.demo ? `<aside class="demo-banner" aria-label="Cuenta de demostración">${icon("info")}<span>Estás en una <strong>cuenta de demostración compartida</strong>${user.role === "ADMIN" ? " de administración (solo lectura)" : ""}. Lo que hagas es real y queda guardado, pero otras personas que usen este botón también lo ven. <a href="#/register" data-demo-register>Crea tu cuenta</a> para tener tus datos privados.</span></aside>` : ""}
@@ -156,6 +158,17 @@ export class Shell {
       }
     });
     this.root.querySelector("[data-logout]").addEventListener("click", () => this.logout());
+    this.root.querySelector("[data-account]").addEventListener("click", () => openAccountDialog());
+    // The photo is downloaded after the frame is drawn, and again whenever the user changes it.
+    const showAvatar = async (current) => {
+      const slot = this.root.querySelector("[data-avatar]");
+      if (!slot || !current) return;
+      slot.innerHTML = avatarMarkup(current, await avatarUrl(current));
+      const name = this.root.querySelector(".user-chip .user-name");
+      if (name) name.textContent = current.fullName?.split(" ")[0] || "";
+    };
+    showAvatar(session.user);
+    this.#offs.push(bus.on("session:changed", (current) => { if (current) showAvatar(current.user); else forgetAvatar(); }));
     // From a demonstration account, "Crea tu cuenta" closes that shared session and opens the registration form.
     this.root.querySelector("[data-demo-register]")?.addEventListener("click", async (event) => {
       event.preventDefault();

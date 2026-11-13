@@ -180,3 +180,18 @@ tbody tr:last-child td { border-bottom: 0; }
 
 .offline-bar { position: fixed; left: 50%; top: 12px; transform: translateX(-50%); z-index: 95; max-width: calc(100vw - 32px); padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; text-align: center; background: var(--warn-bg); color: var(--warn); border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent); box-shadow: var(--shadow); backdrop-filter: blur(8px); }
 .offline-bar[hidden] { display: none; }
+
+/* Profile photo */
+img.avatar { object-fit: cover; background: var(--surface-2); }
+.user-chip { cursor: pointer; color: inherit; font: inherit; font-weight: 700; font-size: 14px; }
+.user-chip:hover, .user-chip:focus-visible { border-color: var(--primary-2); }
+.avatar-xl { width: 96px; height: 96px; font-size: 38px; }
+.account-dialog { display: flex; align-items: center; gap: 18px; margin-bottom: 14px; }
+.account-dialog p { margin: 2px 0 0; overflow-wrap: anywhere; }
+.account-photo { position: relative; flex: none; }
+.account-photo.busy::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: rgba(2, 8, 20, .55) ; }
+.account-photo.busy::before { content: ""; position: absolute; z-index: 1; inset: 34px; border-radius: 50%; border: 3px solid rgba(255,255,255,.35); border-top-color: #fff; animation: spin .8s linear infinite; }
+.account-actions { margin: 4px 0 8px; gap: 8px; }
+.avatar-lg { width: 56px; height: 56px; font-size: 22px; }
+.account-row { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.account-settings-link { margin-top: 10px; }
