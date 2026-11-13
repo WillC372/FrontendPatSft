@@ -1,7 +1,7 @@
 import { Router } from "./core/Router.js";
 import { session } from "./core/Session.js";
 import { bus } from "./core/EventBus.js";
-import { api } from "./core/Api.js";
+import { api, ApiError } from "./core/Api.js";
 import { theme } from "./core/Theme.js";
 import { liveStream } from "./core/LiveStream.js";
 import { emptyState, enableRipples, enableScrollableTables, enableToggleGroups, toast } from "./ui/Components.js";
@@ -136,6 +136,15 @@ window.addEventListener("online", () => {
 watchSessionExpiry({ onWarn: () => toast("Tu sesión vence en 5 minutos. Guarda lo que estés haciendo; luego tendrás que iniciar sesión de nuevo.", "warn", 15000) });
 
 enableRipples();
+
+// A failure that no screen handled (for example, a button whose code breaks) shows a notice instead of doing nothing
+// in silence. The detail stays in the console for diagnosis.
+const unexpected = (error) => {
+  if (!error || error.name === "AbortError") return;
+  toast(error instanceof ApiError ? error.message : "Algo no funcionó como se esperaba en esta pantalla. Si se repite, recarga la página.", "error", 7000);
+};
+window.addEventListener("unhandledrejection", (event) => unexpected(event.reason));
+window.addEventListener("error", (event) => { if (event.error) unexpected(event.error); });
 enableToggleGroups();
 enableScrollableTables();
 theme.apply(theme.preference);
