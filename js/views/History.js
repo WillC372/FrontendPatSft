@@ -217,7 +217,8 @@ export const historyView = {
     root.querySelector("[data-photo]").addEventListener("click", async () => { if (await photoReading()) refresh(); });
     root.querySelector("[data-export]").addEventListener("click", async () => {
       try {
-        await api.download("/measurements/export", { days: state.days === "custom" ? 30 : state.days }, "aquasense-mediciones.csv");
+        // The same period and filters as the table.
+        await api.download("/measurements/export", { ...range(), source: state.source, status: state.status }, "aquasense-mediciones.csv");
       } catch (error) {
         toast(error.message, "error");
       }
@@ -226,7 +227,15 @@ export const historyView = {
       const button = e.currentTarget;
       button.disabled = true;
       try {
-        await api.download("/reports/pdf", { days: state.days === "custom" ? 30 : state.days }, "aquasense-informe.pdf");
+        // The report covers the last N days; with a custom period it goes from its first day until today.
+        let days = state.days;
+        if (state.days === "custom") {
+          const start = state.from ? new Date(`${state.from}T00:00:00`) : null;
+          days = start ? Math.max(1, Math.ceil((Date.now() - start.getTime()) / 86400000)) : 7;
+          toast(start ? `El informe PDF cubre desde el ${start.toLocaleDateString("es")} hasta hoy (${days} días).`
+            : "Sin fechas elegidas, el informe PDF cubre los últimos 7 días.", "info", 6000);
+        }
+        await api.download("/reports/pdf", { days }, "aquasense-informe.pdf");
       } catch (error) {
         toast(error.message, "error");
       } finally {
