@@ -21,3 +21,20 @@ export function copyText(text, citations = []) {
   const sources = citations.map((c, i) => `[${i + 1}] ${c.organization}, ${c.title}${c.section ? ` (${c.section})` : ""}. ${c.url}`);
   return sources.length ? `${body}\n\nFuentes:\n${sources.join("\n")}` : body;
 }
+
+/**
+ * A whole conversation as plain text for a file: its title, then each turn in order; every answer carries its own
+ * numbered sources. {@code conversation}: { title, messages: [{ role, content, model, citations }] }.
+ */
+export function conversationText(conversation, exportedAt = new Date()) {
+  const lines = [`AquaSense AI · ${conversation.title || "Conversación"}`, `Exportada el ${exportedAt.toLocaleString("es")}`, ""];
+  for (const m of conversation.messages || []) {
+    if (m.role === "USER") {
+      lines.push(`Tú: ${String(m.content).trim()}`, "");
+    } else {
+      lines.push(`AquaSense IA${m.model ? ` (${m.model})` : ""}:`, copyText(m.content, m.citations || []), "");
+    }
+  }
+  lines.push("Respuestas generadas por IA a partir de tus datos y de las normas citadas. Verifica la norma aplicable a tu caso.");
+  return lines.join("\n");
+}

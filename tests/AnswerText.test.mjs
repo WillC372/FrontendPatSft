@@ -31,3 +31,19 @@ test("copied text numbers the references in citation order and lists the sources
 test("a reference that is not among the verified citations is dropped from the copy", () => {
   assert.equal(copyText("Dato [inventada-ref-9] y **más**.", []), "Dato  y más.");
 });
+
+test("a conversation is exported with each turn and the sources of each answer", async () => {
+  const { conversationText } = await import("../js/views/AnswerText.js");
+  const text = conversationText({
+    title: "pH de mi piscina",
+    messages: [
+      { role: "USER", content: "¿Qué pH debe tener?" },
+      { role: "ASSISTANT", model: "gemini-3.5-flash-lite", content: "Entre 7,2 y 7,8 [cdc-mahc-2024-ph].", citations: [CDC] },
+    ],
+  }, new Date(2026, 10, 13, 10, 0));
+  const lines = text.split("\n");
+  assert.equal(lines[0], "AquaSense AI · pH de mi piscina");
+  assert.ok(lines.includes("Tú: ¿Qué pH debe tener?"));
+  assert.ok(lines.includes("AquaSense IA (gemini-3.5-flash-lite):"));
+  assert.ok(text.includes("Entre 7,2 y 7,8 [1].\n\nFuentes:\n[1] CDC, Model Aquatic Health Code. https://www.cdc.gov/y"));
+});

@@ -3,7 +3,7 @@ import { esc, fmt } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { confirmDialog, emptyState, loading, toast } from "../ui/Components.js";
 import { bindReferenceMarks, chatCitations, withReferenceMarks } from "./Citations.js";
-import { copyText, liveText } from "./AnswerText.js";
+import { conversationText, copyText, liveText } from "./AnswerText.js";
 
 const SUGGESTIONS = ["¿Cómo está mi agua esta semana?", "¿Qué pH es recomendable para una piscina?", "¿Cómo subo el pH de un acuario sin dañar a los peces?", "¿Cómo calibro un medidor de pH?"];
 
@@ -35,7 +35,8 @@ export async function assistantPane(host) {
         <button class="btn btn-ghost conv-clear" data-clear>${icon("trash")}Borrar todas</button>
       </aside>
       <div class="stack" style="gap:10px;min-width:0">
-        <div class="row-between"><strong data-title>Nueva conversación</strong><span class="badge" data-memory hidden></span></div>
+        <div class="row-between"><strong data-title>Nueva conversación</strong><div class="row" style="gap:8px"><span class="badge" data-memory hidden></span>
+          <button type="button" class="btn btn-ghost btn-sm" data-download-chat hidden>${icon("download")}Descargar</button></div></div>
         <div class="chat card" data-chat></div>
         <div class="row" data-suggestions>${SUGGESTIONS.map((s) => `<button class="tab" data-q="${esc(s)}">${esc(s)}</button>`).join("")}</div>
         <form class="row" data-form>
@@ -186,6 +187,24 @@ export async function assistantPane(host) {
     chat.scrollTop = chat.scrollHeight;
   };
   form.querySelector("[data-stop]").addEventListener("click", () => running?.abort());
+  // The saved conversation (with the verified sources of each answer) as a text file.
+  const download = host.querySelector("[data-download-chat]");
+  new MutationObserver(() => { download.hidden = !current; }).observe(title, { childList: true, characterData: true, subtree: true });
+  download.addEventListener("click", async () => {
+    if (!current) return;
+    try {
+      const conversation = await api.get(`/intelligence/chat/conversations/${current}`);
+      const file = new Blob([conversationText(conversation)], { type: "text/plain;charset=utf-8" });
+      const name = `aquasense-conversacion-${(conversation.title || "chat").toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "chat"}.txt`;
+      const link = Object.assign(document.createElement("a"), { href: URL.createObjectURL(file), download: name });
+      document.body.append(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(link.href), 2000);
+    } catch (error) {
+      toast(error.message, "error");
+    }
+  });
   chat.addEventListener("click", async (event) => {
     const button = event.target.closest("[data-copy]");
     if (!button) return;
