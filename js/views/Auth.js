@@ -94,7 +94,7 @@ export const loginView = {
       session.save(auth, remember);
       toast(`Bienvenido, ${auth.user.fullName.split(" ")[0]}.`, "ok");
       if (auth.notice) toast(auth.notice, "warn", 10000);
-      ctx.router.go("dashboard");
+      ctx.router.go(ctx.router.takeReturn());
     }, showDemoAccounts);
   },
 };
@@ -104,15 +104,17 @@ const DEMO_ICON = { USER: "user", PREMIUM: "star", ADMIN: "shield" };
 // One button per role of the case study. They are real accounts of the database with public credentials and limits
 // (they cannot be deleted or pay, and the administrator can only look); the button fills the form and logs in.
 async function showDemoAccounts(root) {
+  // The elements of this drawing of the screen, taken before waiting: if the screen is drawn again meanwhile, this
+  // call stops instead of adding a second click handler (which sent every demo login twice).
+  const box = root.querySelector("[data-demo]");
+  const form = root.querySelector("form");
   let accounts = [];
   try { accounts = await api.get("/auth/demo-accounts"); } catch { return; }
-  const box = root.querySelector("[data-demo]");
-  if (!box || !accounts.length) return;
+  if (!box || !box.isConnected || !accounts.length) return;
   box.querySelector("[data-demo-buttons]").innerHTML = accounts.map((a) => `<button type="button" class="demo-btn" data-demo-key="${esc(a.key)}" title="${esc(a.description)}">
       ${icon(DEMO_ICON[a.key] || "user")}<span><strong>${esc(a.label)}</strong><small>${esc(a.email)}</small></span></button>`).join("");
   box.querySelector("[data-demo-creds]").textContent = `Contraseña de las cuentas de demostración: ${accounts[0].password}`;
   box.hidden = false;
-  const form = root.querySelector("form");
   box.addEventListener("click", (event) => {
     const button = event.target.closest("[data-demo-key]");
     if (!button) return;
