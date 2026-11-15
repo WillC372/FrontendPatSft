@@ -95,7 +95,7 @@ export const settingsView = {
             <div class="card-head"><div class="card-title">${icon("user")}Cuenta y plan</div>
               <span class="badge ${me.plan === "PREMIUM" ? "badge-info" : "badge-ok"}">${me.plan === "PREMIUM" ? "Premium" : "Gratuito"}</span></div>
             <div class="account-row"><span data-settings-avatar>${avatarMarkup(me, null, "avatar-lg")}</span>
-              <button type="button" class="btn btn-sm" data-change-photo>${icon("camera")}${me.demo ? "Ver foto de perfil" : "Foto de perfil"}</button></div>
+              <button type="button" class="btn btn-sm" data-change-photo>${icon("camera")}Foto de perfil</button></div>
             <dl class="kv"><dt>Nombre</dt><dd data-name-view><span data-name-text>${esc(me.fullName)}</span>${me.demo ? "" : ` <button type="button" class="btn btn-ghost btn-sm" data-edit-name aria-label="Cambiar el nombre">${icon("edit")}</button>`}</dd><dt>Correo</dt><dd>${esc(me.email)}</dd><dt>Rol</dt><dd>${me.role === "ADMIN" ? "Administrador" : "Usuario"}</dd>
               <dt>Miembro desde</dt><dd>${fmt.dateTime(me.createdAt)}</dd>
               ${current ? `<dt>Sesión actual</dt><dd>Desde ${fmt.dateTime(current.startedAt)} · vence ${fmt.dateTime(current.expiresAt)}${current.rememberMe ? " (recordada)" : ""}</dd>` : ""}
