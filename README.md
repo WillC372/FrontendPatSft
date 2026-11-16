@@ -188,14 +188,9 @@ Los requerimientos funcionales (RF-01 a RF-21) y no funcionales (RNF-01 a RNF-07
 
 Los MockUps son capturas de la aplicación publicada en tema claro (el predeterminado). Las mediciones que aparecen son registros manuales de prueba de una cuenta temporal; no son mediciones de agua real.
 
-### Crear los Issues
+### Issues
 
-Una sola vez, con tu cuenta de GitHub:
-
-- **Windows:** `winget install --id GitHub.cli`, luego `gh auth login`, y desde la carpeta del repositorio `powershell -ExecutionPolicy Bypass -File docs\issues\crear-issues.ps1`.
-- **Mac o Linux:** `gh auth login` y `bash docs/issues/crear-issues.sh`.
-
-Crea las etiquetas y 28 Issues (21 funcionales y 7 no funcionales). Si un Issue ya existe con el mismo título, lo salta.
+Los 28 requerimientos están creados como Issues del repositorio ([#1 a #28](https://github.com/WillC372/FrontendPatSft/issues)), con las etiquetas *requerimiento funcional* o *requerimiento no funcional*, *historia de usuario* y su estado. Los scripts de [`docs/issues/`](docs/issues/) (`crear-issues.ps1` para Windows y `crear-issues.sh` para Mac o Linux) sirven para crearlos en otro repositorio con `gh`; saltan los que ya existen.
 
 ## Solución de problemas
 
