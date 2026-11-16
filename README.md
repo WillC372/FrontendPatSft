@@ -83,7 +83,10 @@ Frontend/
 ├── tests/                  Pruebas unitarias (node:test)
 ├── scripts/CheckSyntax.mjs
 ├── .github/workflows/      Revisión automática en cada push
-└── docs/screenshots/
+└── docs/
+    ├── Requerimientos.md    Requerimientos funcionales y no funcionales (historias de usuario)
+    ├── mockups/             MockUp1 ... MockUp32 (capturas de la app publicada, tema claro)
+    └── issues/              Un archivo por Issue y los scripts que los crean en GitHub
 ```
 
 Patrones en el cliente: **Observer** (`EventBus`: lecturas en vivo, sesión, alertas), **Singleton** (`api`, `session`, `liveStream`, `browserMeter`), **Proxy virtual** (`LazyView`: la pantalla se descarga la primera vez que se abre, o antes si el puntero pasa sobre su enlace) y un router que asocia cada ruta con su vista.
@@ -173,17 +176,26 @@ Además, la app publicada se revisa de punta a punta con Playwright. El recorrid
 
 Se registran los errores de consola y las peticiones fallidas. La accesibilidad se revisa con axe-core en tema claro y oscuro. Ese recorrido se ejecuta aparte y no forma parte del repositorio.
 
-## Capturas
+## Requerimientos y MockUps
+
+Los requerimientos funcionales (RF-01 a RF-21) y no funcionales (RNF-01 a RNF-07) están en [`docs/Requerimientos.md`](docs/Requerimientos.md), cada uno como historia de usuario (**Como**… **quiero**… **para**…), con descripción, criterios de aceptación y su MockUp. Los mismos textos están en [`docs/issues/`](docs/issues/) para crear los Issues del repositorio (instrucciones abajo).
 
 | | |
 |---|---|
-| ![Inicio de sesión](docs/screenshots/Screen01Login.png) | ![Dashboard](docs/screenshots/Screen02Dashboard.png) |
-| ![Resultado de medición](docs/screenshots/Screen04MeasureResult.png) | ![Historial](docs/screenshots/Screen06History.png) |
-| ![Anomalías](docs/screenshots/Screen07AiAnomalies.png) | ![Predicción](docs/screenshots/Screen08AiForecast.png) |
-| ![Conexión](docs/screenshots/Screen03Devices.png) | ![Tema claro](docs/screenshots/Screen14DashboardLight.png) |
-| ![Perfiles](docs/screenshots/Screen12Profiles.png) | ![Móvil](docs/screenshots/Screen16MobileDashboard.png) |
+| ![MockUp1](docs/mockups/MockUp1.png) | ![MockUp5](docs/mockups/MockUp5.png) |
+| ![MockUp7](docs/mockups/MockUp7.png) | ![MockUp14](docs/mockups/MockUp14.png) |
+| ![MockUp18](docs/mockups/MockUp18.png) | ![MockUp24](docs/mockups/MockUp24.png) |
 
-Las capturas usan registros manuales de prueba y el simulador; no son mediciones de agua real.
+Los MockUps son capturas de la aplicación publicada en tema claro (el predeterminado). Las mediciones que aparecen son registros manuales de prueba de una cuenta temporal; no son mediciones de agua real.
+
+### Crear los Issues
+
+Una sola vez, con tu cuenta de GitHub:
+
+- **Windows:** `winget install --id GitHub.cli`, luego `gh auth login`, y desde la carpeta del repositorio `powershell -ExecutionPolicy Bypass -File docs\issues\crear-issues.ps1`.
+- **Mac o Linux:** `gh auth login` y `bash docs/issues/crear-issues.sh`.
+
+Crea las etiquetas y 28 Issues (21 funcionales y 7 no funcionales). Si un Issue ya existe con el mismo título, lo salta.
 
 ## Solución de problemas
 
