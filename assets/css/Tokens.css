@@ -1,4 +1,5 @@
-/* AquaSense AI design tokens. The dark theme is the default (mockups). */
+/* AquaSense AI design tokens. The first block holds every token (dark values); the light block overrides them.
+   The light theme is the default: index.html and ThemeBoot.js set data-theme="light" unless the user chose dark. */
 :root,
 :root[data-theme="dark"] {
   --bg: #040b1c;
