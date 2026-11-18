@@ -63,7 +63,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 - [x] Con datos válidos se crea la cuenta y se entra al Inicio.
 - [x] Un correo ya registrado o una contraseña débil muestran el error junto al campo.
 - [x] Con «Recordarme» la sesión sigue al reabrir el navegador; sin él, termina al cerrarlo.
-- [x] «Cerrar sesión» invalida el token de esa sesión y vuelve a la pantalla de inicio de sesión.
+- [x] «Cerrar sesión» está solo en el menú del usuario (la inicial o el nombre, arriba a la derecha), invalida el token de esa sesión y vuelve a la pantalla de inicio de sesión.
 
 **MockUp1** · Inicio de sesión
 
@@ -473,7 +473,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 - [x] Aqua aparece en todas las pantallas de la sesión y la IA no aparece en el menú.
 - [x] Desde el panel de Aqua se abre cada función de IA y el chat.
-- [x] El recorrido sale solo la primera vez, se puede saltar y se repite desde Aqua o desde «Más».
+- [x] El recorrido sale solo la primera vez, se puede saltar y se repite desde Aqua («¿Qué puedo hacer aquí?»).
 - [x] El recorrido y el panel se usan con teclado (flechas, Tab y Esc) y con lector de pantalla.
 - [x] Los consejos de Aqua al cambiar de pantalla se pueden desactivar.
 
@@ -547,7 +547,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Como** usuario de computador o celular, **quiero** una interfaz clara que funcione en cualquier pantalla, **para** usarla cómodamente donde esté.
 
-**Descripción.** Navegación con barra inferior de cinco botones (Inicio, Historial, Medir, Perfiles y Más), igual en celular y computador, para que cada función esté a un toque sin saturar la pantalla. Tema claro predeterminado y oscuro opcional, navegación por teclado y lector de pantalla. Revisión con axe-core: 0 hallazgos en 18 pantallas, el recorrido, el panel de Aqua y las hojas «Medir» y «Más», en tema claro y oscuro, en computador y teléfono.
+**Descripción.** Navegación con una barra inferior que tiene todas las pantallas con su ícono (Inicio, Historial, Perfiles, Medidor, Medir, Datos oficiales, Sesiones, Plan, Configuración y Admin para administradores), igual en celular y computador; en el celular se desliza hacia los lados. La sesión se cierra solo desde el menú del usuario (la inicial o el nombre, arriba a la derecha). Tema claro predeterminado y oscuro opcional, navegación por teclado y lector de pantalla. Revisión con axe-core: 0 hallazgos en 18 pantallas, el recorrido, el panel de Aqua y las hojas «Medir» y «Más», en tema claro y oscuro, en computador y teléfono.
 
 **Criterios de aceptación**
 
@@ -559,7 +559,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 ![MockUp30](mockups/MockUp30.png)
 
-**MockUp37** · Más: el resto de las funciones
+**MockUp37** · Menú del usuario con «Cerrar sesión» y la barra con todas las pantallas
 
 ![MockUp37](mockups/MockUp37.png)
 
@@ -654,4 +654,4 @@ _Requerimiento sin pantalla propia: se comprueba con las pruebas automáticas y 
 | [MockUp34](mockups/MockUp34.png) | Panel de Aqua con el chat y las funciones de IA | RF-22 |
 | [MockUp35](mockups/MockUp35.png) | Chat con Aqua dentro de su panel (celular) | RF-14 |
 | [MockUp36](mockups/MockUp36.png) | Medir: las tres formas de registrar el pH | RF-04 |
-| [MockUp37](mockups/MockUp37.png) | Más: el resto de las funciones | RNF-04 |
+| [MockUp37](mockups/MockUp37.png) | Menú del usuario con «Cerrar sesión» y la barra con todas las pantallas | RNF-04 |
