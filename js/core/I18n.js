@@ -19,16 +19,21 @@ const INLINE = new Set(["B", "STRONG", "EM", "I", "U", "SMALL", "A", "SPAN", "AB
 const ATTRS = ["placeholder", "title", "aria-label", "alt", "aria-description", "aria-roledescription", "data-tip"];
 const LETTER = /\p{L}/u;
 const NUMBER = /\d+(?:[.,:/]\d+)*/g;
+// An email address is personal data: the text that holds one is never sent to be translated.
+const EMAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/;
 const ONLY_CODE = /^(?:https?:\/\/\S+|[A-Z0-9]{2,}(?:-[A-Z0-9]{2,})+|#?[\w-]+\.(?:js|css|png|pdf|csv))$/;
 const MAX = 1500;
 
 const dict = new Map();
+// Texts that already are a translation (the app sometimes reads a label back and writes it again): left as they are.
+const outputs = new Set();
+const put = (key, value) => { dict.set(key, value); outputs.add(value); };
 const nodeState = new WeakMap(); // text node -> { src, applied }
 const unitState = new WeakMap(); // element translated as one sentence -> { key, appliedSer }
 const attrState = new WeakMap(); // element -> Map(attr -> { src, applied })
 const pending = new Set(); // keys waiting for the server
 const failed = new Map(); // key -> attempts the server could not translate (tried again a little later)
-const RETRY_MS = [8000, 30000, 120000];
+const RETRY_MS = [8000, 30000, 120000, 600000];
 let retryTimer = null;
 let observer = null;
 let flushTimer = null;
@@ -53,7 +58,7 @@ const fill = (translated, nums) => translated.replace(/\{(\d{1,2})\}/g, (m, i) =
 
 function translatable(text) {
   const t = norm(text);
-  return t.length > 0 && t.length <= MAX && LETTER.test(t) && !ONLY_CODE.test(t);
+  return t.length > 0 && t.length <= MAX && LETTER.test(t) && !ONLY_CODE.test(t) && !EMAIL.test(t);
 }
 
 function skipped(el) {
@@ -61,6 +66,8 @@ function skipped(el) {
     if (SKIP.has(n.nodeName) || n.isContentEditable) return true;
     if (n.getAttribute("translate") === "no" || n.classList?.contains("notranslate")) return true;
     if (n.translate === false && n.hasAttribute("translate")) return true;
+    // What the browser's own translator adds to the page (its "Rate this translation" box) is not the app's text.
+    if (/^goog-/.test(n.id || "") || /(^|\s)goog-/.test(n.getAttribute("class") || "")) return true;
   }
   return false;
 }
@@ -69,6 +76,7 @@ function lookup(text) {
   const { key, nums } = keyOf(text);
   const hit = dict.get(key);
   if (hit !== undefined) return fill(hit, nums);
+  if (outputs.has(key)) return fill(key, nums);
   if (!failed.has(key)) {
     pending.add(key);
     schedule();
@@ -276,7 +284,7 @@ async function flush() {
       const res = await fetch(`${API}/translate`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ lang: LANG, texts }) });
       if (!res.ok) throw new Error(String(res.status));
       const { translations } = await res.json();
-      texts.forEach((k, i) => { if (translations[i]) { dict.set(k, translations[i]); retries.delete(k); } else fail(k); });
+      texts.forEach((k, i) => { if (translations[i]) { put(k, translations[i]); retries.delete(k); } else fail(k); });
     } catch {
       texts.forEach((k) => fail(k));
     }
@@ -351,7 +359,7 @@ export const i18n = {
     if (IS_SPANISH) return;
     try {
       const saved = JSON.parse(localStorage.getItem(DICT_KEY(LANG)) || "{}");
-      Object.entries(saved).forEach(([k, v]) => dict.set(k, v));
+      Object.entries(saved).forEach(([k, v]) => put(k, v));
     } catch { /* corrupt copy: it is downloaded again */ }
     observer = new MutationObserver((records) => {
       handle(records);
@@ -362,7 +370,7 @@ export const i18n = {
     // Everything already translated for this language, in one request (also what other people translated).
     fetch(`${API}/dictionary/${encodeURIComponent(LANG)}`).then((r) => (r.ok ? r.json() : {})).then((all) => {
       let added = 0;
-      for (const [k, v] of Object.entries(all)) if (dict.get(k) !== v) { dict.set(k, v); added++; }
+      for (const [k, v] of Object.entries(all)) if (dict.get(k) !== v) { put(k, v); added++; }
       if (added) { save(); refresh(); }
     }).catch(() => {});
   },
@@ -383,7 +391,7 @@ export const i18n = {
       try {
         const res = await fetch(`${API}/translate`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ lang: LANG, texts: [key] }) });
         const { translations } = await res.json();
-        if (translations?.[0]) { dict.set(key, translations[0]); save(); }
+        if (translations?.[0]) { put(key, translations[0]); save(); }
       } catch { /* Spanish meanwhile */ }
     }
     return dict.has(key) ? fill(dict.get(key), nums) : text;

@@ -16,7 +16,7 @@ export async function openAccountDialog() {
     title: "Tu cuenta",
     body: `<div class="account-dialog">
         <div class="account-photo" data-photo>${avatarMarkup(user, url, "avatar-xl")}</div>
-        <div><strong>${esc(user?.fullName || "")}</strong><p class="muted">${esc(user?.email || "")}</p>
+        <div><div translate="no"><strong>${esc(user?.fullName || "")}</strong><p class="muted">${esc(user?.email || "")}</p></div>
           <p class="muted small">${user?.role === "ADMIN" ? "Administrador · sin límites" : `Usuario · ${user?.plan === "PREMIUM" ? "Premium" : "Plan gratuito"}`}</p></div>
       </div>
       ${user?.demo ? `<p class="banner banner-info">${icon("info")}<span>Estás en una cuenta de demostración. La usan muchas personas a la vez, por eso no admite foto propia. Para poner tu foto, crea tu cuenta (es gratis y toma un minuto).</span></p>

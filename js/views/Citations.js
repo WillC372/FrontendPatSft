@@ -16,7 +16,7 @@ export function citationCard(c, index) {
         <span class="citation-section">${esc(c.section)}</span>
       </header>
       <blockquote lang="${esc(c.quoteLanguage || "en")}">${icon("quote")}<p>${esc(c.quote)}</p></blockquote>
-      <p class="citation-summary"><small>Resumen (no es traducción oficial)</small>${esc(c.summaryEs)}</p>
+      <p class="citation-summary"><small>Resumen (no es traducción oficial)</small><span>${esc(c.summaryEs)}</span></p>
       <footer class="citation-foot">
         <small class="muted">${esc(c.title)}${c.edition ? ` · ${esc(c.edition)}` : ""}</small>
         <small class="legal">${icon("shield")}${esc(c.legalStatus)}</small>

@@ -126,7 +126,7 @@ async function showDemoAccounts(root) {
   try { accounts = await api.get("/auth/demo-accounts"); } catch { return; }
   if (!box || !box.isConnected || !accounts.length) return;
   box.querySelector("[data-demo-buttons]").innerHTML = accounts.map((a) => `<button type="button" class="demo-btn" data-demo-key="${esc(a.key)}" title="${esc(a.description)}">
-      ${icon(DEMO_ICON[a.key] || "user")}<span><strong>${esc(a.label)}</strong><small>${esc(a.email)}</small></span></button>`).join("");
+      ${icon(DEMO_ICON[a.key] || "user")}<span><strong>${esc(a.label)}</strong><small translate="no">${esc(a.email)}</small></span></button>`).join("");
   box.querySelector("[data-demo-creds]").textContent = `Contraseña de las cuentas de demostración: ${accounts[0].password}`;
   box.hidden = false;
   box.addEventListener("click", (event) => {

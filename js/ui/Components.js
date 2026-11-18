@@ -34,14 +34,14 @@ export function toast(message, type = "info", timeout = 4500) {
   timer = setTimeout(leave, timeout);
 }
 
-export function modal({ title, body, actions = [], onMount, dismissible = true }) {
+export function modal({ title, titleHtml, body, actions = [], onMount, dismissible = true }) {
   return new Promise((resolve) => {
     const previous = document.activeElement;
     const backdrop = document.createElement("div");
     backdrop.className = "modal-backdrop";
     backdrop.innerHTML = `
       <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-        <div class="modal-head"><h2 id="modal-title">${esc(title)}</h2>
+        <div class="modal-head"><h2 id="modal-title">${titleHtml ?? esc(title)}</h2>
           ${dismissible ? `<button class="btn btn-ghost icon-btn" data-close aria-label="Cerrar">${icon("close")}</button>` : ""}
         </div>
         <div class="modal-body">${body}</div>
@@ -226,7 +226,8 @@ export function enableScrollableTables(root = document.body) {
       wrap.setAttribute("role", "region");
       if (!wrap.hasAttribute("aria-label")) {
         const title = wrap.closest("section, .card, .modal")?.querySelector("h1, h2, h3, .card-title")?.textContent.trim();
-        wrap.setAttribute("aria-label", `${title || "Tabla"} (se desplaza)`);
+        wrap.setAttribute("aria-label", title || "Tabla");
+        wrap.setAttribute("aria-description", "Se desplaza");
       }
     } else if (wrap.getAttribute("role") === "region") {
       wrap.removeAttribute("tabindex");

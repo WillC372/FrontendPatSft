@@ -65,7 +65,7 @@ export async function sessionList(host, base) {
       const detail = await api.get(`${base}/${article.dataset.sid}`);
       timeline.dataset.loaded = "1";
       timeline.innerHTML = detail.actions.length ? detail.actions.map((a) => `<li><time>${esc(stamp.format(new Date(a.at)))}</time>
-        <span><strong>${esc(a.label)}</strong>${a.detail ? `<small class="muted">${esc(a.detail)}</small>` : ""}</span></li>`).join("")
+        <span><strong>${esc(a.label)}</strong>${a.detail ? `<small class="muted" translate="no">${esc(a.detail)}</small>` : ""}</span></li>`).join("")
         : `<li class="muted">No hay acciones registradas en esta sesión.</li>`;
     } catch (error) {
       timeline.innerHTML = `<li class="muted">${esc(error.message)}</li>`;

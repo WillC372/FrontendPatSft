@@ -267,12 +267,12 @@ export const careView = {
         const list = await api.get("/reminders");
         if (ctx.stale()) return;
         host.innerHTML = list.length ? `<ul class="list reminders">${list.map((r) => `<li class="${r.due ? "due" : ""}">
-            <span><strong>${esc(r.title)}</strong> ${r.due ? `<span class="badge badge-warn">Toca hoy</span>` : ""}
+            <span><strong>${r.kind === "CUSTOM" ? own(r.title) : esc(r.title)}</strong> ${r.due ? `<span class="badge badge-warn">Toca hoy</span>` : ""}
             <br><small class="muted">Cada ${r.everyDays} ${r.everyDays === 1 ? "día" : "días"} · ${r.due ? "pendiente" : `próxima ${fmt.dateTime(r.nextDue)}`}${r.placeName ? ` · ${esc(r.placeName)}` : ""}${r.byPush || r.byEmail ? ` · aviso por ${[r.byPush ? "notificación" : "", r.byEmail ? "correo" : ""].filter(Boolean).join(" y ")}` : ""}</small></span>
             <span class="row" style="gap:4px;flex-wrap:nowrap">
               ${r.due ? `<button type="button" class="btn btn-sm btn-primary" data-done="${r.id}">${icon("check")}Hecho</button>` : ""}
-              <button type="button" class="icon-btn btn btn-ghost" data-edit-rm="${r.id}" aria-label="Editar ${esc(r.title)}">${icon("edit")}</button>
-              <button type="button" class="icon-btn btn btn-ghost" data-del-rm="${r.id}" aria-label="Borrar ${esc(r.title)}">${icon("trash")}</button></span></li>`).join("")}</ul>`
+              <button type="button" class="icon-btn btn btn-ghost" data-edit-rm="${r.id}" aria-label="Editar el recordatorio">${icon("edit")}</button>
+              <button type="button" class="icon-btn btn btn-ghost" data-del-rm="${r.id}" aria-label="Borrar el recordatorio">${icon("trash")}</button></span></li>`).join("")}</ul>`
           : `<p class="muted small">Sin recordatorios. Crea uno para medir cada semana, limpiar el filtro o calibrar el medidor; te avisaré aunque no tengas la app abierta.</p>`;
         host.querySelectorAll("[data-done]").forEach((b) => b.addEventListener("click", (e) => withBusy(e.currentTarget, async () => {
           try { await api.post(`/reminders/${b.dataset.done}/done`); toast("¡Hecho! El próximo se cuenta desde ahora.", "ok"); bus.emit("reminder:saved"); drawReminders(); }

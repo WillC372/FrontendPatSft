@@ -1,6 +1,6 @@
 import { api } from "../core/Api.js";
 import { bus } from "../core/EventBus.js";
-import { esc, fmt, relativeTime } from "../core/Format.js";
+import { esc, fmt, own, relativeTime } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { confirmDialog, emptyState, loading, modal, toast, withBusy } from "../ui/Components.js";
 import { beaker } from "../ui/Illustrations.js";
@@ -105,7 +105,7 @@ export const devicesView = {
         list.innerHTML = devices.map((d, i) => `
           <div class="device-row ${connectedPort === d.port ? "connected" : ""}">
             ${icon(d.simulated ? "flask" : d.transport === "BLUETOOTH_SPP" ? "bluetooth" : "usb")}
-            <div class="grow"><strong>${esc(d.name)}</strong><small class="muted">${esc(TRANSPORT[d.transport] || d.transport)} · <span class="mono">${esc(d.port)}</span>${d.description ? ` · ${esc(d.description)}` : ""}</small></div>
+            <div class="grow"><strong>${own(d.name)}</strong><small class="muted">${esc(TRANSPORT[d.transport] || d.transport)} · <span class="mono">${esc(d.port)}</span>${d.description ? ` · ${esc(d.description)}` : ""}</small></div>
             ${connectedPort === d.port ? `<span class="badge badge-ok">Conectado</span>` : `
               ${d.simulated ? `<span class="badge badge-sim">SIMULADO</span>` : `<select class="input" data-protocol="${i}" style="width:auto" aria-label="Protocolo">${PROTOCOLS.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}</select>`}
               <button class="btn btn-sm btn-primary" data-connect="${i}" ${connectedPort ? "disabled" : ""}>Conectar</button>`}
@@ -135,7 +135,7 @@ export const devicesView = {
       try {
         const devices = await api.get("/devices");
         host.innerHTML = devices.length ? `<div class="table-wrap"><table><thead><tr><th>Nombre</th><th>Protocolo</th><th>Puerto</th><th>Última conexión</th></tr></thead>
-          <tbody>${devices.map((d) => `<tr><td>${esc(d.name)} ${d.simulated ? '<span class="badge badge-sim">SIMULADO</span>' : ""}</td><td>${esc(d.protocolLabel)}</td><td class="mono">${esc(d.port)}</td><td>${fmt.dateTime(d.lastConnectedAt)}</td></tr>`).join("")}</tbody></table></div>`
+          <tbody>${devices.map((d) => `<tr><td>${own(d.name)} ${d.simulated ? '<span class="badge badge-sim">SIMULADO</span>' : ""}</td><td>${esc(d.protocolLabel)}</td><td class="mono">${esc(d.port)}</td><td>${fmt.dateTime(d.lastConnectedAt)}</td></tr>`).join("")}</tbody></table></div>`
           : `<p class="muted">Aún no has conectado ningún dispositivo.</p>`;
       } catch (error) {
         host.innerHTML = `<p class="muted">${esc(error.message)}</p>`;

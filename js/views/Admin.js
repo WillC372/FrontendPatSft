@@ -1,5 +1,5 @@
 import { api } from "../core/Api.js";
-import { esc, fmt, relativeTime } from "../core/Format.js";
+import { esc, fmt, own, relativeTime } from "../core/Format.js";
 import { session } from "../core/Session.js";
 import { icon } from "../ui/Icons.js";
 import { countUp, emptyState, loading, modal, toast } from "../ui/Components.js";
@@ -66,15 +66,15 @@ function planCard(s) {
 function usersTable(page) {
   if (!page.items.length) return emptyState("users", "Sin resultados", "Ninguna cuenta coincide con la búsqueda o los filtros.");
   const rows = page.items.map((u) => `
-    <tr data-user="${u.id}" class="${u.enabled ? "" : "row-off"}" tabindex="0" aria-label="Gestionar ${esc(u.fullName)}">
-      <td><div class="who"><span class="avatar">${initials(u.fullName)}</span><div><strong>${esc(u.fullName)}${u.self ? ` <small class="muted">(tú)</small>` : ""}${u.demo ? ` <span class="badge badge-sim">Demo</span>` : ""}</strong><small>${esc(u.email)}</small></div></div></td>
+    <tr data-user="${u.id}" class="${u.enabled ? "" : "row-off"}" tabindex="0" aria-label="Gestionar la cuenta">
+      <td><div class="who"><span class="avatar">${initials(u.fullName)}</span><div><strong>${own(u.fullName)}${u.self ? ` <small class="muted">(tú)</small>` : ""}${u.demo ? ` <span class="badge badge-sim">Demo</span>` : ""}</strong><small>${own(u.email)}</small></div></div></td>
       <td>${roleBadge(u)}</td>
       <td><div class="plan-cell">${planBadge(u)}</div></td>
       <td>${statusBadge(u)}</td>
       <td class="num" data-label="mediciones">${int(u.measurements)}</td>
       <td>${u.lastLoginAt ? `${relativeTime(u.lastLoginAt)}` : `<span class="muted">Nunca</span>`}</td>
       <td class="num">${fmt.dateTime(u.createdAt)}</td>
-      <td><button class="btn btn-ghost icon-btn manage-btn" data-manage="${u.id}" aria-label="Gestionar ${esc(u.fullName)}" title="Gestionar">${icon("chevronRight")}</button></td>
+      <td><button class="btn btn-ghost icon-btn manage-btn" data-manage="${u.id}" aria-label="Gestionar la cuenta" title="Gestionar">${icon("chevronRight")}</button></td>
     </tr>`).join("");
   const from = page.page * page.size + 1;
   const to = page.page * page.size + page.items.length;
@@ -112,7 +112,7 @@ function activityList(list, withUser) {
   return `<ol class="admin-log">${list.map((a) => `
     <li><span class="when" title="${esc(fmt.dateTime(a.createdAt))}">${esc(fmt.dateTime(a.createdAt))}</span>
       <div><strong>${esc(a.label)}</strong>${withUser && a.userEmail ? ` <small class="muted">por ${esc(a.userEmail)}</small>` : ""}
-      ${a.detail ? `<small class="detail">${esc(a.detail)}</small>` : ""}</div></li>`).join("")}</ol>`;
+      ${a.detail ? `<small class="detail" translate="no">${esc(a.detail)}</small>` : ""}</div></li>`).join("")}</ol>`;
 }
 
 /** Account management dialog: details, plan, role, status, payments and activity. */
@@ -232,7 +232,7 @@ function detailBody(d) {
   return `
     <div class="admin-detail">
       <div class="who who-lg"><span class="avatar">${initials(u.fullName)}</span>
-        <div><strong>${esc(u.fullName)}${u.self ? ` <small class="muted">(tú)</small>` : ""}${u.demo ? ` <span class="badge badge-sim">Demo</span>` : ""}</strong><small>${esc(u.email)}</small>
+        <div><strong>${own(u.fullName)}${u.self ? ` <small class="muted">(tú)</small>` : ""}${u.demo ? ` <span class="badge badge-sim">Demo</span>` : ""}</strong><small>${own(u.email)}</small>
           <div class="row" style="margin-top:6px">${roleBadge(u)}${statusBadge(u)}</div></div></div>
       ${!u.enabled ? `<div class="banner banner-crit">${icon("ban")}<p>Desactivada${d.disabledAt ? ` el ${esc(longDate(d.disabledAt))}` : ""}.${d.disabledReason ? ` Motivo: ${esc(d.disabledReason)}` : ""}</p></div>` : ""}
 
@@ -280,7 +280,7 @@ function detailBody(d) {
         <h3>${icon("trash")}Eliminar cuenta</h3>
         ${d.guards.deleteBlockedReason ? `<p class="muted">${icon("lock")}<span>${esc(d.guards.deleteBlockedReason)}</span></p>`
           : `<p class="muted"><span>Borra para siempre la cuenta y sus mediciones, perfiles, informes y conversaciones. Para conservar sus datos, desactívala en su lugar.</span></p>
-             <input class="input" data-delete-confirm placeholder="Escribe ${esc(u.email)} para confirmar" aria-label="Confirma el correo de la cuenta" autocomplete="off">
+             <input class="input" data-delete-confirm placeholder="${esc(u.email)}" aria-label="Confirma el correo de la cuenta" autocomplete="off">
              <button class="btn btn-danger" data-delete disabled>${icon("trash")}Eliminar definitivamente</button>`}
       </section>
 

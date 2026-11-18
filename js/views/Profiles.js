@@ -1,5 +1,5 @@
 import { api, ApiError } from "../core/Api.js";
-import { esc } from "../core/Format.js";
+import { esc, own } from "../core/Format.js";
 import { icon, PROFILE_ICONS } from "../ui/Icons.js";
 import { confirmDialog, emptyState, loading, modal, showFieldErrors, toast } from "../ui/Components.js";
 import { rangeProblems } from "./ProfileRules.js";
@@ -75,7 +75,7 @@ export const profilesView = {
             <article class="profile-card ${p.active ? "active" : ""} reveal">
               <div class="row-between"><div class="profile-icon">${icon(PROFILE_ICONS[p.type] || "profiles")}</div>
                 ${p.active ? `<span class="badge badge-ok">${icon("check")}Activo</span>` : p.systemProfile ? `<span class="badge badge-info">Sistema</span>` : `<span class="badge badge-sim">Personalizado</span>`}</div>
-              <h2 class="h-sm">${esc(p.name)}</h2>
+              <h2 class="h-sm">${p.systemProfile ? esc(p.name) : own(p.name)}</h2>
               <div class="range num">${p.idealMin.toFixed(1)} – ${p.idealMax.toFixed(1)}</div>
               <small class="muted num">Precaución ${p.cautionMin.toFixed(1)} – ${p.cautionMax.toFixed(1)} · fuera: crítico</small>
               <p>${esc(p.description)}</p>
@@ -83,7 +83,7 @@ export const profilesView = {
               <div class="actions">
                 ${p.active ? "" : `<button class="btn btn-sm btn-primary" data-activate="${p.id}">Activar</button>`}
                 <button class="btn btn-sm" data-duplicate="${p.id}" title="Duplicar para personalizar">${icon("copy")}Duplicar</button>
-                ${p.systemProfile ? "" : `<button class="btn btn-sm" data-edit="${p.id}" aria-label="Editar el perfil ${esc(p.name)}" title="Editar">${icon("edit")}</button><button class="btn btn-sm btn-danger" data-delete="${p.id}" aria-label="Borrar el perfil ${esc(p.name)}" title="Borrar">${icon("trash")}</button>`}
+                ${p.systemProfile ? "" : `<button class="btn btn-sm" data-edit="${p.id}" aria-label="Editar el perfil" title="Editar">${icon("edit")}</button><button class="btn btn-sm btn-danger" data-delete="${p.id}" aria-label="Borrar el perfil ${esc(p.name)}" title="Borrar">${icon("trash")}</button>`}
               </div>
             </article>`).join("")}
           <button class="profile-card add reveal" data-new>${icon("plus")}<strong>Personalizado</strong><small class="muted">Crea un perfil con tus propios rangos</small></button>

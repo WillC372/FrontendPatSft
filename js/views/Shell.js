@@ -49,9 +49,9 @@ export class Shell {
                 <div class="dropdown" data-alerts hidden></div>
               </div>
               <div class="user-menu-wrap">
-                <button type="button" class="user-chip" data-account aria-haspopup="menu" aria-expanded="false" aria-controls="user-menu" aria-label="Tu cuenta: ${esc(user?.fullName || "")}"><span data-avatar>${avatarMarkup(user, null)}</span><span class="user-name" translate="no">${esc(user?.fullName?.split(" ")[0] || "")}</span>${icon("chevronRight", "user-chev")}</button>
+                <button type="button" class="user-chip" data-account aria-haspopup="menu" aria-expanded="false" aria-controls="user-menu" aria-label="Tu cuenta"><span data-avatar>${avatarMarkup(user, null)}</span><span class="user-name" translate="no">${esc(user?.fullName?.split(" ")[0] || "")}</span>${icon("chevronRight", "user-chev")}</button>
                 <div class="dropdown user-menu" id="user-menu" role="menu" aria-label="Tu cuenta" data-user-menu hidden>
-                  <div class="user-menu-head"><span data-avatar-big>${avatarMarkup(user, null, "avatar-lg")}</span><div translate="no"><strong>${esc(user?.fullName || "")}</strong><small class="muted">${esc(user?.email || "")}</small>
+                  <div class="user-menu-head"><span data-avatar-big>${avatarMarkup(user, null, "avatar-lg")}</span><div><strong translate="no">${esc(user?.fullName || "")}</strong><small class="muted" translate="no">${esc(user?.email || "")}</small>
                     <small class="muted">${user?.role === "ADMIN" ? "Administrador" : "Usuario"} · ${user?.role === "ADMIN" ? "sin límites" : user?.plan === "PREMIUM" ? "Premium" : "Plan gratuito"}</small></div></div>
                   <button type="button" class="user-menu-item" role="menuitem" data-my-account>${icon("user")}Mi cuenta</button>
                   <button type="button" class="user-menu-item danger" role="menuitem" data-logout>${icon("logout")}Cerrar sesión</button>
@@ -234,7 +234,7 @@ export class Shell {
       label.textContent = active.name;
       // The person's own name for the place is not translated ("Mi agua", created by the app, is).
       if (active.name === "Mi agua") label.removeAttribute("translate"); else label.setAttribute("translate", "no");
-      chip.setAttribute("aria-label", `Lugar: ${active.name}. Cambiar de lugar`);
+      chip.setAttribute("aria-label", "Cambiar de lugar");
       chip.classList.toggle("shared", active.role !== "OWNER");
     } catch { /* the chip keeps its text */ }
   }

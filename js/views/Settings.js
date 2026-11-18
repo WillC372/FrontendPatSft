@@ -3,7 +3,7 @@ import { pushClient } from "../core/PushClient.js";
 import { bus } from "../core/EventBus.js";
 import { session } from "../core/Session.js";
 import { theme } from "../core/Theme.js";
-import { esc, fmt, quotaText } from "../core/Format.js";
+import { esc, fmt, own, quotaText } from "../core/Format.js";
 import { icon, logo } from "../ui/Icons.js";
 import { bindHelp, helpBox } from "../ui/Help.js";
 import { i18n } from "../core/I18n.js";
@@ -121,7 +121,7 @@ export const settingsView = {
               <span class="badge ${me.plan === "PREMIUM" ? "badge-info" : "badge-ok"}">${me.plan === "PREMIUM" ? "Premium" : "Gratuito"}</span></div>
             <div class="account-row"><span data-settings-avatar>${avatarMarkup(me, null, "avatar-lg")}</span>
               <button type="button" class="btn btn-sm" data-change-photo>${icon("camera")}Foto de perfil</button></div>
-            <dl class="kv"><dt>Nombre</dt><dd data-name-view><span data-name-text>${esc(me.fullName)}</span>${me.demo ? "" : ` <button type="button" class="btn btn-ghost btn-sm" data-edit-name aria-label="Cambiar el nombre">${icon("edit")}</button>`}</dd><dt>Correo</dt><dd>${esc(me.email)}</dd><dt>Rol</dt><dd>${me.role === "ADMIN" ? "Administrador" : "Usuario"}</dd>
+            <dl class="kv"><dt>Nombre</dt><dd data-name-view><span data-name-text translate="no">${esc(me.fullName)}</span>${me.demo ? "" : ` <button type="button" class="btn btn-ghost btn-sm" data-edit-name aria-label="Cambiar el nombre">${icon("edit")}</button>`}</dd><dt>Correo</dt><dd>${own(me.email)}</dd><dt>Rol</dt><dd>${me.role === "ADMIN" ? "Administrador" : "Usuario"}</dd>
               <dt>Miembro desde</dt><dd>${fmt.dateTime(me.createdAt)}</dd>
               ${current ? `<dt>Sesión actual</dt><dd>Desde ${fmt.dateTime(current.startedAt)} · vence ${fmt.dateTime(current.expiresAt)}${current.rememberMe ? " (recordada)" : ""}</dd>` : ""}
               <dt>Análisis histórico</dt><dd>Hasta ${ai.maxAnalysisDays} días</dd>
@@ -139,7 +139,7 @@ export const settingsView = {
           <section class="card reveal" id="s-activity">
             <div class="card-head"><div class="card-title">${icon("history")}Actividad reciente</div><a class="btn btn-ghost btn-sm" href="#/sessions">${icon("clock")}Ver por sesión</a></div>
             <div class="activity" tabindex="0" role="region" aria-label="Actividad reciente de la cuenta">${activity.length ? `<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Acción</th><th>Detalle</th></tr></thead><tbody>
-              ${activity.map((a) => `<tr><td class="num">${fmt.dateTime(a.createdAt)}</td><td>${esc(a.label || a.action)}</td><td>${esc(a.detail)}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">Sin actividad.</p>`}</div>
+              ${activity.map((a) => `<tr><td class="num">${fmt.dateTime(a.createdAt)}</td><td>${esc(a.label || a.action)}</td><td translate="no">${esc(a.detail)}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">Sin actividad.</p>`}</div>
           </section>
 
           ${me.demo ? "" : `<section class="card reveal" id="s-security">

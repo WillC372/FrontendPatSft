@@ -45,7 +45,7 @@ export async function placeForm(existing = null) {
         <div class="field-error" data-error-for="volumeLiters"></div></div>
       <div class="field"><label for="pl-profile">Perfil de pH</label><select class="input" id="pl-profile" name="profileId">
         <option value="">El recomendado para ese tipo de agua</option>
-        ${profiles.map((p) => `<option value="${p.id}" ${existing?.profileId === p.id && existing ? "selected" : ""}>${esc(p.name)} (${p.idealMin.toFixed(1)} - ${p.idealMax.toFixed(1)})</option>`).join("")}</select></div>
+        ${profiles.map((p) => `<option value="${p.id}" ${existing?.profileId === p.id && existing ? "selected" : ""}${p.systemProfile ? "" : ' translate="no"'}>${esc(p.name)} (${p.idealMin.toFixed(1)} - ${p.idealMax.toFixed(1)})</option>`).join("")}</select></div>
     </form>`,
     actions: [
       { label: "Cancelar", className: "btn-ghost", value: null },
@@ -75,7 +75,7 @@ export async function placeForm(existing = null) {
 
 async function shareDialog(place, refresh) {
   await modal({
-    title: `Compartir "${place.name}"`,
+    titleHtml: `Compartir «${own(place.name)}»`,
     body: `<div class="stack" data-share>
       <p class="muted">Quien escriba el código en <strong>Lugares → Unirme con un código</strong> verá las mediciones, tratamientos y análisis de este lugar. Tú decides si también puede medir.</p>
       <div class="segmented" role="radiogroup" aria-label="Qué puede hacer quien se una">
@@ -122,8 +122,8 @@ async function shareDialog(place, refresh) {
         try {
           const people = await api.get(`/places/${place.id}/members`);
           host.innerHTML = people.length <= 1 ? `<p class="muted small">Todavía no se ha unido nadie.</p>`
-            : `<ul class="list members">${people.map((m) => `<li><span><strong>${esc(m.name)}</strong> <small class="muted">${esc(m.email)}</small><br><small class="muted">${esc(m.roleLabel)}</small></span>
-              ${m.role !== "OWNER" ? `<button type="button" class="btn btn-sm btn-ghost" data-remove="${m.userId}" aria-label="Quitar a ${esc(m.name)}">${icon("trash")}Quitar</button>` : ""}</li>`).join("")}</ul>`;
+            : `<ul class="list members">${people.map((m) => `<li><span><strong>${own(m.name)}</strong> <small class="muted">${own(m.email)}</small><br><small class="muted">${esc(m.roleLabel)}</small></span>
+              ${m.role !== "OWNER" ? `<button type="button" class="btn btn-sm btn-ghost" data-remove="${m.userId}" aria-label="Quitar a esta persona">${icon("trash")}Quitar</button>` : ""}</li>`).join("")}</ul>`;
           host.querySelectorAll("[data-remove]").forEach((b) => b.addEventListener("click", (e) => withBusy(e.currentTarget, async () => {
             try { await api.delete(`/places/${place.id}/members/${b.dataset.remove}`); toast("Persona quitada del lugar.", "ok"); listMembers(); refresh(); }
             catch (error) { toast(error.message, "error"); }
@@ -176,7 +176,7 @@ export const placesView = {
               ${p.canEdit ? `<button class="btn btn-sm" data-edit="${p.id}">${icon("edit")}Editar</button>` : ""}
               ${p.role === "OWNER" && !demo ? `<button class="btn btn-sm" data-share="${p.id}">${icon("share")}Compartir</button>` : ""}
               ${p.role !== "OWNER" ? `<button class="btn btn-sm btn-ghost" data-leave="${p.id}">${icon("logout")}Salir</button>` : ""}
-              ${p.role === "OWNER" && places.filter((x) => x.role === "OWNER").length > 1 ? `<button class="btn btn-sm btn-danger" data-delete="${p.id}" aria-label="Borrar ${esc(p.name)}">${icon("trash")}</button>` : ""}
+              ${p.role === "OWNER" && places.filter((x) => x.role === "OWNER").length > 1 ? `<button class="btn btn-sm btn-danger" data-delete="${p.id}" aria-label="Borrar el lugar">${icon("trash")}</button>` : ""}
             </div>
           </article>`).join("")}
         </div>

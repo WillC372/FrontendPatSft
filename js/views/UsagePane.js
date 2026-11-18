@@ -1,5 +1,5 @@
 import { api } from "../core/Api.js";
-import { esc } from "../core/Format.js";
+import { esc, own } from "../core/Format.js";
 import { session } from "../core/Session.js";
 import { icon } from "../ui/Icons.js";
 import { countUp, emptyState, loading } from "../ui/Components.js";
@@ -83,7 +83,7 @@ function render(target, r, scope) {
     </div>
     ${scope === "all" && r.topUsers.length ? `<section class="card reveal" style="margin-top:16px"><div class="card-head"><div class="card-title">${icon("user")}Usuarios con más consumo</div></div>
       <div class="table-wrap"><table class="table usage-table"><thead><tr><th>Usuario</th><th>Llamadas</th><th>Tokens</th><th>Costo est.</th></tr></thead><tbody>
-      ${r.topUsers.map((u) => `<tr><td>${esc(u.email)}</td><td class="num">${int(u.calls)}</td><td class="num">${int(u.tokens)}</td><td class="num">${usd(u.estimatedUsd)}</td></tr>`).join("")}</tbody></table></div></section>` : ""}
+      ${r.topUsers.map((u) => `<tr><td>${own(u.email)}</td><td class="num">${int(u.calls)}</td><td class="num">${int(u.tokens)}</td><td class="num">${usd(u.estimatedUsd)}</td></tr>`).join("")}</tbody></table></div></section>` : ""}
     <p class="disclaimer" style="margin-top:14px">${icon("info")}El costo estimado multiplica los tokens por el precio configurado de cada modelo y se guarda con cada llamada, así un cambio de precio no reescribe el historial.</p>`;
   usageChart(target.querySelector("[data-usage-chart]"), r.daily);
   target.querySelectorAll("[data-count]").forEach((n) => countUp(n, Number(n.dataset.count), { decimals: 0 }));
