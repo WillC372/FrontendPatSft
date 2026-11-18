@@ -8,23 +8,18 @@ import { esc, fmt, relativeTime } from "../core/Format.js";
 import { icon, logo } from "../ui/Icons.js";
 import { avatarMarkup, avatarUrl, forgetAvatar } from "../core/Avatar.js";
 import { openAccountDialog } from "./AccountDialog.js";
-import { confirmDialog, modal, toast } from "../ui/Components.js";
+import { confirmDialog, toast } from "../ui/Components.js";
 import { AquaBot } from "./AquaBot.js";
 
-// Bottom bar (every screen size): four places and, in the middle, the main action of the app.
-const TABS = [["dashboard", "Inicio", "home"], ["history", "Historial", "history"]];
-const TABS_RIGHT = [["profiles", "Perfiles", "profiles"]];
-// Screens reached from "Más"; while one is open, "Más" is shown as the active tab.
-const MORE = [
-  ["devices", "Conectar medidor", "bluetooth", "USB (ESP32 o de bolsillo) o cámara"],
-  ["official", "Datos oficiales", "globe", "pH real de ríos medidos por el USGS"],
-  ["sessions", "Mis sesiones", "clock", "Cuándo entraste y qué hiciste"],
-  ["settings", "Configuración", "settings", "Tema, alertas y tu cuenta"],
-  ["billing", "Plan y pagos", "card", "Plan gratuito o Premium"],
-];
-const MORE_ROUTES = new Set([...MORE.map(([r]) => r), "admin"]);
+// Bottom bar (every screen size) with every screen of the app; "Medir", the main action, sits in the middle.
+// [route, label, icon, full name for screen readers when the label is shortened]
+const LEFT = [["dashboard", "Inicio", "home"], ["history", "Historial", "history"], ["profiles", "Perfiles", "profiles"],
+  ["devices", "Medidor", "bluetooth", "Conectar medidor"]];
+const RIGHT = [["official", "Datos oficiales", "globe"], ["sessions", "Sesiones", "clock"], ["billing", "Plan", "card", "Plan y pagos"],
+  ["settings", "Configuración", "settings"]];
+const ADMIN = ["admin", "Admin", "users", "Administración"];
 
-const tab = ([r, label, ic]) => `<a class="tab-link" data-route="${r}" data-tab="${r}" href="#/${r}">${icon(ic)}<span>${label}</span></a>`;
+const tab = ([r, label, ic, full]) => `<a class="tab-link" data-route="${r}" data-tab="${r}" href="#/${r}"${full ? ` aria-label="${full}" title="${full}"` : ""}>${icon(ic)}<span>${label}</span></a>`;
 
 // Frame of the authenticated application: top bar, bottom bar, Aqua (the AI) and alerts.
 export class Shell {
@@ -48,22 +43,32 @@ export class Shell {
                 <button class="btn btn-ghost icon-btn" data-bell aria-label="Alertas" aria-expanded="false">${icon("bell")}<span class="count" data-count hidden></span></button>
                 <div class="dropdown" data-alerts hidden></div>
               </div>
-              <button type="button" class="user-chip" data-account aria-label="Tu cuenta y foto de perfil"><span data-avatar>${avatarMarkup(user, null)}</span><span class="user-name">${esc(user?.fullName?.split(" ")[0] || "")}</span></button>
+              <div class="user-menu-wrap">
+                <button type="button" class="user-chip" data-account aria-haspopup="menu" aria-expanded="false" aria-controls="user-menu" aria-label="Tu cuenta: ${esc(user?.fullName || "")}"><span data-avatar>${avatarMarkup(user, null)}</span><span class="user-name">${esc(user?.fullName?.split(" ")[0] || "")}</span>${icon("chevronRight", "user-chev")}</button>
+                <div class="dropdown user-menu" id="user-menu" role="menu" aria-label="Tu cuenta" data-user-menu hidden>
+                  <div class="user-menu-head"><span data-avatar-big>${avatarMarkup(user, null, "avatar-lg")}</span><div><strong>${esc(user?.fullName || "")}</strong><small class="muted">${esc(user?.email || "")}</small>
+                    <small class="muted">${user?.role === "ADMIN" ? "Administrador" : "Usuario"} · ${user?.plan === "PREMIUM" ? "Premium" : "Plan gratuito"}</small></div></div>
+                  <button type="button" class="user-menu-item" role="menuitem" data-my-account>${icon("user")}Mi cuenta y foto</button>
+                  <button type="button" class="user-menu-item danger" role="menuitem" data-logout>${icon("logout")}Cerrar sesión</button>
+                </div>
+              </div>
             </div>
           </header>
           ${user?.demo ? `<aside class="demo-banner" aria-label="Cuenta de demostración">${icon("info")}<span>Estás en una <strong>cuenta de demostración compartida</strong>${user.role === "ADMIN" ? " de administración (solo lectura)" : ""}. Lo que hagas es real y queda guardado, pero otras personas que usen este botón también lo ven. <a href="#/register" data-demo-register>Crea tu cuenta</a> para tener tus datos privados.</span></aside>` : ""}
           <main class="page" id="page" tabindex="-1"></main>
         </div>
         <nav class="tabbar" aria-label="Navegación principal">
-          ${TABS.map(tab).join("")}
-          <button type="button" class="tab-measure" data-tab="measure" data-measure-tab aria-haspopup="dialog"><span class="tab-measure-ring">${icon("drop")}</span><span>Medir</span></button>
-          ${TABS_RIGHT.map(tab).join("")}
-          <button type="button" class="tab-link" data-tab="more" data-more aria-haspopup="dialog">${icon("menu")}<span>Más</span></button>
+          <div class="tabbar-scroll" data-tab-scroll>
+            ${LEFT.map(tab).join("")}
+            <button type="button" class="tab-measure" data-tab="measure" data-measure-tab aria-haspopup="dialog"><span class="tab-measure-ring">${icon("drop")}</span><span>Medir</span></button>
+            ${RIGHT.map(tab).join("")}
+            ${user?.role === "ADMIN" ? tab(ADMIN) : ""}
+          </div>
         </nav>
       </div>`;
     this.root = root;
     this.page = root.querySelector("#page");
-    this.aqua = new AquaBot(root.querySelector(".shell"));
+    this.aqua = new AquaBot(root.querySelector(".shell"), { onTourEnd: () => this.#centerActive() });
     this.#bind();
     this.refreshDevice();
     this.refreshAlerts();
@@ -76,8 +81,7 @@ export class Shell {
       link.classList.toggle("active", active);
       if (active) link.setAttribute("aria-current", "page"); else link.removeAttribute("aria-current");
     });
-    const more = this.root.querySelector("[data-more]");
-    more.classList.toggle("active", MORE_ROUTES.has(name));
+    this.#centerActive();
     this.root.querySelector("[data-title]").textContent = title;
     document.title = `${title} · Aqua Assistant AI`;
     this.aqua.onRoute(name);
@@ -166,12 +170,15 @@ export class Shell {
       this.page.focus();
       this.page.scrollIntoView({ block: "start" });
     });
-    this.root.querySelector("[data-account]").addEventListener("click", () => openAccountDialog());
+    this.#bindUserMenu();
     // The photo is downloaded after the frame is drawn, and again whenever the user changes it.
     const showAvatar = async (current) => {
       const slot = this.root.querySelector("[data-avatar]");
       if (!slot || !current) return;
-      slot.innerHTML = avatarMarkup(current, await avatarUrl(current));
+      const url = await avatarUrl(current);
+      slot.innerHTML = avatarMarkup(current, url);
+      const big = this.root.querySelector("[data-avatar-big]");
+      if (big) big.innerHTML = avatarMarkup(current, url, "avatar-lg");
       const name = this.root.querySelector(".user-chip .user-name");
       if (name) name.textContent = current.fullName?.split(" ")[0] || "";
     };
@@ -185,7 +192,6 @@ export class Shell {
       session.clear();
       this.ctx.router.go("register");
     });
-    this.root.querySelector("[data-more]").addEventListener("click", () => this.#moreMenu());
     this.root.querySelector("[data-measure-tab]").addEventListener("click", async () => {
       // The measuring flows are downloaded the first time "Medir" is pressed.
       try {
@@ -210,21 +216,48 @@ export class Shell {
 
   #closePanel;
 
-  async #moreMenu() {
-    const tile = ([r, label, ic, text]) => `<a class="sheet-option" href="#/${r}" data-close><span class="sheet-ic">${icon(ic)}</span><span><strong>${label}</strong><small>${text}</small></span>${icon("chevronRight")}</a>`;
-    await modal({
-      title: "Más opciones",
-      body: `<div class="sheet-options">
-        ${MORE.map(tile).join("")}
-        ${session.user?.role === "ADMIN" ? tile(["admin", "Administración", "users", "Cuentas, roles y uso del sistema"]) : ""}
-        <button type="button" class="sheet-option" data-tour-again><span class="sheet-ic">${icon("info")}</span><span><strong>Ver el recorrido</strong><small>Aqua te muestra para qué sirve cada parte</small></span>${icon("chevronRight")}</button>
-        <button type="button" class="sheet-option sheet-danger" data-logout-mobile><span class="sheet-ic">${icon("logout")}</span><span><strong>Cerrar sesión</strong><small>Lo que hiciste queda guardado</small></span>${icon("chevronRight")}</button>
-      </div>`,
-      onMount: (node, close) => {
-        node.querySelector("[data-logout-mobile]").addEventListener("click", () => { close(); this.logout(); });
-        node.querySelector("[data-tour-again]").addEventListener("click", () => { close(); this.aqua.tour(); });
-      },
+  /** On a phone the bar scrolls sideways: the open screen is brought into view. */
+  #centerActive() {
+    const current = this.root.querySelector(".tabbar .active");
+    const scroller = this.root.querySelector("[data-tab-scroll]");
+    if (!current || !scroller) return;
+    const left = current.offsetLeft - (scroller.clientWidth - current.offsetWidth) / 2;
+    scroller.scrollTo({ left: Math.max(0, left), behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }
+
+  /** The user's menu (initial or name, top right): the account and the only place to sign out. */
+  #bindUserMenu() {
+    const chip = this.root.querySelector("[data-account]");
+    const menu = this.root.querySelector("[data-user-menu]");
+    const items = () => [...menu.querySelectorAll("[role=menuitem]")];
+    const close = (focusChip = false) => {
+      if (menu.hidden) return;
+      menu.hidden = true;
+      chip.setAttribute("aria-expanded", "false");
+      if (focusChip) chip.focus();
+    };
+    const open = () => {
+      menu.hidden = false;
+      chip.setAttribute("aria-expanded", "true");
+      items()[0].focus();
+    };
+    chip.addEventListener("click", (event) => {
+      event.stopPropagation();
+      if (menu.hidden) open(); else close();
     });
+    menu.addEventListener("keydown", (event) => {
+      const list = items();
+      const at = list.indexOf(document.activeElement);
+      if (event.key === "Escape") { event.preventDefault(); close(true); }
+      else if (event.key === "ArrowDown") { event.preventDefault(); list[(at + 1) % list.length].focus(); }
+      else if (event.key === "ArrowUp") { event.preventDefault(); list[(at - 1 + list.length) % list.length].focus(); }
+      else if (event.key === "Tab") close();
+    });
+    const outside = (event) => { if (!menu.hidden && !menu.contains(event.target) && !chip.contains(event.target)) close(); };
+    document.addEventListener("click", outside);
+    this.#offs.push(() => document.removeEventListener("click", outside));
+    menu.querySelector("[data-my-account]").addEventListener("click", () => { close(); openAccountDialog(); });
+    menu.querySelector("[data-logout]").addEventListener("click", () => { close(); this.logout(); });
   }
 
   async logout() {

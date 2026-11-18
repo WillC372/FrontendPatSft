@@ -84,6 +84,8 @@ export function startTour(steps) {
     const show = (i) => {
       index = i;
       const step = steps[i];
+      // A button hidden at the side of the sliding bar (phones) is brought into view before pointing at it.
+      targetOf(step)?.scrollIntoView({ block: "nearest", inline: "center", behavior: "auto" });
       overlay.querySelector("[data-count]").textContent = `Paso ${i + 1} de ${steps.length}`;
       overlay.querySelector("[data-title]").textContent = step.title;
       overlay.querySelector("[data-text]").innerHTML = esc(step.text).replace(/«(.+?)»/g, "<strong>$1</strong>");

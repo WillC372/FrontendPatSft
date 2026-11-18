@@ -38,8 +38,10 @@ export const TOUR_STEPS = [
   { target: '[data-tab="measure"]', title: "Medir", text: "El botón más importante: registra el pH con tu medidor, con una foto o escribiendo el valor." },
   { target: '[data-tab="history"]', title: "Historial", text: "Todas tus mediciones con gráficas, filtros y descarga." },
   { target: '[data-tab="profiles"]', title: "Perfiles", text: "Piscina, acuario, agua potable, riego… cada uno cambia el rango ideal de pH." },
-  { target: '[data-tab="more"]', title: "Más", text: "Conectar el medidor, datos oficiales, sesiones, configuración y tu plan." },
+  { target: '[data-tab="devices"]', title: "Medidor", text: "Conecta aquí tu medidor de pH por USB o usa la cámara para leer su pantalla." },
+  { target: '[data-tab="settings"]', title: "Todo está en la barra", text: "Datos oficiales, sesiones, tu plan y la configuración también están aquí. En el celular, desliza la barra hacia los lados." },
   { target: "[data-bell]", title: "Alertas", text: "Si una medición sale del rango, te aviso aquí." },
+  { target: "[data-account]", title: "Tu cuenta", text: "Toca tu inicial o tu nombre para ver tu cuenta y para «Cerrar sesión»." },
   { target: "[data-aqua]", title: "Y aquí estoy yo", text: "Tócame para chatear conmigo, pedir un diagnóstico, predecir tu pH o armar un informe. Toda la IA está aquí." },
 ];
 
@@ -49,13 +51,14 @@ export class AquaBot {
   #chatReady = false;
   #sayTimer = 0;
 
-  constructor(host) {
+  constructor(host, { onTourEnd = () => {} } = {}) {
+    this.onTourEnd = onTourEnd;
     const first = esc(session.user?.fullName?.split(" ")[0] || "");
     this.node = document.createElement("div");
     this.node.className = "aqua";
     this.node.innerHTML = `
       <div class="aqua-say" data-say hidden><p data-say-text></p><button type="button" class="aqua-say-x" data-say-close aria-label="Cerrar consejo de Aqua">${icon("close")}</button></div>
-      <button type="button" class="aqua-bot" data-aqua aria-expanded="false" aria-controls="aqua-panel" aria-label="Aqua, asistente de IA: chatear y funciones de inteligencia artificial">${aquaFace()}<span class="aqua-ring" aria-hidden="true"></span></button>
+      <button type="button" class="aqua-bot" data-aqua aria-expanded="false" aria-controls="aqua-panel" aria-label="Aqua, asistente de IA: chatear y funciones de inteligencia artificial">${aquaFace()}<span class="aqua-ring" aria-hidden="true"></span><span class="aqua-splash" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span></button>
       <section class="aqua-panel" id="aqua-panel" role="dialog" aria-labelledby="aqua-title" hidden>
         <div class="aqua-head">
           <button type="button" class="icon-btn btn btn-ghost" data-aqua-back aria-label="Volver a las funciones" hidden>${icon("chevronRight")}</button>
@@ -151,6 +154,10 @@ export class AquaBot {
     bubble.setAttribute("role", "status");
     clearTimeout(this.#sayTimer);
     this.#sayTimer = setTimeout(() => this.hideSay(), ms);
+    // Aqua moves its mouth while the bubble appears, about as long as it takes to read it.
+    this.node.classList.add("talking");
+    clearTimeout(this.#talkTimer);
+    this.#talkTimer = setTimeout(() => this.node.classList.remove("talking"), Math.min(4000, 900 + text.length * 30));
   }
 
   hideSay() {
@@ -173,7 +180,8 @@ export class AquaBot {
     this.hideSay();
     window.scrollTo({ top: 0 });
     await startTour(TOUR_STEPS);
-    if (session.user?.id) write(localStorage, TOUR_KEY(session.user.id), "done");
+    this.onTourEnd();
+    if (session.user?.id) write(localStorage, TOUR_KEY(session.user.id), String(Date.now()));
   }
 
   /** The first time each person signs in on this browser, the tour starts by itself. */
@@ -239,9 +247,57 @@ export class AquaBot {
     this.#offs.push(() => document.removeEventListener("pointerdown", onDown));
     this.#offs.push(bus.on("aqua:open", (mode) => this.open(mode || "home")));
     this.#offs.push(bus.on("aqua:tour", () => this.tour()));
+    this.#bindLife();
   }
 
+  /**
+   * Aqua's life: its eyes follow the pointer, it lights its antenna while the AI works, and now and then it jumps,
+   * winks or looks around. Nothing moves when the person asked the system to reduce motion.
+   */
+  #bindLife() {
+    const face = this.bot.querySelector(".aqua-face");
+    this.#offs.push(bus.on("ai:busy", (count) => this.node.classList.toggle("thinking", count > 0)));
+    const still = matchMedia("(prefers-reduced-motion: reduce)");
+    if (still.matches) return;
+    let frame = 0;
+    const look = (event) => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const r = this.bot.getBoundingClientRect();
+        const dx = event.clientX - (r.left + r.width / 2);
+        const dy = event.clientY - (r.top + r.height * 0.6);
+        const d = Math.hypot(dx, dy) || 1;
+        const reach = Math.min(1, d / 220) * 3;
+        face.style.setProperty("--look-x", `${((dx / d) * reach).toFixed(2)}px`);
+        face.style.setProperty("--look-y", `${((dy / d) * reach * 0.8).toFixed(2)}px`);
+      });
+    };
+    document.addEventListener("pointermove", look, { passive: true });
+    this.#offs.push(() => document.removeEventListener("pointermove", look));
+    const TRICKS = ["jump", "wink", "look-around", "spin"];
+    const trick = () => {
+      if (!this.isOpen && !document.hidden && !this.node.classList.contains("thinking")) {
+        const name = TRICKS[Math.floor(Math.random() * TRICKS.length)];
+        this.node.classList.add(`trick-${name}`);
+        setTimeout(() => this.node.classList.remove(`trick-${name}`), 1600);
+      }
+      this.#trickTimer = setTimeout(trick, 9000 + Math.random() * 7000);
+    };
+    this.#trickTimer = setTimeout(trick, 6000);
+    this.bot.addEventListener("click", () => {
+      this.node.classList.remove("splash");
+      void this.node.offsetWidth;
+      this.node.classList.add("splash");
+    });
+  }
+
+  #trickTimer = 0;
+  #talkTimer = 0;
+
   destroy() {
+    clearTimeout(this.#trickTimer);
+    clearTimeout(this.#talkTimer);
     clearTimeout(this.#sayTimer);
     this.#offs.forEach((off) => off());
     this.node.remove();
