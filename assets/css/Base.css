@@ -34,6 +34,9 @@ button { cursor: pointer; }
 
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 [hidden] { display: none !important; }
+/* Text written by the user (names, notes, links) can have very long words: they wrap inside their box. */
+.card, .profile-card, .modal, .bubble, .alert-item, .dropdown, .toast, .aqua-panel, .tour-card { overflow-wrap: anywhere; }
+.card table, .modal table { overflow-wrap: normal; }
 
 ::selection { background: rgba(34, 199, 240, 0.35); }
 ::-webkit-scrollbar { width: 10px; height: 10px; }

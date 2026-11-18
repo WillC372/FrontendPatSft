@@ -64,7 +64,7 @@ export const dashboardView = {
         <div class="stack">
           <section class="card reveal">
             <div class="card-head"><div class="card-title">${icon("drop")}Tu agua</div>
-              <a class="btn btn-sm btn-pill" href="#/profiles" aria-label="Cambiar el perfil de uso (ahora ${esc(profile.name)})"><span class="profile-mini">${icon(PROFILE_ICONS[profile.type] || "profiles")}</span>${esc(profile.name)} ${icon("chevronRight")}</a></div>
+              <a class="btn btn-sm btn-pill" href="#/profiles" aria-label="Cambiar el perfil de uso (ahora ${esc(profile.name)})"><span class="profile-mini">${icon(PROFILE_ICONS[profile.type] || "profiles")}</span><span class="pill-text">${esc(profile.name)}</span>${icon("chevronRight")}</a></div>
             ${latest ? `<div class="water-state-value">${icon("drop")}<strong data-nature>${esc(latest.natureLabel)}</strong></div>
               <p class="muted" style="margin-top:8px" data-nature-text>${NATURE_TEXT[latest.nature]}</p>
               <div data-scale>${phScale(latest.ph, profile.idealMin, profile.idealMax)}</div>`

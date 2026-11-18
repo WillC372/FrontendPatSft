@@ -148,3 +148,4 @@
 .ref-line { margin-top: 8px; }
 .ref-line svg { width: 15px; height: 15px; vertical-align: -3px; margin-right: 5px; color: var(--primary-2); }
 .assistant-compact > .row-between:first-child { justify-content: flex-start; min-height: 30px; }
+.pill-text { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

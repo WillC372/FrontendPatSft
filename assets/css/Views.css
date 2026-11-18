@@ -116,7 +116,7 @@
 
 /* Profiles */
 .profile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
-.profile-card { display: flex; flex-direction: column; gap: 12px; padding: 18px; border-radius: 16px; border: 1px solid var(--border); background: var(--surface); transition: transform .2s, border-color .2s, box-shadow .2s; }
+.profile-card { min-width: 0; display: flex; flex-direction: column; gap: 12px; padding: 18px; border-radius: 16px; border: 1px solid var(--border); background: var(--surface); transition: transform .2s, border-color .2s, box-shadow .2s; }
 .profile-card:hover { transform: translateY(-3px); border-color: var(--border-strong); box-shadow: var(--glow); }
 .profile-card.active { border-color: var(--primary-2); box-shadow: var(--glow-strong); background: linear-gradient(160deg, rgba(30,139,255,.22), var(--surface)); }
 .profile-icon { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: var(--surface-2); border: 1px solid var(--border); }
