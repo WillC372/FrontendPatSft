@@ -4,6 +4,7 @@ import { brainHolo, icon } from "../ui/Icons.js";
 import { emptyState, loading, toast } from "../ui/Components.js";
 import { barChart, lineChart } from "../ui/Charts.js";
 import { citationBlock } from "./Citations.js";
+import { i18n } from "../core/I18n.js";
 
 const SUGGESTIONS = [
   "Informe general de la semana",
@@ -115,6 +116,7 @@ export async function agentReportPane(host) {
     run.innerHTML = reportView(r);
     run.querySelector("[data-pdf]")?.addEventListener("click", async (e) => {
       const button = e.currentTarget;
+      if (!i18n.pdfOnServer) { i18n.printAsPdf(toast); return; }
       button.disabled = true;
       try { await api.download(`/intelligence/agent-reports/${r.id}/pdf`, {}, "aqua-assistant-informe-agente.pdf"); } catch (err) { toast(err.message, "error"); } finally { button.disabled = false; }
     });

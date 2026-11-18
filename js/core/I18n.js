@@ -12,6 +12,8 @@ import { LANG, LANG_KEY, IS_SPANISH } from "./Locale.js";
 const API = "https://aquasense-backend-willc372.onrender.com/api/v1/i18n";
 const DICT_KEY = (lang) => `aquasense.i18n.${lang}`;
 const RTL = new Set(["ar", "he", "fa", "ur"]);
+// Scripts the server's PDF font cannot draw (or needs shaping for): their reports are printed from the browser.
+const PDF_IN_BROWSER = new Set(["zh-Hans", "zh-Hant", "ja", "ko", "hi", "bn", "ur", "pa", "mr", "te", "ta", "gu", "kn", "ml", "ar", "he", "fa", "th", "am"]);
 const SKIP = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "CODE", "PRE", "TEXTAREA", "svg", "SVG", "KBD", "SAMP", "VAR", "MATH", "CANVAS", "VIDEO", "AUDIO", "IFRAME", "TEMPLATE"]);
 const INLINE = new Set(["B", "STRONG", "EM", "I", "U", "SMALL", "A", "SPAN", "ABBR", "MARK", "SUB", "SUP", "Q", "S", "LABEL", "TIME", "DFN", "CITE", "BDI"]);
 const ATTRS = ["placeholder", "title", "aria-label", "alt", "aria-description", "aria-roledescription", "data-tip"];
@@ -308,6 +310,14 @@ export const i18n = {
   lang: LANG,
   spanish: IS_SPANISH,
   rtl: RTL.has(LANG),
+  /** False when the PDF must be made by printing the translated screen ("Guardar como PDF"). */
+  pdfOnServer: !PDF_IN_BROWSER.has(LANG),
+
+  /** Opens the browser's print dialog for the current screen, explaining how to save it as PDF. */
+  printAsPdf(toast) {
+    toast?.("Tu idioma usa una escritura que el PDF del servidor no puede dibujar: se abre la impresión de esta pantalla ya traducida. Elige «Guardar como PDF».", "info", 8000);
+    setTimeout(() => window.print(), 600);
+  },
 
   /** Starts translating the page (nothing to do in Spanish). */
   start() {

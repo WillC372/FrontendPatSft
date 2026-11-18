@@ -7,6 +7,7 @@ import { barChart, lineChart } from "../ui/Charts.js";
 import { manualEntry } from "./MeasureFlow.js";
 import { photoReading } from "./PhotoFlow.js";
 import { LOCALE } from "../core/Locale.js";
+import { i18n } from "../core/I18n.js";
 
 const PAGE_SIZE = 15;
 
@@ -240,6 +241,7 @@ export const historyView = {
     });
     root.querySelector("[data-pdf]").addEventListener("click", async (e) => {
       const button = e.currentTarget;
+      if (!i18n.pdfOnServer) { i18n.printAsPdf(toast); return; }
       button.disabled = true;
       try {
         // The report covers the last N days; with a custom period it goes from its first day until today.
