@@ -22,6 +22,11 @@ export const devicesView = {
       <div class="row-between reveal"><div><h1>Conexión del dispositivo</h1><p class="muted">Conecta tu medidor de pH a este computador por USB o Bluetooth, o léelo con la cámara si no tiene cable de datos.</p></div></div>
       <section class="card glow reveal" data-usb-meter></section>
       <section class="card reveal camera-meter" data-camera-meter></section>
+      <section class="card reveal" aria-labelledby="cal-title">
+        <div class="card-head"><div class="card-title" id="cal-title">${icon("target")}Historial de calibraciones</div></div>
+        <p class="muted small">Cada vez que calibras un punto queda aquí: con qué solución buffer, qué marcaba el medidor antes y si el medidor lo aceptó. Si la diferencia crece mucho, es hora de revisar o cambiar la sonda.</p>
+        <div data-calibrations>${loading()}</div>
+      </section>
       <div class="stack" data-server-section hidden>
       <h2 class="section-title">Medidor conectado al servidor <small class="muted">(solo cuando Aqua Assistant corre en el mismo computador del medidor)</small></h2>
       <div class="grid grid-2">
@@ -173,6 +178,24 @@ export const devicesView = {
     const stopUsb = usbMeter(root.querySelector("[data-usb-meter]"));
     const stopCamera = cameraMeter(root.querySelector("[data-camera-meter]"));
     await refresh();
-    return () => { off(); stopUsb(); stopCamera(); };
+    const drawCalibrations = async () => {
+      const host = root.querySelector("[data-calibrations]");
+      try {
+        const list = await api.get("/calibrations", { limit: 30 });
+        if (ctx.stale()) return;
+        host.innerHTML = list.length ? `<div class="table-wrap"><table class="calibrations"><thead><tr><th>Fecha</th><th>Medidor</th><th>Punto</th><th>Buffer</th><th>Marcaba</th><th>Diferencia</th><th>Resultado</th></tr></thead><tbody>
+          ${list.map((c) => `<tr><td>${fmt.dateTime(c.createdAt)}</td><td>${esc(c.deviceName)}</td><td>${esc(c.pointLabel)}</td>
+            <td class="num">${c.bufferValue != null ? fmt.ph(c.bufferValue) : "—"}</td><td class="num">${c.reading != null ? fmt.ph(c.reading) : "—"}</td>
+            <td class="num ${c.deviation == null ? "" : Math.abs(c.deviation) > 0.5 ? "dev-bad" : "dev-ok"}">${c.deviation == null ? "—" : `${c.deviation > 0 ? "+" : ""}${c.deviation.toFixed(2)}`}</td>
+            <td>${c.success ? `<span class="badge badge-ok">${icon("check")}Aceptada</span>` : `<span class="badge badge-warn" title="${esc(c.response || "")}">${icon("alert")}Falló</span>`}</td></tr>`).join("")}
+          </tbody></table></div>`
+          : `<p class="muted small">Aún no hay calibraciones. Conecta tu medidor por USB y usa «Calibrar».</p>`;
+      } catch (error) {
+        host.innerHTML = `<p class="muted">${esc(error.message)}</p>`;
+      }
+    };
+    drawCalibrations();
+    const offCal = bus.on("calibration:saved", drawCalibrations);
+    return () => { off(); offCal(); stopUsb(); stopCamera(); };
   },
 };

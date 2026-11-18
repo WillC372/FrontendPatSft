@@ -154,16 +154,33 @@ class BrowserMeter {
     return saved;
   }
 
+  /**
+   * Calibrates one point and saves the step in the calibration history (with the reading just before, so the
+   * history shows how far the meter was from the buffer).
+   */
   async calibrate(point, value) {
     if (!PROTOCOLS[this.protocol]?.calibrates) throw new Error("Este medidor se calibra desde sus propios botones.");
-    if (this.protocol === "AQUASENSE_ESP32") {
-      await this.#write(`CAL:${point}:${value.toFixed(2)}`);
-      const r = await this.#nextLine((l) => (l.startsWith("OK") || l.startsWith("ERR") ? l : null), 5000);
-      if (!r.startsWith("OK")) throw new Error(`El medidor rechazó la calibración (${r}).`);
-    } else {
-      await this.#write(`Cal,${point.toLowerCase()},${value.toFixed(2)}`);
-      const r = await this.#nextLine((l) => (l === "*OK" || l === "*ER" ? l : null), 5000);
-      if (r !== "*OK") throw new Error("El circuito rechazó la calibración.");
+    let before = null;
+    try { before = (await this.read())?.ph ?? null; } catch { /* the calibration can go on without it */ }
+    let answer = "";
+    let ok = false;
+    try {
+      if (this.protocol === "AQUASENSE_ESP32") {
+        await this.#write(`CAL:${point}:${value.toFixed(2)}`);
+        answer = await this.#nextLine((l) => (l.startsWith("OK") || l.startsWith("ERR") ? l : null), 5000);
+        if (!answer.startsWith("OK")) throw new Error(`El medidor rechazó la calibración (${answer}).`);
+      } else {
+        await this.#write(`Cal,${point.toLowerCase()},${value.toFixed(2)}`);
+        answer = await this.#nextLine((l) => (l === "*OK" || l === "*ER" ? l : null), 5000);
+        if (answer !== "*OK") throw new Error("El circuito rechazó la calibración.");
+      }
+      ok = true;
+    } finally {
+      api.post("/calibrations", {
+        deviceName: this.name || "Medidor USB", protocol: this.protocol, point, bufferValue: value,
+        reading: before !== null && before >= 0 && before <= 14 ? Math.round(before * 100) / 100 : null,
+        response: String(answer || "sin respuesta").slice(0, 200), success: ok,
+      }).then(() => bus.emit("calibration:saved")).catch(() => { /* the meter is calibrated even if the history could not be saved */ });
     }
   }
 
