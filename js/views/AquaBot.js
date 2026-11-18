@@ -40,13 +40,17 @@ const write = (store, key, value) => { try { store.setItem(key, value); } catch 
 export const TOUR_STEPS = [
   { target: null, title: "¡Hola! Soy Aqua", text: "Te ayudo a cuidar el pH de tu agua. En un minuto te muestro dónde está cada cosa." },
   { target: '[data-tab="dashboard"]', title: "Inicio", text: "Tu última medición y si tu agua está bien para el uso que elegiste." },
-  { target: '[data-tab="measure"]', title: "Medir", text: "El botón más importante: registra el pH con tu medidor, con una foto o escribiendo el valor." },
   { target: '[data-tab="history"]', title: "Historial", text: "Todas tus mediciones con gráficas, filtros y descarga." },
   { target: '[data-tab="places"]', title: "Lugares", text: "Si tienes piscina y acuario, cada uno lleva su propio historial. Arriba ves en cuál estás y lo cambias con un toque." },
   { target: '[data-tab="care"]', title: "Cuidado", text: "Calculadora de dosis, registro de lo que le echas al agua y recordatorios que te llegan al celular o al correo." },
+  { target: '[data-tab="measure"]', title: "Medir", text: "El botón más importante: registra el pH con tu medidor, con una foto o escribiendo el valor." },
   { target: '[data-tab="profiles"]', title: "Perfiles", text: "Piscina, acuario, agua potable, riego… cada uno cambia el rango ideal de pH." },
   { target: '[data-tab="devices"]', title: "Medidor", text: "Conecta aquí tu medidor de pH por USB o usa la cámara para leer su pantalla." },
-  { target: '[data-tab="settings"]', title: "Todo está en la barra", text: "Datos oficiales, sesiones, tu plan y la configuración también están aquí. En el celular, desliza la barra hacia los lados." },
+  { target: '[data-tab="official"]', title: "Datos oficiales", text: "El pH real que miden hoy las estaciones del Servicio Geológico de EE. UU., para comparar tu agua con ríos de referencia." },
+  { target: '[data-tab="sessions"]', title: "Sesiones", text: "Cada vez que entras queda una sesión: cuándo empezó, desde qué equipo y qué hiciste. Desde aquí cierras las sesiones abiertas en otros equipos." },
+  { target: '[data-tab="billing"]', title: "Plan", text: "Tu plan actual y lo que incluye Premium: más días de análisis, predicciones más largas y más consultas de IA." },
+  { target: '[data-tab="settings"]', title: "Configuración", text: "Tema claro u oscuro, idioma, voz de Aqua, avisos al celular o por correo y tu cuenta. En el celular, desliza la barra hacia los lados para ver todo." },
+  { target: '[data-tab="admin"]', title: "Admin", text: "Solo para administradores: cuentas, planes, actividad y el consumo de la IA." },
   { target: "[data-bell]", title: "Alertas", text: "Si una medición sale del rango, te aviso aquí." },
   { target: "[data-account]", title: "Tu cuenta", text: "Toca tu inicial o tu nombre para ver tu cuenta y para «Cerrar sesión»." },
   { target: "[data-aqua]", title: "Y aquí estoy yo", text: "Tócame para chatear conmigo, pedir un diagnóstico, predecir tu pH o armar un informe. Toda la IA está aquí." },
@@ -197,7 +201,8 @@ export class AquaBot {
     this.close({ focusBot: false });
     this.hideSay();
     window.scrollTo({ top: 0 });
-    await startTour(TOUR_STEPS);
+    // Only the buttons this person has (Admin appears only for administrators), in the order of the bar.
+    await startTour(TOUR_STEPS.filter((step) => !step.target || document.querySelector(step.target)));
     this.onTourEnd();
     if (session.user?.id) write(localStorage, TOUR_KEY(session.user.id), String(Date.now()));
   }
