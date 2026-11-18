@@ -12,8 +12,47 @@
 .aqua-ring { position: absolute; inset: 8px 6px 0; border-radius: 50%; border: 2px solid var(--primary-2); opacity: 0; animation: aqua-ping 3.4s ease-out infinite; pointer-events: none; }
 .aqua.open .aqua-ring, .aqua.on-ai .aqua-ring { display: none; }
 .aqua.on-ai .aqua-bot::after { content: ""; position: absolute; right: 4px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--ok); border: 2px solid var(--bg); }
+/* ---------- Aqua comes alive: water sways inside the drop, bubbles rise, the eyes blink and follow the pointer ---------- */
 .aqua-face .aqua-eye { animation: aqua-blink 4.6s infinite; transform-origin: center; transform-box: fill-box; }
+.aqua-face .aqua-eyes { transform: translate(var(--look-x, 0px), var(--look-y, 0px)); transition: transform .25s ease-out; }
 .aqua-face .aqua-antenna { animation: aqua-wiggle 4s ease-in-out infinite; transform-origin: 60px 14px; }
+.aqua-face .aqua-light { animation: aqua-glow 2.6s ease-in-out infinite; }
+.aqua-face .aqua-wave-back { animation: aqua-wave 5s linear infinite; }
+.aqua-face .aqua-wave-front { animation: aqua-wave 3.2s linear infinite reverse; }
+.aqua-face .aqua-bubble { animation: aqua-rise 3.4s ease-in infinite; opacity: 0; transform-box: fill-box; }
+.aqua-face .aqua-bubble.b2 { animation-delay: .9s; } .aqua-face .aqua-bubble.b3 { animation-delay: 1.7s; } .aqua-face .aqua-bubble.b4 { animation-delay: 2.5s; }
+.aqua-face .aqua-mouth-open { opacity: 0; transform-origin: 60px 86.5px; transform-box: view-box; }
+.aqua-face .aqua-body { transform-origin: 60px 110px; transform-box: view-box; }
+@keyframes aqua-wave { 0% { transform: translate(0, 0); } 50% { transform: translate(30px, 2px); } 100% { transform: translate(60px, 0); } }
+@keyframes aqua-rise { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: .85; } 100% { transform: translateY(-34px); opacity: 0; } }
+@keyframes aqua-glow { 0%, 100% { fill: #9fe7ff; } 50% { fill: #d6f6ff; } }
+/* Talking: the mouth opens and closes. */
+.aqua.talking .aqua-bot .aqua-mouth { opacity: 0; }
+.aqua.talking .aqua-bot .aqua-mouth-open { opacity: 1; animation: aqua-talk .32s ease-in-out infinite alternate; }
+@keyframes aqua-talk { from { transform: scaleY(.25); } to { transform: scaleY(1); } }
+/* Thinking (an AI request is running anywhere in the app): the antenna flashes and the eyes look up. */
+.aqua.thinking .aqua-bot .aqua-light { animation: aqua-think .7s ease-in-out infinite; }
+.aqua.thinking .aqua-bot .aqua-eyes { transform: translate(1.5px, -2.4px); }
+.aqua.thinking .aqua-bot .aqua-antenna { animation-duration: 1.2s; }
+.aqua.thinking .aqua-bot { filter: drop-shadow(0 0 14px rgba(47, 208, 242, .7)) drop-shadow(0 8px 14px rgba(10, 80, 150, .35)); }
+@keyframes aqua-think { 0%, 100% { fill: #9fe7ff; } 33% { fill: #2fd27a; } 66% { fill: #ffd166; } }
+/* Little tricks now and then. */
+.aqua.trick-jump .aqua-bot .aqua-face { transform-origin: 50% 95%; animation: aqua-jump 1.1s cubic-bezier(.3, .7, .4, 1); }
+@keyframes aqua-jump { 0% { transform: none; } 20% { transform: scale(1.12, .86); } 45% { transform: translateY(-14px) scale(.94, 1.08); } 70% { transform: scale(1.06, .94); } 100% { transform: none; } }
+.aqua.trick-wink .aqua-bot .aqua-eye:last-child { animation: aqua-wink 1.2s ease-in-out; }
+@keyframes aqua-wink { 0%, 100% { transform: scaleY(1); } 30%, 60% { transform: scaleY(.12); } }
+.aqua.trick-look-around .aqua-bot .aqua-eyes { animation: aqua-look 1.5s ease-in-out; }
+@keyframes aqua-look { 0%, 100% { transform: none; } 25% { transform: translate(-3px, 0); } 60% { transform: translate(3px, -1px); } }
+.aqua.trick-spin .aqua-bot .aqua-face { animation: aqua-spin 1.2s cubic-bezier(.4, 0, .2, 1); }
+@keyframes aqua-spin { 0% { transform: rotate(0); } 70% { transform: rotate(370deg); } 100% { transform: rotate(360deg); } }
+/* A tap splashes droplets around the robot. */
+.aqua-splash { position: absolute; inset: 0; pointer-events: none; }
+.aqua-splash i { position: absolute; left: 50%; top: 55%; width: 7px; height: 9px; margin: -4px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: #3fb4ff; opacity: 0; }
+.aqua.splash .aqua-splash i { animation: aqua-drop .6s ease-out; }
+.aqua.splash .aqua-splash i:nth-child(1) { --dx: -30px; --dy: -26px; } .aqua.splash .aqua-splash i:nth-child(2) { --dx: 30px; --dy: -26px; }
+.aqua.splash .aqua-splash i:nth-child(3) { --dx: -38px; --dy: 4px; } .aqua.splash .aqua-splash i:nth-child(4) { --dx: 38px; --dy: 4px; }
+.aqua.splash .aqua-splash i:nth-child(5) { --dx: -16px; --dy: -42px; } .aqua.splash .aqua-splash i:nth-child(6) { --dx: 16px; --dy: -42px; }
+@keyframes aqua-drop { 0% { transform: translate(0, 0) scale(.6); opacity: .95; } 100% { transform: translate(var(--dx), var(--dy)) scale(1); opacity: 0; } }
 @keyframes aqua-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 @keyframes aqua-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
 @keyframes aqua-wiggle { 0%, 70%, 100% { transform: rotate(0); } 78% { transform: rotate(-12deg); } 86% { transform: rotate(10deg); } }

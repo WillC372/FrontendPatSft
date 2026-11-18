@@ -2,6 +2,12 @@ import { session } from "./Session.js";
 import { bus } from "./EventBus.js";
 import { waitForServer } from "./ServerWake.js";
 import { SseParser } from "./SseParser.js";
+import { ApiCache } from "./ApiCache.js";
+
+export const apiCache = new ApiCache();
+apiCache.startSweeping();
+// Another account (or none) must never see answers kept for the previous one.
+bus.on("session:changed", () => apiCache.clear());
 
 export class ApiError extends Error {
   constructor(status, message, fields = {}) {
@@ -9,6 +15,16 @@ export class ApiError extends Error {
     this.status = status;
     this.fields = fields;
   }
+}
+
+// Requests that make the AI work (analyses, chat, photo reading): Aqua shows it is thinking while any is running.
+const AI_WORK = /^\/(intelligence|vision)\//;
+let aiBusy = 0;
+function aiWork(method, path) {
+  if (method === "GET" || !AI_WORK.test(path)) return () => {};
+  bus.emit("ai:busy", ++aiBusy);
+  let done = false;
+  return () => { if (!done) { done = true; bus.emit("ai:busy", --aiBusy); } };
 }
 
 // Single REST client of the application: adds the token, normalizes errors and notifies when the session expires.
@@ -45,7 +61,20 @@ class ApiClient {
     return false;
   }
 
-  async request(method, path, { body, query, raw = false, retried = false } = {}) {
+  async request(method, path, options = {}) {
+    const finished = aiWork(method, path);
+    // A change (save, delete, analysis...) makes the kept answers old: they are dropped before and after it.
+    const changes = method !== "GET";
+    if (changes) apiCache.clear();
+    try {
+      return await this.#request(method, path, options);
+    } finally {
+      finished();
+      if (changes) apiCache.clear();
+    }
+  }
+
+  async #request(method, path, { body, query, raw = false, retried = false } = {}) {
     let response;
     const sentToken = session.token;
     // A free hosted backend sleeps when idle: if the answer takes long, the UI explains why.
@@ -63,7 +92,7 @@ class ApiClient {
       // repeat the request once; changes are not repeated automatically to avoid saving something twice.
       bus.emit("api:slow");
       const up = await waitForServer(() => {});
-      if (up && method === "GET" && !retried) return this.request(method, path, { body, query, raw, retried: true });
+      if (up && method === "GET" && !retried) return this.#request(method, path, { body, query, raw, retried: true });
       throw new ApiError(0, up
         ? "Se perdió la conexión con el servidor por un momento. Vuelve a intentarlo."
         : "No se pudo conectar con el servidor. Revisa tu conexión a internet e inténtalo de nuevo.");
@@ -72,7 +101,7 @@ class ApiClient {
     }
     if (response.status === 401 && !this.#unauthorized(sentToken) && session.token && session.token !== sentToken && method === "GET" && !retried) {
       // The token changed while this read was on its way: it is repeated with the new one.
-      return this.request(method, path, { body, query, raw, retried: true });
+      return this.#request(method, path, { body, query, raw, retried: true });
     }
     if (!response.ok) {
       let payload = {};
@@ -86,6 +115,17 @@ class ApiClient {
   }
 
   async upload(path, formData, method = "POST") {
+    const finished = aiWork(method, path);
+    apiCache.clear();
+    try {
+      return await this.#upload(path, formData, method);
+    } finally {
+      finished();
+      apiCache.clear();
+    }
+  }
+
+  async #upload(path, formData, method) {
     let response;
     const sentToken = session.token;
     const slow = setTimeout(() => bus.emit("api:slow"), 5000);
@@ -114,6 +154,17 @@ class ApiClient {
    * resolves when the server closes the stream. Errors before the first event are thrown like {@code request}.
    */
   async stream(path, body, onEvent, signal) {
+    const finished = aiWork("POST", path);
+    apiCache.clear();
+    try {
+      return await this.#stream(path, body, onEvent, signal);
+    } finally {
+      finished();
+      apiCache.clear();
+    }
+  }
+
+  async #stream(path, body, onEvent, signal) {
     let response;
     const sentToken = session.token;
     try {
@@ -140,7 +191,7 @@ class ApiClient {
     parser.end().forEach((e) => onEvent(e.name, e.data));
   }
 
-  get(path, query) { return this.request("GET", path, { query }); }
+  get(path, query) { return apiCache.get(path, query, () => this.request("GET", path, { query })); }
   post(path, body, query) { return this.request("POST", path, { body, query }); }
   put(path, body) { return this.request("PUT", path, { body }); }
   patch(path, body) { return this.request("PATCH", path, { body }); }
