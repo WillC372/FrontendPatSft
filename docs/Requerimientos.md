@@ -40,7 +40,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 | [RF-25](#rf-25) | Recordatorios y avisos fuera de la app | Como usuario, quiero que la app me recuerde medir o limpiar el filtro y me avise si el agua sale de rango aunque no la tenga abierta, para no olvidar el mantenimiento ni enterarme tarde de un problema. | Parcial | [MockUp41](mockups/MockUp41.png) |
 | [RF-26](#rf-26) | Compartir un lugar con un código | Como dueño de un lugar, quiero compartirlo con mi familia o mi técnico mediante un código, para que lo vean o midan desde su propia cuenta. | Hecho | [MockUp39](mockups/MockUp39.png) |
 | [RF-27](#rf-27) | Historial de calibraciones | Como usuario con medidor, quiero ver cada calibración que hice, para saber cuándo recalibrar o cambiar la sonda. | Hecho | [MockUp43](mockups/MockUp43.png) |
-| [RF-28](#rf-28) | Toda la app en el idioma elegido | Como usuario que no habla español, quiero elegir mi idioma entre 61 opciones y ver toda la app en él, para entender y usar todas las funciones. | Hecho | [MockUp44](mockups/MockUp44.png), [MockUp45](mockups/MockUp45.png) |
+| [RF-28](#rf-28) | Toda la app en el idioma elegido | Como usuario que no habla español, quiero elegir mi idioma (español, inglés, francés, alemán, italiano, chino o japonés) y ver toda la app en él, para entender y usar todas las funciones. | Hecho | [MockUp44](mockups/MockUp44.png), [MockUp45](mockups/MockUp45.png) |
 | [RF-29](#rf-29) | Voz de Aqua | Como usuario, quiero que Aqua me salude y me lea sus respuestas con una voz natural, y poder apagarla, para usar el asistente sin tener que leer todo. | Hecho | [MockUp44](mockups/MockUp44.png) |
 
 ## Requerimientos no funcionales
@@ -597,17 +597,18 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Toda la app en el idioma elegido** · Funcional · Estado: Hecho
 
-**Como** usuario que no habla español, **quiero** elegir mi idioma entre 61 opciones y ver toda la app en él, **para** entender y usar todas las funciones.
+**Como** usuario que no habla español, **quiero** elegir mi idioma (español, inglés, francés, alemán, italiano, chino o japonés) y ver toda la app en él, **para** entender y usar todas las funciones.
 
-**Descripción.** Selector en Configuración y en la pantalla de inicio de sesión. Un traductor cambia cada texto, botón, etiqueta, mensaje y aviso de la pantalla, incluidos los que aparecen después. Cada texto se traduce una vez por idioma con la IA y el servidor lo guarda y comparte, así que después es inmediato; las negritas y los enlaces dentro de una frase se conservan con marcadores y los números viajan como {0}. Fechas, números y tiempos relativos usan el formato del idioma y el árabe, el hebreo, el persa y el urdu se muestran de derecha a izquierda. Las respuestas de la IA, los diagnósticos, los informes del agente, los correos y las notificaciones también salen en el idioma de la persona; el PDF del servidor, en los idiomas de escritura latina, griega o cirílica, y en los demás se imprime la pantalla ya traducida. Lo que escribe la persona (nombres, notas, chats) no se traduce.
+**Descripción.** Selector en Configuración y en la pantalla de inicio de sesión. Un traductor cambia cada texto, botón, etiqueta, mensaje y aviso de la pantalla, incluidos los que aparecen después. Los 2130 textos de la app y de los mensajes del servidor se extraen del código y el servidor los mantiene traducidos de antemano con la IA, con el mismo tono en cada idioma (tuteo en francés, alemán e italiano; forma cortés en japonés), así que cambiar de idioma es inmediato; lo que aún no esté traducido se traduce al aparecer y queda guardado para todos; las negritas y los enlaces dentro de una frase se conservan con marcadores y los números viajan como {0}. Fechas, números y tiempos relativos usan el formato del idioma. Las respuestas de la IA, los diagnósticos, los informes del agente, los correos y las notificaciones también salen en el idioma de la persona; el PDF del servidor también, con una fuente propia para el chino y el japonés. Lo que escribe la persona (nombres, notas, chats) no se traduce.
 
 **Criterios de aceptación**
 
 - [x] Al elegir un idioma la app se recarga en él y la elección queda en la cuenta.
-- [x] En inglés, las pantallas principales no muestran textos en español (prueba automática en 17 pantallas).
+- [x] En cada idioma, las pantallas y los diálogos principales no muestran textos en español (prueba automática).
 - [x] Si la traducción de un texto falla, se muestra en español y se reintenta.
 - [x] Las cuentas de demostración guardan el idioma solo en el navegador.
-- [x] La primera vez en un idioma sin traducciones guardadas la pantalla tarda unos segundos en traducirse.
+- [x] Un idioma que ya no se ofrece vuelve a español sin errores.
+- [x] El PDF en chino y japonés muestra los caracteres (sin signos «?»).
 
 **MockUp44** · Idioma y voz de Aqua en Configuración
 
