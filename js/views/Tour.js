@@ -61,7 +61,8 @@ export function startTour(steps) {
         return;
       }
       // The frame covers the element and whatever it draws outside its own box (the raised circle of "Medir").
-      const r = [...el.querySelectorAll("*")].reduce((box, child) => {
+      // Shapes inside a drawing count by the drawing's own box: theirs ignore the clipping (Aqua's water is wider).
+      const r = [...el.querySelectorAll("*")].filter((child) => !child.parentElement?.closest("svg")).reduce((box, child) => {
         const c = child.getBoundingClientRect();
         if (!c.width || !c.height) return box;
         return { left: Math.min(box.left, c.left), top: Math.min(box.top, c.top), right: Math.max(box.right, c.right), bottom: Math.max(box.bottom, c.bottom) };
@@ -70,7 +71,9 @@ export function startTour(steps) {
       r.height = r.bottom - r.top;
       const pad = 6;
       spot.hidden = false;
-      Object.assign(spot.style, { left: `${r.left - pad}px`, top: `${r.top - pad}px`, width: `${r.width + pad * 2}px`, height: `${r.height + pad * 2}px` });
+      // The frame stays inside the screen, so its border is seen whole even around Aqua in the corner.
+      const box = { left: Math.max(8, r.left - pad), top: Math.max(8, r.top - pad), right: Math.min(vw - 8, r.right + pad), bottom: Math.min(vh - 8, r.bottom + pad) };
+      Object.assign(spot.style, { left: `${box.left}px`, top: `${box.top}px`, width: `${box.right - box.left}px`, height: `${box.bottom - box.top}px` });
       const left = Math.min(Math.max(12, r.left + r.width / 2 - cw / 2), vw - cw - 12);
       card.style.left = `${left}px`;
       const below = r.top + r.height / 2 < vh / 2;
@@ -81,9 +84,13 @@ export function startTour(steps) {
       arrow.style.left = `${Math.min(Math.max(18, r.left + r.width / 2 - left), cw - 18)}px`;
     };
 
+    let still = null;
     const show = (i) => {
       index = i;
       const step = steps[i];
+      still?.classList.remove("tour-target");
+      still = targetOf(step);
+      still?.classList.add("tour-target");
       // A button hidden at the side of the sliding bar (phones) is brought into view before pointing at it.
       targetOf(step)?.scrollIntoView({ block: "nearest", inline: "center", behavior: "auto" });
       overlay.querySelector("[data-count]").textContent = `Paso ${i + 1} de ${steps.length}`;
@@ -103,6 +110,7 @@ export function startTour(steps) {
     const end = () => {
       if (running !== handle) return;
       running = null;
+      still?.classList.remove("tour-target");
       window.removeEventListener("resize", place);
       window.removeEventListener("scroll", place, true);
       document.removeEventListener("keydown", onKey, true);
