@@ -116,10 +116,10 @@ export async function agentReportPane(host) {
     run.querySelector("[data-pdf]")?.addEventListener("click", async (e) => {
       const button = e.currentTarget;
       button.disabled = true;
-      try { await api.download(`/intelligence/agent-reports/${r.id}/pdf`, {}, "aquasense-informe-agente.pdf"); } catch (err) { toast(err.message, "error"); } finally { button.disabled = false; }
+      try { await api.download(`/intelligence/agent-reports/${r.id}/pdf`, {}, "aqua-assistant-informe-agente.pdf"); } catch (err) { toast(err.message, "error"); } finally { button.disabled = false; }
     });
     run.querySelector("[data-download]")?.addEventListener("click", async () => {
-      try { await api.download(`/intelligence/agent-reports/${r.id}/text`, {}, "aquasense-informe-agente.txt"); } catch (e) { toast(e.message, "error"); }
+      try { await api.download(`/intelligence/agent-reports/${r.id}/text`, {}, "aqua-assistant-informe-agente.txt"); } catch (e) { toast(e.message, "error"); }
     });
     await renderCharts(run, r);
   };

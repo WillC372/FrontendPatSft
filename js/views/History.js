@@ -229,7 +229,7 @@ export const historyView = {
     root.querySelector("[data-export]").addEventListener("click", async () => {
       try {
         // The same period and filters as the table.
-        await api.download("/measurements/export", { ...range(), source: state.source, status: state.status }, "aquasense-mediciones.csv");
+        await api.download("/measurements/export", { ...range(), source: state.source, status: state.status }, "aqua-assistant-mediciones.csv");
       } catch (error) {
         toast(error.message, "error");
       }
@@ -246,7 +246,7 @@ export const historyView = {
           toast(start ? `El informe PDF cubre desde el ${start.toLocaleDateString("es")} hasta hoy (${days} días).`
             : "Sin fechas elegidas, el informe PDF cubre los últimos 7 días.", "info", 6000);
         }
-        await api.download("/reports/pdf", { days }, "aquasense-informe.pdf");
+        await api.download("/reports/pdf", { days }, "aqua-assistant-informe.pdf");
       } catch (error) {
         toast(error.message, "error");
       } finally {

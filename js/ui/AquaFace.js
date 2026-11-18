@@ -1,4 +1,4 @@
-// Aqua, the water-drop robot that represents the AI of AquaSense.
+// Aqua, the water-drop robot that represents the AI of Aqua Assistant.
 let seq = 0;
 
 export function aquaFace(cls = "") {

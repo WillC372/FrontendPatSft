@@ -42,8 +42,8 @@ test("a conversation is exported with each turn and the sources of each answer",
     ],
   }, new Date(2026, 10, 13, 10, 0));
   const lines = text.split("\n");
-  assert.equal(lines[0], "AquaSense AI · pH de mi piscina");
+  assert.equal(lines[0], "Aqua Assistant AI · pH de mi piscina");
   assert.ok(lines.includes("Tú: ¿Qué pH debe tener?"));
-  assert.ok(lines.includes("AquaSense IA (gemini-3.5-flash-lite):"));
+  assert.ok(lines.includes("Aqua · IA (gemini-3.5-flash-lite):"));
   assert.ok(text.includes("Entre 7,2 y 7,8 [1].\n\nFuentes:\n[1] CDC, Model Aquatic Health Code. https://www.cdc.gov/y"));
 });

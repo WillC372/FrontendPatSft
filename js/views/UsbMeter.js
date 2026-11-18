@@ -8,7 +8,7 @@ import { modal, toast, withBusy } from "../ui/Components.js";
 const CONTINUOUS_EVERY_MS = 10000;
 const HELP = {
   TEXT_METER: "Para medidores de laboratorio o de mesa con salida USB o RS-232 (con un adaptador USB-serie). El medidor envía el valor como texto cuando pulsas su botón de enviar o imprimir (Print, Send, Data) o cada cierto tiempo. Se calibra desde sus propios botones.",
-  AQUASENSE_ESP32: "Para el medidor armado con ESP32 y el firmware AquaSense incluido en el proyecto. Velocidad: 9600.",
+  AQUASENSE_ESP32: "Para el medidor armado con ESP32 y el firmware Aqua Assistant incluido en el proyecto. Velocidad: 9600.",
   ATLAS_EZO: "Para el circuito Atlas Scientific EZO-pH en modo UART, con un adaptador USB-serie. Velocidad por defecto: 9600.",
 };
 
@@ -24,14 +24,14 @@ export function usbMeter(host) {
       host.innerHTML = `
         <div class="card-head"><div class="card-title">${icon("usb")}Medidor conectado a este equipo</div><span class="badge">No disponible</span></div>
         <div class="banner banner-info">${icon("info")}<div><strong>Este navegador no puede conectar medidores USB.</strong>
-          <p>Abre AquaSense en <strong>Google Chrome</strong> o <strong>Microsoft Edge</strong> en un computador (Windows, macOS, Linux o ChromeOS).
+          <p>Abre Aqua Assistant en <strong>Google Chrome</strong> o <strong>Microsoft Edge</strong> en un computador (Windows, macOS, Linux o ChromeOS).
           En el celular, o con un medidor sin cable de datos, usa el <strong>medidor por cámara</strong> de abajo.</p></div></div>`;
       return;
     }
     if (!browserMeter.connected) {
       host.innerHTML = `
         <div class="card-head"><div class="card-title">${icon("usb")}Medidor conectado a este equipo</div><span class="badge">Desconectado</span></div>
-        <p class="muted">Conecta tu medidor de pH por USB (o por Bluetooth emparejado como puerto serie) al computador desde el que usas AquaSense.
+        <p class="muted">Conecta tu medidor de pH por USB (o por Bluetooth emparejado como puerto serie) al computador desde el que usas Aqua Assistant.
           El navegador lee el medidor y guarda cada medición como real.</p>
         <div class="usb-form">
           <div class="field"><label for="usb-protocol">Tipo de medidor</label>
@@ -73,7 +73,7 @@ export function usbMeter(host) {
             ${p.calibrates ? `<button class="btn" data-usb-cal>${icon("target")}Calibrar</button>` : ""}
             <button class="btn btn-danger" data-usb-off>${icon("link")}Desconectar</button>
           </div>
-          ${browserMeter.protocol === "TEXT_METER" ? `<p class="muted usb-help">${icon("info")}<span>Al pulsar Medir, AquaSense espera el siguiente valor que envíe el medidor (hasta 15 s): pulsa su botón de enviar o imprimir.</span></p>` : ""}
+          ${browserMeter.protocol === "TEXT_METER" ? `<p class="muted usb-help">${icon("info")}<span>Al pulsar Medir, Aqua Assistant espera el siguiente valor que envíe el medidor (hasta 15 s): pulsa su botón de enviar o imprimir.</span></p>` : ""}
           <div><span class="muted" style="font-size:12px">Últimas líneas recibidas del medidor</span><pre class="usb-lines" data-usb-lines>${esc(lines.join("\n")) || "(todavía nada)"}</pre></div>
         </div>
       </div>`;

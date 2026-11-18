@@ -40,7 +40,7 @@ function buyCard(p) {
       <div class="price"><span class="amount">${cop(p.price)}</span><span class="per">por ${p.periodDays} días</span></div>
       <p class="muted">Pago único por periodo: sin cobros automáticos y sin guardar tu tarjeta. ${renew ? "Si renuevas antes de que venza, los días se suman a tu fecha actual." : ""}</p>
       <button class="btn btn-primary btn-pill" data-pay ${p.paymentsEnabled ? "" : "disabled"}>${icon("card")}${renew ? "Renovar con PayU" : "Pagar con PayU"}</button>
-      <p class="secure">${icon("shield")}Pagas en la página segura de ${esc(p.provider)}. AquaSense nunca ve los datos de tu tarjeta y activa Premium solo después de confirmar el pago con PayU.</p>
+      <p class="secure">${icon("shield")}Pagas en la página segura de ${esc(p.provider)}. Aqua Assistant nunca ve los datos de tu tarjeta y activa Premium solo después de confirmar el pago con PayU.</p>
     </section>`;
 }
 

@@ -57,7 +57,7 @@ export function cameraMeter(host) {
   host.innerHTML = `
     <div class="card-head"><div class="card-title">${icon("camera")}Medidor por cámara</div>
       <span class="badge" data-cam-state>Apagada</span></div>
-    <p class="muted">Para medidores sin cable de datos: apunta la cámara a la pantalla del medidor de pH. AquaSense lee el número con IA
+    <p class="muted">Para medidores sin cable de datos: apunta la cámara a la pantalla del medidor de pH. Aqua Assistant lee el número con IA
       cuando cambia y se estabiliza, y lo guarda como medición. La imagen se analiza en tu equipo y solo se envía un cuadro por lectura.</p>
     <div class="cam-grid">
       <div>

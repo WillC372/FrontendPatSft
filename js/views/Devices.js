@@ -9,7 +9,7 @@ import { cameraMeter } from "./CameraMeter.js";
 import { usbMeter } from "./UsbMeter.js";
 
 const PROTOCOLS = [
-  ["AQUASENSE_ESP32", "Firmware AquaSense ESP32"],
+  ["AQUASENSE_ESP32", "Firmware Aqua Assistant ESP32"],
   ["ATLAS_EZO", "Atlas Scientific EZO-pH (UART)"],
 ];
 const TRANSPORT = { SIMULADO: "Simulación", USB_SERIAL: "USB / serie", BLUETOOTH_SPP: "Bluetooth (SPP)" };
@@ -23,7 +23,7 @@ export const devicesView = {
       <section class="card glow reveal" data-usb-meter></section>
       <section class="card reveal camera-meter" data-camera-meter></section>
       <div class="stack" data-server-section hidden>
-      <h2 class="section-title">Medidor conectado al servidor <small class="muted">(solo cuando AquaSense corre en el mismo computador del medidor)</small></h2>
+      <h2 class="section-title">Medidor conectado al servidor <small class="muted">(solo cuando Aqua Assistant corre en el mismo computador del medidor)</small></h2>
       <div class="grid grid-2">
         <section class="card glow reveal">
           <div class="card-head"><div class="card-title">${icon("bluetooth")}Dispositivos</div>
@@ -31,7 +31,7 @@ export const devicesView = {
           <div class="radar" data-radar><div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="core">${icon("bluetooth")}</div></div>
           <p style="text-align:center;margin-top:8px" data-scan-label><strong>Buscando dispositivos...</strong></p>
           <div class="stack" style="margin-top:14px" data-list>${loading()}</div>
-          <div class="banner banner-info" style="margin-top:14px">${icon("info")}<p>Asegúrate de que tu medidor esté encendido y conectado al equipo donde corre el servidor de AquaSense. Para Bluetooth, empareja primero el dispositivo desde el sistema operativo.</p></div>
+          <div class="banner banner-info" style="margin-top:14px">${icon("info")}<p>Asegúrate de que tu medidor esté encendido y conectado al equipo donde corre el servidor de Aqua Assistant. Para Bluetooth, empareja primero el dispositivo desde el sistema operativo.</p></div>
         </section>
         <div class="stack">
           <section class="card reveal" data-status-card>${loading()}</section>

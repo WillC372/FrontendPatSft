@@ -22,7 +22,8 @@
   .auth { grid-template-columns: 1fr; }
   .auth-hero { min-height: 280px; border-right: 0; border-bottom: 1px solid var(--border); padding: 28px 16px; }
   .auth-hero-content .brand-logo { width: 80px; height: 80px; }
-  .auth-hero-features { display: none; }
+  .auth-hero-features { gap: 20px; margin-top: 8px; }
+  .auth-hero-features svg { width: 24px; height: 24px; }
 }
 
 /* Dashboard */

@@ -27,12 +27,12 @@ export function copyText(text, citations = []) {
  * numbered sources. {@code conversation}: { title, messages: [{ role, content, model, citations }] }.
  */
 export function conversationText(conversation, exportedAt = new Date()) {
-  const lines = [`AquaSense AI · ${conversation.title || "Conversación"}`, `Exportada el ${exportedAt.toLocaleString("es")}`, ""];
+  const lines = [`Aqua Assistant AI · ${conversation.title || "Conversación"}`, `Exportada el ${exportedAt.toLocaleString("es")}`, ""];
   for (const m of conversation.messages || []) {
     if (m.role === "USER") {
       lines.push(`Tú: ${String(m.content).trim()}`, "");
     } else {
-      lines.push(`AquaSense IA${m.model ? ` (${m.model})` : ""}:`, copyText(m.content, m.citations || []), "");
+      lines.push(`Aqua · IA${m.model ? ` (${m.model})` : ""}:`, copyText(m.content, m.citations || []), "");
     }
   }
   lines.push("Respuestas generadas por IA a partir de tus datos y de las normas citadas. Verifica la norma aplicable a tu caso.");

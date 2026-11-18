@@ -1,6 +1,6 @@
-# AquaSense AI · Frontend
+# Aqua Assistant AI · Frontend
 
-Interfaz web de **AquaSense AI** para monitorear el pH del agua. Muestra las mediciones, controla el medidor, presenta los análisis de AquaSense Intelligence y aplica el diseño de los mockups: tema oscuro con efecto vidrio, indicador circular de pH, ondas de agua animadas y tema claro opcional.
+Interfaz web de **Aqua Assistant AI** para monitorear el pH del agua. Muestra las mediciones, controla el medidor, presenta los análisis de la IA de Aqua y aplica el diseño de los mockups: tema oscuro con efecto vidrio, indicador circular de pH, ondas de agua animadas y tema claro opcional.
 
 > Backend: carpeta [`../Backend`](../Backend) (repositorio [BackendPatSft](https://github.com/WillC372/BackendPatSft)).
 
@@ -22,7 +22,7 @@ Presentar la información y recoger las acciones del usuario. **Toda la lógica 
 - **Medición**: "Medir ahora" con el medidor conectado (resultado con clasificación, fecha, dispositivo, perfil, explicación y validación; guardar o descartar), modo en tiempo real por SSE y registro manual.
 - **Historial**: 7 o 30 días, rango personalizado, filtros por origen y estado, tabla paginada, borrado con confirmación, exportación CSV. Las gráficas (evolución y distribución) se generan solo cuando el usuario las pide.
 - **Diagnóstico IA**: riesgo con anillo animado, hallazgos con evidencia, causas probables, plan de acción priorizado, datos faltantes, confianza, salvaguardas aplicadas e historial. Indica qué proveedor respondió (Gemini, Groq o reglas). El último diagnóstico aparece también en el inicio.
-- **Medidor conectado a este equipo** (Conexión, `js/core/BrowserMeter.js`, `js/views/UsbMeter.js`): en Chrome o Edge, la página abre el puerto USB del medidor (o un Bluetooth emparejado como puerto serie) con Web Serial, habla su protocolo (firmware AquaSense, Atlas EZO-pH o medidor de laboratorio que envía texto), mide, calibra y guarda mediciones reales en el backend. Con el medidor conectado, "Medir" (barra inferior) ofrece medir con él.
+- **Medidor conectado a este equipo** (Conexión, `js/core/BrowserMeter.js`, `js/views/UsbMeter.js`): en Chrome o Edge, la página abre el puerto USB del medidor (o un Bluetooth emparejado como puerto serie) con Web Serial, habla su protocolo (firmware Aqua Assistant, Atlas EZO-pH o medidor de laboratorio que envía texto), mide, calibra y guarda mediciones reales en el backend. Con el medidor conectado, "Medir" (barra inferior) ofrece medir con él.
 - **Asistente IA**: responde cualquier pregunta sobre el agua y su pH (piscinas, acuarios, agua potable, riego, corrección del pH, medidores, uso de la app y tus datos) y rechaza con una frase fija los temas ajenos. La respuesta aparece **mientras se escribe** (Server-Sent Events leídos con `fetch`, `js/core/SseParser.js`); el botón **Detener** la corta y **Copiar** la lleva al portapapeles con sus fuentes numeradas. Si el modelo se congela a mitad, el servidor avisa (`restart`) y otro modelo escribe la respuesta de nuevo; si ya no queda otro, lo recibido se conserva con el motivo.
 - **Arranque del servidor**: el backend gratuito se apaga cuando nadie lo usa; la app espera a que despierte mostrando "Activando el servidor..." en vez de fallar.
 - **Medidor por cámara** (Conexión, `js/views/CameraMeter.js`): para medidores sin cable de datos. La cámara apunta a la pantalla del medidor; el navegador detecta cuándo cambia el número y solo entonces envía un cuadro a la lectura por foto del backend. Las lecturas confiables se guardan solas. Muestra la cuota de IA del día, porque cada lectura usa una consulta.
@@ -136,7 +136,7 @@ El origen del frontend debe estar en la variable `CORS_ORIGINS` del backend: `ht
 
 Vercel publica la carpeta tal cual (sin compilación) en **https://frontendpatsft.vercel.app**. `vercel.json` envía cualquier ruta a `index.html` y agrega cabeceras de seguridad:
 
-- `Content-Security-Policy`: solo el código del propio sitio (sin scripts en línea), Google Fonts, la API de AquaSense en Render y el formulario de pago de PayU.
+- `Content-Security-Policy`: solo el código del propio sitio (sin scripts en línea), Google Fonts, la API de Aqua Assistant en Render y el formulario de pago de PayU.
 - `X-Frame-Options: DENY`: la página no puede incrustarse en otros sitios.
 - `X-Content-Type-Options` y `Referrer-Policy`.
 - `Permissions-Policy`: solo la cámara y el puerto serie, y solo para este sitio.

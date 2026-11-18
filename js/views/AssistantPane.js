@@ -59,7 +59,7 @@ export async function assistantPane(host, { compact = false } = {}) {
       chat.innerHTML = `<div class="bubble ai">Hola, soy Aqua. Pregúntame sobre tus mediciones, piscinas, acuarios, agua potable, riego o calibración. Recuerdo lo que hablamos.<small class="muted">Uso tus datos, cito normas oficiales y no respondo temas ajenos al agua.</small></div>`;
       return;
     }
-    chat.innerHTML = `<div class="bubble ai">Hola, soy Aqua, el asistente de AquaSense. Pregúntame lo que quieras sobre el agua y su pH: tus mediciones, piscinas, acuarios, agua potable, riego, cómo corregir el pH, medidores y calibración, o cómo usar AquaSense. Recuerdo lo que hablamos en esta conversación.<small class="muted">Uso tus datos registrados, cito normas oficiales cuando aplican y no respondo temas ajenos al agua.</small></div>`;
+    chat.innerHTML = `<div class="bubble ai">Hola, soy Aqua, tu asistente de agua. Pregúntame lo que quieras sobre el agua y su pH: tus mediciones, piscinas, acuarios, agua potable, riego, cómo corregir el pH, medidores y calibración, o cómo usar Aqua Assistant. Recuerdo lo que hablamos en esta conversación.<small class="muted">Uso tus datos registrados, cito normas oficiales cuando aplican y no respondo temas ajenos al agua.</small></div>`;
   };
   const setMemory = (turns, omitted) => {
     memory.hidden = !turns;
@@ -200,7 +200,7 @@ export async function assistantPane(host, { compact = false } = {}) {
     try {
       const conversation = await api.get(`/intelligence/chat/conversations/${current}`);
       const file = new Blob([conversationText(conversation)], { type: "text/plain;charset=utf-8" });
-      const name = `aquasense-conversacion-${(conversation.title || "chat").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "chat"}.txt`;
+      const name = `aqua-assistant-conversacion-${(conversation.title || "chat").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "chat"}.txt`;
       const link = Object.assign(document.createElement("a"), { href: URL.createObjectURL(file), download: name });
       document.body.append(link);
       link.click();

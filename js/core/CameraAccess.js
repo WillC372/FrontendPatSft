@@ -2,14 +2,14 @@
 
 /** Clear message for a getUserMedia failure. */
 export function cameraErrorMessage(error) {
-  if (!window.isSecureContext) return "La cámara solo funciona en una página segura (https). Abre AquaSense desde su dirección https.";
+  if (!window.isSecureContext) return "La cámara solo funciona en una página segura (https). Abre Aqua Assistant desde su dirección https.";
   switch (error?.name) {
     case "NotAllowedError":
     case "SecurityError":
       return "El navegador bloqueó la cámara. Pulsa el icono del candado o de la cámara junto a la dirección, permite la cámara y vuelve a intentarlo.";
     case "NotFoundError":
     case "OverconstrainedError":
-      return "No se encontró ninguna cámara en este equipo. Conecta una cámara web o abre AquaSense en tu celular.";
+      return "No se encontró ninguna cámara en este equipo. Conecta una cámara web o abre Aqua Assistant en tu celular.";
     case "NotReadableError":
     case "AbortError":
       return "La cámara está en uso por otro programa (videollamada u otra pestaña). Ciérralo y vuelve a intentarlo.";

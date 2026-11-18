@@ -12,8 +12,7 @@ function layout(card) {
         <canvas data-waves></canvas>
         <div class="auth-hero-content">
           ${logo()}
-          <p class="auth-hero-title">AquaSense <span>AI</span></p>
-          <p>Monitorea · Analiza · Cuida</p>
+          <p class="auth-hero-title">Aqua Assistant <span>AI</span></p>
           <div class="auth-hero-features">
             <div>${icon("drop")}Mide</div><div>${icon("brain")}Analiza</div><div>${icon("shield")}Cuida</div>
           </div>
@@ -146,7 +145,7 @@ export const registerView = {
       }
       const auth = await api.post("/auth/register", { fullName: data.fullName, email: data.email, password: data.password });
       session.save(auth, false);
-      toast("Cuenta creada. ¡Bienvenido a AquaSense AI!", "ok");
+      toast("Cuenta creada. ¡Bienvenido a Aqua Assistant AI!", "ok");
       if (auth.notice) toast(auth.notice, "warn", 10000);
       ctx.router.go("dashboard");
     }, (host) => passwordChecklist(host.querySelector("#f-password")));

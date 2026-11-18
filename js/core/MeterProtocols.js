@@ -1,9 +1,9 @@
 // Protocols of the meters the browser can read over a serial port (USB, or Bluetooth paired as a serial port).
-// The rules match the backend adapters (AquaSenseFirmwareAdapter, AtlasEzoPhAdapter and TextMeterParser).
+// The rules match the backend adapters (AquaAssistantFirmwareAdapter, AtlasEzoPhAdapter and TextMeterParser).
 
 export const PROTOCOLS = {
   TEXT_METER: { label: "Medidor de laboratorio que envía texto (USB o RS-232)", eol: "\r\n", calibrates: false },
-  AQUASENSE_ESP32: { label: "Firmware AquaSense (ESP32)", eol: "\n", calibrates: true },
+  AQUASENSE_ESP32: { label: "Firmware Aqua Assistant (ESP32)", eol: "\n", calibrates: true },
   ATLAS_EZO: { label: "Atlas Scientific EZO-pH", eol: "\r", calibrates: true },
 };
 
@@ -40,7 +40,7 @@ export function parseTextLine(line) {
   return { ph: round2(ph), temperatureC };
 }
 
-/** AquaSense firmware: "PH:7.12;T:24.5" or "PH:7.12;T:NA". */
+/** Aqua Assistant firmware: "PH:7.12;T:24.5" or "PH:7.12;T:NA". */
 export function parseFirmwareLine(line) {
   if (!line || !line.startsWith("PH:")) return null;
   let ph = null;

@@ -79,7 +79,7 @@ async function show(view, route) {
     // The code of the screen could not be downloaded (connection lost, or a new version was published meanwhile).
     if (stale()) return;
     page.innerHTML = emptyState("error", "No se pudo abrir esta pantalla",
-      "Revisa tu conexión y recarga la página. Si se publicó una versión nueva de AquaSense, recargar la descarga.",
+      "Revisa tu conexión y recarga la página. Si se publicó una versión nueva de Aqua Assistant, recargar la descarga.",
       `<button class="btn btn-primary" data-reload>Recargar</button>`);
     page.querySelector("[data-reload]").addEventListener("click", () => location.reload());
     console.warn("Screen could not be rendered:", error);

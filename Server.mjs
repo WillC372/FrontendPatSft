@@ -50,4 +50,4 @@ createServer(async (req, res) => {
   } catch {
     if (!res.headersSent) send(res, 404, "No encontrado", { "Content-Type": "text/plain; charset=utf-8" });
   }
-}).listen(port, () => console.log(`AquaSense AI frontend en http://localhost:${port}`));
+}).listen(port, () => console.log(`Aqua Assistant AI frontend en http://localhost:${port}`));

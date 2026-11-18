@@ -116,7 +116,7 @@ class BrowserMeter {
     if (this.protocol === "AQUASENSE_ESP32") {
       await this.#write("PING");
       await this.#nextLine((l) => (l.startsWith("PONG") ? l : null), 4000)
-        .catch(() => { throw new Error("El dispositivo no respondió como firmware AquaSense. Revisa el tipo de medidor y la velocidad (9600)."); });
+        .catch(() => { throw new Error("El dispositivo no respondió como firmware Aqua Assistant. Revisa el tipo de medidor y la velocidad (9600)."); });
     } else if (this.protocol === "ATLAS_EZO") {
       await this.#write("C,0");
       await this.#write("i");

@@ -1,4 +1,4 @@
-// The AI functions of AquaSense. They open from Aqua (the robot), the only entry point to the AI.
+// The AI functions of Aqua Assistant. They open from Aqua (the robot), the only entry point to the AI.
 // [route key, title, icon, short explanation shown in Aqua's panel]
 export const AI_FUNCTIONS = [
   ["diagnosis", "Diagnóstico IA", "sparkle", "Revisa tus mediciones y te dice el riesgo"],

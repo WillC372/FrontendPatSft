@@ -1,6 +1,6 @@
 {
-  "name": "AquaSense AI",
-  "short_name": "AquaSense",
+  "name": "Aqua Assistant AI",
+  "short_name": "Aqua Assistant",
   "description": "Monitoreo inteligente del pH del agua.",
   "lang": "es",
   "start_url": "/#/dashboard",

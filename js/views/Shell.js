@@ -39,7 +39,7 @@ export class Shell {
         <button type="button" class="skip-link" data-skip>Saltar al contenido</button>
         <div class="main">
           <header class="topbar">
-            <a class="topbar-brand" href="#/dashboard" aria-label="AquaSense AI, ir al inicio">${logo("")}<span>AquaSense <b>AI</b></span></a>
+            <a class="topbar-brand" href="#/dashboard" aria-label="Aqua Assistant AI, ir al inicio">${logo("")}<span>Aqua Assistant <b>AI</b></span></a>
             <h1 class="topbar-h1" data-title></h1>
             <div class="topbar-actions">
               <a class="device-chip" href="#/devices" data-device-pill aria-label="Estado del medidor"></a>
@@ -79,7 +79,7 @@ export class Shell {
     const more = this.root.querySelector("[data-more]");
     more.classList.toggle("active", MORE_ROUTES.has(name));
     this.root.querySelector("[data-title]").textContent = title;
-    document.title = `${title} · AquaSense AI`;
+    document.title = `${title} · Aqua Assistant AI`;
     this.aqua.onRoute(name);
   }
 

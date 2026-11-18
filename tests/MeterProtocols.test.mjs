@@ -19,10 +19,10 @@ test("laboratory meters: lines without a clear pH are not readings", () => {
   }
 });
 
-test("AquaSense firmware lines", () => {
+test("Aqua Assistant firmware lines", () => {
   assert.deepEqual(parseFirmwareLine("PH:7.12;T:24.5"), { ph: 7.12, temperatureC: 24.5 });
   assert.deepEqual(parseFirmwareLine("PH:6.987;T:NA"), { ph: 6.99, temperatureC: null });
-  assert.equal(parseFirmwareLine("PONG AquaSense"), null);
+  assert.equal(parseFirmwareLine("PONG Aqua Assistant"), null);
   assert.equal(parseFirmwareLine("OK"), null);
 });
 
