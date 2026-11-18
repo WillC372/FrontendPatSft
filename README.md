@@ -10,16 +10,19 @@ Presentar la información y recoger las acciones del usuario. **Toda la lógica 
 
 ## Funcionalidades
 
+- **Navegación sencilla con barra inferior** (`js/views/Shell.js`), igual en computador y celular: Inicio, Historial, **Medir** (botón central: medidor, foto o escribir el valor; `MeasureSheet.js`), Perfiles y Más (conectar medidor, datos oficiales, sesiones, configuración, plan, administración y cerrar sesión). El Inicio muestra solo la última medición, qué significa y la sugerencia de Aqua.
+- **Aqua, el robot de la IA** (`js/views/AquaBot.js`, `js/ui/AquaFace.js`): una gota con cara que flota en todas las pantallas y es la única entrada a la inteligencia artificial. Al tocarlo se abre un panel para chatear (el asistente con memoria y citas), preguntar directamente o abrir cualquier función: diagnóstico, anomalías, recomendaciones, predicción, red neuronal, escenarios, aprendizaje automático, informes, biblioteca normativa, consumo y lectura por foto. Al abrir cada pantalla da un consejo corto sobre para qué sirve (se puede desactivar).
+- **Recorrido guiado** (`js/views/Tour.js`): la primera vez que una persona entra, Aqua señala cada botón con un globo de texto (Siguiente, Atrás, Saltar; también con las flechas del teclado y Esc). Se repite desde Aqua → "¿Qué puedo hacer aquí?" o desde Más → "Ver el recorrido".
 - Inicio de sesión, registro, "Recordarme", mostrar u ocultar contraseña, recuperación y restablecimiento.
 - **Foto de perfil** (`js/views/AccountDialog.js`, `js/core/Avatar.js`): el nombre de la barra superior abre "Tu cuenta", donde se sube (en el teléfono, desde la galería o la cámara), cambia o quita la foto; también desde Configuración. El navegador endereza la foto, recorta el cuadrado central y la reduce antes de enviarla; el servidor la vuelve a procesar y la guarda sin metadatos. La foto no es pública: se descarga con la sesión.
 - **Acceso de demostración**: en el inicio de sesión hay dos botones, **Usuario Premium** y **Administrador**, con su correo y la contraseña visibles. Son cuentas reales del backend con límites: no se pueden eliminar, recuperar la contraseña ni pagar, y el administrador de demostración solo consulta (ve enmascarados los datos de las cuentas reales). Una franja avisa que la cuenta es compartida.
 - **Historial de sesiones** (`#/sessions`, `js/views/Sessions.js`): cada inicio de sesión es una entrada nueva, con inicio, fin, duración, navegador y lo que se hizo (mediciones, preguntas a la IA, descargas...). El detalle muestra cada acción en orden hasta el cierre de sesión. "Cerrar mis otras sesiones" cierra las abiertas en otros equipos. El administrador ve las sesiones de cualquier cuenta.
 - **Datos oficiales** (`#/official`, `js/views/OfficialData.js`): datos reales de pH de las estaciones del Servicio Geológico de EE. UU. (USGS) que el backend importa cada 3 horas: estaciones que reportaron en 24 horas, mediana, mínimo, máximo y distribución; ocho estaciones destacadas con su serie de 24 horas, 7 o 30 días; las de pH más bajo y más alto, con enlace a la fuente. Se muestran aparte de las mediciones del usuario e indican si los valores son provisionales.
-- **Dashboard**: indicador circular de pH animado, estado del agua con escala 0-14 y rango del perfil, perfil activo, panel de AquaSense Intelligence, alertas, accesos rápidos y consejo.
+- **Inicio**: indicador circular de pH animado con el botón "Medir ahora", estado del agua con escala 0-14, perfil activo y su rango, referencia oficial del USGS, lo que sugiere Aqua, alertas sin leer (solo si hay) y consejo.
 - **Medición**: "Medir ahora" con el medidor conectado (resultado con clasificación, fecha, dispositivo, perfil, explicación y validación; guardar o descartar), modo en tiempo real por SSE y registro manual.
 - **Historial**: 7 o 30 días, rango personalizado, filtros por origen y estado, tabla paginada, borrado con confirmación, exportación CSV. Las gráficas (evolución y distribución) se generan solo cuando el usuario las pide.
 - **Diagnóstico IA**: riesgo con anillo animado, hallazgos con evidencia, causas probables, plan de acción priorizado, datos faltantes, confianza, salvaguardas aplicadas e historial. Indica qué proveedor respondió (Gemini, Groq o reglas). El último diagnóstico aparece también en el inicio.
-- **Medidor conectado a este equipo** (Conexión, `js/core/BrowserMeter.js`, `js/views/UsbMeter.js`): en Chrome o Edge, la página abre el puerto USB del medidor (o un Bluetooth emparejado como puerto serie) con Web Serial, habla su protocolo (firmware AquaSense, Atlas EZO-pH o medidor de laboratorio que envía texto), mide, calibra y guarda mediciones reales en el backend. Inicio muestra "Medir ahora" cuando hay un medidor conectado.
+- **Medidor conectado a este equipo** (Conexión, `js/core/BrowserMeter.js`, `js/views/UsbMeter.js`): en Chrome o Edge, la página abre el puerto USB del medidor (o un Bluetooth emparejado como puerto serie) con Web Serial, habla su protocolo (firmware AquaSense, Atlas EZO-pH o medidor de laboratorio que envía texto), mide, calibra y guarda mediciones reales en el backend. Con el medidor conectado, "Medir" (barra inferior) ofrece medir con él.
 - **Asistente IA**: responde cualquier pregunta sobre el agua y su pH (piscinas, acuarios, agua potable, riego, corrección del pH, medidores, uso de la app y tus datos) y rechaza con una frase fija los temas ajenos. La respuesta aparece **mientras se escribe** (Server-Sent Events leídos con `fetch`, `js/core/SseParser.js`); el botón **Detener** la corta y **Copiar** la lleva al portapapeles con sus fuentes numeradas. Si el modelo se congela a mitad, el servidor avisa (`restart`) y otro modelo escribe la respuesta de nuevo; si ya no queda otro, lo recibido se conserva con el motivo.
 - **Arranque del servidor**: el backend gratuito se apaga cuando nadie lo usa; la app espera a que despierte mostrando "Activando el servidor..." en vez de fallar.
 - **Medidor por cámara** (Conexión, `js/views/CameraMeter.js`): para medidores sin cable de datos. La cámara apunta a la pantalla del medidor; el navegador detecta cuándo cambia el número y solo entonces envía un cuadro a la lectura por foto del backend. Las lecturas confiables se guardan solas. Muestra la cuota de IA del día, porque cada lectura usa una consulta.
@@ -37,7 +40,7 @@ Presentar la información y recoger las acciones del usuario. **Toda la lógica 
 - **Conexión**: medidor USB o Bluetooth del propio equipo (Web Serial) y medidor por cámara. La sección del medidor conectado al servidor solo aparece cuando el backend corre en el mismo computador del medidor.
 - **Perfiles**: activar, duplicar, crear, editar y borrar perfiles con rangos y fuente.
 - **Configuración**: tema automático, claro u oscuro (persistente), notificaciones, guardado automático, cuenta y plan, actividad.
-- Diseño adaptable: barra lateral en escritorio y navegación inferior en móvil. Respeta "reducir movimiento".
+- Diseño adaptable: la misma barra inferior en escritorio y en móvil, contenido centrado con ancho máximo. Respeta "reducir movimiento".
 - **Cuenta**: cambiar el nombre y la contraseña desde Configuración. La contraseña pide la actual, muestra las reglas mientras se escribe y avisa si Bloq Mayús está activado; al cambiarla se cierran las demás sesiones y esta sigue abierta con el token nuevo.
 - **Volver donde estabas**: si la sesión vence, o se abre el enlace de una pantalla sin haber iniciado sesión, al entrar se vuelve a esa pantalla.
 - **Instalable**: con su manifiesto e íconos, el navegador ofrece "Instalar" o "Agregar a la pantalla de inicio"; la app abre en su propia ventana.
@@ -78,7 +81,8 @@ Frontend/
 │   │                       EventBus, Theme, LiveStream, BrowserMeter y MeterProtocols (Web Serial), Format
 │   ├── ui/                 icons, components (toast, modal, insignias), gauge, charts, water, illustrations
 │   └── views/              Una vista por pantalla (Auth, Shell, Dashboard, History, OfficialData, Sessions,
-│                           Intelligence, AssistantPane, Devices, Admin...) y textos sin DOM (AnswerText, SessionText,
+│                           Intelligence, AssistantPane, Devices, Admin...), Aqua (AquaBot, Tour, AiFunctions),
+│                           MeasureSheet y textos sin DOM (AnswerText, SessionText,
 │                           OfficialText)
 ├── tests/                  Pruebas unitarias (node:test)
 ├── scripts/CheckSyntax.mjs
@@ -186,7 +190,7 @@ Los requerimientos funcionales (RF-01 a RF-21) y no funcionales (RNF-01 a RNF-07
 | ![MockUp7](docs/mockups/MockUp7.png) | ![MockUp14](docs/mockups/MockUp14.png) |
 | ![MockUp18](docs/mockups/MockUp18.png) | ![MockUp24](docs/mockups/MockUp24.png) |
 
-Los MockUps son capturas de la aplicación publicada en tema claro (el predeterminado). Las mediciones que aparecen son registros manuales de prueba de una cuenta temporal; no son mediciones de agua real.
+Los MockUps son capturas de la aplicación publicada en tema claro (el predeterminado), tomadas antes del rediseño con barra inferior y el robot Aqua: las funciones son las mismas, pero la navegación se ve distinta. Las mediciones que aparecen son registros manuales de prueba de una cuenta temporal; no son mediciones de agua real.
 
 ### Issues
 
