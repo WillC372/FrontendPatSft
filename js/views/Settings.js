@@ -1,4 +1,5 @@
 import { api } from "../core/Api.js";
+import { pushClient } from "../core/PushClient.js";
 import { bus } from "../core/EventBus.js";
 import { session } from "../core/Session.js";
 import { theme } from "../core/Theme.js";
@@ -83,8 +84,13 @@ export const settingsView = {
 
           <section class="card reveal" id="s-measurement">
             <div class="card-head"><div class="card-title">${icon("bell")}Notificaciones y medición</div></div>
-            <div class="setting-row"><div><strong>Notificaciones</strong><p>Avisos en pantalla cuando una lectura en vivo sea crítica.</p></div>
-              <label class="switch"><input type="checkbox" data-notifications ${draft.notificationsEnabled ? "checked" : ""} aria-label="Notificaciones"><span></span></label></div>
+            <div class="setting-row"><div><strong>Notificaciones de alertas</strong><p>Avisos cuando una medición sale del rango (en la app y en los dispositivos donde actives los avisos).</p></div>
+              <label class="switch"><input type="checkbox" data-notifications ${draft.notificationsEnabled ? "checked" : ""} aria-label="Notificaciones de alertas"><span></span></label></div>
+            <div class="setting-row"><div><strong>Alertas por correo</strong><p>Te escribo a tu correo cuando una medición sale del rango (como mucho uno por hora).</p></div>
+              <label class="switch"><input type="checkbox" data-email-alerts ${draft.emailAlerts !== false ? "checked" : ""} aria-label="Alertas por correo"><span></span></label></div>
+            <div class="setting-row push-row"><div><strong>Avisos en este celular o computador</strong><p data-push-status>Revisando...</p></div>
+              <div class="row" style="gap:6px;flex-wrap:nowrap"><button type="button" class="btn btn-sm" data-push-test hidden>${icon("send")}Probar</button>
+              <label class="switch"><input type="checkbox" data-push aria-label="Avisos en este dispositivo"><span></span></label></div></div>
             <div class="setting-row"><div><strong>Guardar mediciones automáticamente</strong><p>Si está activo, cada medición con el medidor se guarda sin pedir confirmación.</p></div>
               <label class="switch"><input type="checkbox" data-autosave ${draft.autoSave ? "checked" : ""} aria-label="Guardar automáticamente"><span></span></label></div>
           </section>
@@ -168,6 +174,41 @@ export const settingsView = {
       }
     }));
     root.querySelector("[data-notifications]").addEventListener("change", (e) => { draft.notificationsEnabled = e.target.checked; });
+    root.querySelector("[data-email-alerts]").addEventListener("change", (e) => { draft.emailAlerts = e.target.checked; });
+    // Notifications on this device (Web Push): turned on and off right away, without "Guardar cambios".
+    const pushBox = root.querySelector("[data-push]");
+    const pushStatus = root.querySelector("[data-push-status]");
+    const pushTest = root.querySelector("[data-push-test]");
+    const showPush = async () => {
+      const reason = pushClient.unsupportedReason();
+      if (reason) { pushBox.disabled = true; pushStatus.textContent = reason; return; }
+      const sub = await pushClient.current().catch(() => null);
+      pushBox.checked = Boolean(sub) && Notification.permission === "granted";
+      pushTest.hidden = !pushBox.checked;
+      pushStatus.textContent = pushBox.checked
+        ? "Activos: aquí te llegan las alertas y los recordatorios aunque la app esté cerrada."
+        : Notification.permission === "denied" ? "Bloqueados en el navegador. Actívalos desde el candado junto a la dirección de la página."
+          : "Apagados en este dispositivo.";
+    };
+    showPush();
+    pushBox.addEventListener("change", async () => {
+      pushBox.disabled = true;
+      try {
+        if (pushBox.checked) { await pushClient.enable(); toast("Avisos activados en este dispositivo.", "ok"); }
+        else { await pushClient.disable(); toast("Avisos desactivados en este dispositivo.", "ok"); }
+      } catch (error) {
+        toast(error.message, "error", 7000);
+      } finally {
+        pushBox.disabled = false;
+        showPush();
+      }
+    });
+    pushTest.addEventListener("click", (e) => withBusy(e.currentTarget, async () => {
+      try {
+        const r = await api.post("/push/test");
+        toast(r.delivered ? "Aviso enviado: debería aparecer en unos segundos." : "No se pudo entregar el aviso. Desactívalos y vuelve a activarlos.", r.delivered ? "ok" : "warn");
+      } catch (error) { toast(error.message, "error"); }
+    }));
     root.querySelector("[data-autosave]").addEventListener("change", (e) => { draft.autoSave = e.target.checked; });
     const settingsAvatar = async () => {
       const current = session.user || me;
