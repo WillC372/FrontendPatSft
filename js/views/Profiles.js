@@ -3,6 +3,7 @@ import { esc, own } from "../core/Format.js";
 import { icon, PROFILE_ICONS } from "../ui/Icons.js";
 import { confirmDialog, emptyState, loading, modal, showFieldErrors, toast } from "../ui/Components.js";
 import { rangeProblems } from "./ProfileRules.js";
+import { PLACES_NAV, subNav } from "../ui/SubNav.js";
 
 function profileForm(profile) {
   // "Personalizado" opens the form with null: a default parameter (p = {}) only covers undefined, so null broke it.
@@ -68,7 +69,7 @@ export const profilesView = {
         root.innerHTML = emptyState("error", "No se pudieron cargar los perfiles", error.message);
         return;
       }
-      root.innerHTML = `
+      root.innerHTML = `${subNav("profiles", PLACES_NAV)}
         <div class="row-between reveal"><div><h1>Perfiles de uso</h1><p class="muted">Cada contexto usa rangos distintos. El perfil activo se aplica a nuevas mediciones y análisis.</p></div></div>
         <div class="profile-grid">
           ${profiles.map((p) => `

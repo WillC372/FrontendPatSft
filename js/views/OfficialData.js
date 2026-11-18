@@ -4,6 +4,7 @@ import { icon } from "../ui/Icons.js";
 import { emptyState, loading, toast } from "../ui/Components.js";
 import { lineChart } from "../ui/Charts.js";
 import { approval, band, HIGH, LOW, num } from "./OfficialText.js";
+import { LIBRARY_NAV, subNav } from "../ui/SubNav.js";
 
 /** One bar split in three, readable at any width; the legend repeats the counts and percentages as text. */
 function distribution(host, parts) {
@@ -53,7 +54,7 @@ export const officialDataView = {
         data.lastImportMessage || "El servidor descarga los datos del USGS al arrancar y cada 3 horas. Vuelve en un minuto.");
       return null;
     }
-    root.innerHTML = `
+    root.innerHTML = `${subNav("official", LIBRARY_NAV, "Biblioteca")}
       <div class="row-between reveal">
         <div><h1>Datos oficiales de pH</h1>
           <p class="muted">Mediciones reales de pH de las estaciones de monitoreo continuo del Servicio Geológico de EE. UU. (USGS) en ríos y arroyos.

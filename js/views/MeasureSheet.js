@@ -25,7 +25,8 @@ export function openMeasureSheet() {
         <div data-meter-slot>${meterOption(null)}</div>
         ${option("data-m-photo", "camera", "Con una foto", "De una tira reactiva o de la pantalla de tu medidor")}
         ${option("data-m-manual", "edit", "Escribir el valor", "Si ya mediste con otro equipo")}
-      </div>`,
+      </div>
+      <a class="sheet-link" href="#/devices" data-close>${icon("bluetooth")}Conectar, calibrar o cambiar mi medidor</a>`,
     onMount: (node, close) => {
       const slot = node.querySelector("[data-meter-slot]");
       const bindMeter = () => {

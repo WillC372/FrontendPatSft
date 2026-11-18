@@ -10,10 +10,11 @@ import { i18n } from "../core/I18n.js";
 import { AI_FUNCTIONS } from "./AiFunctions.js";
 import { startTour, tourRunning } from "./Tour.js";
 
-const GROUPS = [
-  ["Analizar mi agua", ["diagnosis", "anomalies", "recommendations"]],
-  ["Mirar el futuro", ["forecast", "deep", "scenario"]],
-  ["Más herramientas", ["ml", "reports", "library", "assistant", "usage"]],
+const GROUPS = () => [
+  ["Analizar mi agua", ["diagnosis", "anomalies", "forecast"]],
+  ["Más herramientas", ["reports", "library"]],
+  ["Análisis avanzado", ["deep", "ml", "scenario"]],
+  ...(session.user?.role === "ADMIN" ? [["Administración", ["usage"]]] : []),
 ];
 const BY_KEY = Object.fromEntries(AI_FUNCTIONS.map((f) => [f[0], f]));
 
@@ -41,19 +42,15 @@ export const TOUR_STEPS = [
   { target: null, title: "¡Hola! Soy Aqua", text: "Te ayudo a cuidar el pH de tu agua. En un minuto te muestro dónde está cada cosa." },
   { target: '[data-tab="dashboard"]', title: "Inicio", text: "Tu última medición y si tu agua está bien para el uso que elegiste." },
   { target: '[data-tab="history"]', title: "Historial", text: "Todas tus mediciones con gráficas, filtros y descarga." },
-  { target: '[data-tab="places"]', title: "Lugares", text: "Si tienes piscina y acuario, cada uno lleva su propio historial. Arriba ves en cuál estás y lo cambias con un toque." },
+  { target: '[data-tab="places"]', title: "Lugares", text: "Si tienes piscina y acuario, cada uno lleva su propio historial. Arriba ves en cuál estás y lo cambias con un toque. Aquí también están los «Perfiles de uso»: piscina, acuario, agua potable o riego cambian el rango ideal de pH." },
   { target: '[data-tab="care"]', title: "Cuidado", text: "Calculadora de dosis, registro de lo que le echas al agua y recordatorios que te llegan al celular o al correo." },
-  { target: '[data-tab="measure"]', title: "Medir", text: "El botón más importante: registra el pH con tu medidor, con una foto o escribiendo el valor." },
-  { target: '[data-tab="profiles"]', title: "Perfiles", text: "Piscina, acuario, agua potable, riego… cada uno cambia el rango ideal de pH." },
-  { target: '[data-tab="devices"]', title: "Medidor", text: "Conecta aquí tu medidor de pH por USB o usa la cámara para leer su pantalla." },
-  { target: '[data-tab="official"]', title: "Datos oficiales", text: "El pH real que miden hoy las estaciones del Servicio Geológico de EE. UU., para comparar tu agua con ríos de referencia." },
-  { target: '[data-tab="sessions"]', title: "Sesiones", text: "Cada vez que entras queda una sesión: cuándo empezó, desde qué equipo y qué hiciste. Desde aquí cierras las sesiones abiertas en otros equipos." },
+  { target: '[data-tab="measure"]', title: "Medir", text: "El botón más importante: registra el pH con tu medidor, con una foto o escribiendo el valor. Desde aquí también conectas y calibras tu medidor." },
   { target: '[data-tab="billing"]', title: "Plan", text: "Tu plan actual y lo que incluye Premium: más días de análisis, predicciones más largas y más consultas de IA." },
-  { target: '[data-tab="settings"]', title: "Configuración", text: "Tema claro u oscuro, idioma, voz de Aqua, avisos al celular o por correo y tu cuenta. En el celular, desliza la barra hacia los lados para ver todo." },
+  { target: '[data-tab="settings"]', title: "Configuración", text: "Tema claro u oscuro, idioma, voz de Aqua, avisos al celular o por correo y tu cuenta. Arriba están también «Medidor» y «Actividad y sesiones», donde ves qué hiciste en cada sesión y cierras las abiertas en otros equipos." },
   { target: '[data-tab="admin"]', title: "Admin", text: "Solo para administradores: cuentas, planes, actividad y el consumo de la IA." },
   { target: "[data-bell]", title: "Alertas", text: "Si una medición sale del rango, te aviso aquí." },
   { target: "[data-account]", title: "Tu cuenta", text: "Toca tu inicial o tu nombre para ver tu cuenta y para «Cerrar sesión»." },
-  { target: "[data-aqua]", title: "Y aquí estoy yo", text: "Tócame para chatear conmigo, pedir un diagnóstico, predecir tu pH o armar un informe. Toda la IA está aquí." },
+  { target: "[data-aqua]", title: "Y aquí estoy yo", text: "Tócame para chatear conmigo, pedir un diagnóstico, predecir tu pH o armar un informe. En la «Biblioteca normativa» están las normas y los datos oficiales de pH, y en «Análisis avanzado», los modelos entrenados con tus datos." },
 ];
 
 /** Aqua: the floating robot. Its panel holds the chat and every AI function; it also runs the guided tour. */
@@ -86,7 +83,7 @@ export class AquaBot {
             <button class="btn btn-primary icon-btn" type="submit" aria-label="Enviar pregunta">${icon("send")}</button>
           </form>
           <button type="button" class="aqua-chat-btn" data-aqua-chat-open>${icon("message")}<span><strong>Chatear conmigo</strong><small>Respondo sobre tu agua, piscinas, acuarios, riego y calibración</small></span>${icon("chevronRight")}</button>
-          ${GROUPS.map(([label, keys]) => `<h3 class="aqua-group">${label}</h3><div class="aqua-grid">
+          ${GROUPS().map(([label, keys]) => `<h3 class="aqua-group">${label}</h3><div class="aqua-grid">
             ${keys.map((k) => { const [key, title, ic, text] = BY_KEY[k]; return `<a class="aqua-fn" href="#/intelligence/${key}" data-aqua-fn="${key}">${icon(ic)}<span><strong>${title}</strong><small>${text}</small></span></a>`; }).join("")}
             ${label === "Más herramientas" ? `<button type="button" class="aqua-fn" data-aqua-photo>${icon("camera")}<span><strong>Leer pH de una foto</strong><small>Tira reactiva o pantalla del medidor</small></span></button>` : ""}
           </div>`).join("")}

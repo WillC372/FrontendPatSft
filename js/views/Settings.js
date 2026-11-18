@@ -12,8 +12,9 @@ import { avatarMarkup, avatarUrl } from "../core/Avatar.js";
 import { openAccountDialog } from "./AccountDialog.js";
 import { confirmDialog, emptyState, loading, passwordChecklist, showFieldErrors, toast, withBusy } from "../ui/Components.js";
 import { LOCALE_CO } from "../core/Locale.js";
+import { SETTINGS_NAV, subNav } from "../ui/SubNav.js";
 
-const SECTIONS = [["appearance", "Apariencia", "sun"], ["measurement", "Notificaciones y medición", "bell"], ["account", "Cuenta y plan", "user"], ["activity", "Actividad", "history"], ["about", "Acerca de", "info"]];
+const SECTIONS = [["appearance", "Apariencia", "sun"], ["measurement", "Notificaciones y medición", "bell"], ["account", "Cuenta y plan", "user"], ["activity", "Medidor y actividad", "clock"], ["about", "Acerca de", "info"]];
 
 /** Email delivery status and test email (administrators only). */
 async function loadMail(root) {
@@ -50,16 +51,15 @@ export const settingsView = {
     let settings;
     let me;
     let ai;
-    let activity;
     let current;
     try {
       let whoami;
-      [settings, whoami, ai, activity] = await Promise.all([api.get("/users/me/settings"), api.get("/auth/me").catch((error) => {
+      [settings, whoami, ai] = await Promise.all([api.get("/users/me/settings"), api.get("/auth/me").catch((error) => {
           // A server not yet updated has no /auth/me: the account alone, without the session.
           if (error.status === 404) return api.get("/users/me").then((user) => ({ user, session: null }));
           throw error;
         }),
-        api.get("/intelligence/ai-status"), api.get("/users/me/activity")]);
+        api.get("/intelligence/ai-status")]);
       me = whoami.user;
       current = whoami.session;
       if (ctx.stale()) return null;
@@ -70,10 +70,9 @@ export const settingsView = {
     session.updateUser(me);
     const draft = { ...settings };
 
-    root.innerHTML = `
+    root.innerHTML = `${subNav("settings", SETTINGS_NAV)}
       <div class="settings-layout">
-        <nav class="card ia-menu" aria-label="Secciones">${SECTIONS.map(([id, label, ic]) => `<button data-goto="${id}">${icon(ic)}${label}</button>`).join("")}
-          <a class="btn btn-ghost" href="#/profiles" style="justify-content:flex-start">${icon("profiles")}Perfiles de agua</a></nav>
+        <nav class="card ia-menu" aria-label="Secciones">${SECTIONS.map(([id, label, ic]) => `<button data-goto="${id}">${icon(ic)}${label}</button>`).join("")}</nav>
         <div class="stack">
           <section class="card reveal" id="s-appearance">
             <div class="card-head"><div class="card-title">${icon("sun")}Modo de apariencia</div></div>
@@ -137,9 +136,11 @@ export const settingsView = {
           </section>` : ""}
 
           <section class="card reveal" id="s-activity">
-            <div class="card-head"><div class="card-title">${icon("history")}Actividad reciente</div><a class="btn btn-ghost btn-sm" href="#/sessions">${icon("clock")}Ver por sesión</a></div>
-            <div class="activity" tabindex="0" role="region" aria-label="Actividad reciente de la cuenta">${activity.length ? `<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Acción</th><th>Detalle</th></tr></thead><tbody>
-              ${activity.map((a) => `<tr><td class="num">${fmt.dateTime(a.createdAt)}</td><td>${esc(a.label || a.action)}</td><td translate="no">${esc(a.detail)}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">Sin actividad.</p>`}</div>
+            <div class="card-head"><div class="card-title">${icon("clock")}Medidor y actividad</div></div>
+            <div class="sheet-options">
+              <a class="sheet-option" href="#/devices"><span class="sheet-ic">${icon("bluetooth")}</span><span><strong>Medidor</strong><small>Conecta tu medidor por USB o Bluetooth, léelo con la cámara y mira sus calibraciones</small></span>${icon("chevronRight")}</a>
+              <a class="sheet-option" href="#/sessions"><span class="sheet-ic">${icon("clock")}</span><span><strong>Actividad y sesiones</strong><small>Qué hiciste en cada sesión y desde qué equipo; cierra las sesiones abiertas en otros equipos</small></span>${icon("chevronRight")}</a>
+            </div>
           </section>
 
           ${me.demo ? "" : `<section class="card reveal" id="s-security">

@@ -3,7 +3,7 @@ import { esc, fmt } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { aquaFace } from "../ui/AquaFace.js";
 import { bus } from "../core/EventBus.js";
-import { AI_FUNCTIONS } from "./AiFunctions.js";
+import { AI_ALIASES, AI_FUNCTIONS } from "./AiFunctions.js";
 import { emptyState, loading, statusBadge, toast, withBusy } from "../ui/Components.js";
 import { lineChart } from "../ui/Charts.js";
 import { flask } from "../ui/Illustrations.js";
@@ -128,7 +128,13 @@ function animateDiagnosis(host) {
 }
 
 const panes = {
+  // What to do now (from the last measurement, at once) and, below, the full diagnosis of the period.
   async diagnosis(host) {
+    host.innerHTML = `<div data-rec></div><hr class="pane-split"><div data-dx></div>`;
+    await Promise.all([panes.recommendations(host.querySelector("[data-rec]")), panes.diagnosisOnly(host.querySelector("[data-dx]"))]);
+  },
+
+  async diagnosisOnly(host) {
     let days = 7;
     host.innerHTML = `
       <div class="dx-head">
@@ -356,7 +362,7 @@ const panes = {
     host.innerHTML = loading();
     try {
       const r = await api.get("/intelligence/recommendations");
-      host.innerHTML = `<h2>Recomendaciones</h2>
+      host.innerHTML = `<h2>Qué hacer ahora</h2>
         ${r.basedOn ? `<p class="muted" style="margin-top:4px">Basadas en tu última medición: pH ${fmt.ph(r.basedOn.ph)} (${esc(r.basedOn.statusLabel.toLowerCase())}) del ${fmt.dateTime(r.basedOn.measuredAt)} · Perfil ${esc(r.profileName)}</p>` : ""}
         <section class="card" style="margin-top:14px">${adviceBlock(r.advice)}</section>
         ${citationBlock(r.sources, { coverageNote: r.sources && r.sources.length ? null : r.coverageNote,
@@ -396,7 +402,8 @@ export const intelligenceView = {
   name: "intelligence",
   title: "Centro de análisis IA",
   async render(root, ctx) {
-    const initial = PANES.some(([k]) => k === ctx.route.sub) ? ctx.route.sub : "diagnosis";
+    const wanted = AI_ALIASES[ctx.route.sub] || ctx.route.sub;
+    const initial = PANES.some(([k]) => k === wanted) ? wanted : "diagnosis";
     root.innerHTML = `
       <nav class="ia-head reveal" aria-label="Función de Aqua">
         <button type="button" class="ia-head-bot" data-aqua-open aria-label="Abrir a Aqua para elegir otra función">${aquaFace()}</button>

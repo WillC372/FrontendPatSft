@@ -3,6 +3,7 @@ import { esc } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { emptyState, loading, toast } from "../ui/Components.js";
 import { citationCard } from "./Citations.js";
+import { LIBRARY_NAV, subNav } from "../ui/SubNav.js";
 
 const TYPES = [["", "Todos los usos"], ["GENERAL", "Uso general"], ["DRINKING", "Agua potable"], ["POOL", "Piscina"],
   ["AQUARIUM", "Acuario"], ["IRRIGATION", "Agricultura y riego"]];
@@ -19,7 +20,7 @@ export async function libraryPane(host) {
     return;
   }
   const total = lib.sources.reduce((n, s) => n + s.chunkCount, 0);
-  host.innerHTML = `
+  host.innerHTML = `${subNav("intelligence/library", LIBRARY_NAV, "Biblioteca")}
     <div class="dx-head">
       <div><h2>Biblioteca normativa</h2>
         <p class="muted" style="max-width:66ch">Las recomendaciones, diagnósticos, informes y el asistente citan estos fragmentos. Cada cita es el texto literal del documento oficial; el sistema descarta cualquier cita que la IA invente.</p></div>

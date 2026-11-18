@@ -7,6 +7,7 @@ import { beaker } from "../ui/Illustrations.js";
 import { measureWithDevice } from "./MeasureFlow.js";
 import { cameraMeter } from "./CameraMeter.js";
 import { usbMeter } from "./UsbMeter.js";
+import { SETTINGS_NAV, subNav } from "../ui/SubNav.js";
 
 const PROTOCOLS = [
   ["AQUASENSE_ESP32", "Firmware Aqua Assistant ESP32"],
@@ -18,7 +19,7 @@ export const devicesView = {
   name: "devices",
   title: "Conexión del dispositivo",
   async render(root, ctx) {
-    root.innerHTML = `
+    root.innerHTML = `${subNav("devices", SETTINGS_NAV)}
       <div class="row-between reveal"><div><h1>Conexión del dispositivo</h1><p class="muted">Conecta tu medidor de pH a este computador por USB o Bluetooth, o léelo con la cámara si no tiene cable de datos.</p></div></div>
       <section class="card glow reveal" data-usb-meter></section>
       <section class="card reveal camera-meter" data-camera-meter></section>

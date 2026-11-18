@@ -6,6 +6,7 @@ import { icon } from "../ui/Icons.js";
 import { bindHelp, helpBox } from "../ui/Help.js";
 import { confirmDialog, emptyState, loading, modal, showFieldErrors, toast, withBusy } from "../ui/Components.js";
 import { LOCALE } from "../core/Locale.js";
+import { PLACES_NAV, subNav } from "../ui/SubNav.js";
 
 export const PLACE_KINDS = [
   ["POOL", "Piscina", "pool"], ["SPA", "Jacuzzi o spa", "pool"], ["AQUARIUM", "Acuario", "fish"], ["POND", "Estanque", "fish"],
@@ -150,7 +151,7 @@ export const placesView = {
         return;
       }
       const demo = session.user?.demo;
-      root.innerHTML = `
+      root.innerHTML = `${subNav("places", PLACES_NAV)}
         <div class="row-between reveal"><div><h1>Lugares</h1><p class="muted">Cada sitio con agua que mides, por separado.</p></div>
           <button class="btn btn-primary btn-pill" data-new>${icon("plus")}Nuevo lugar</button></div>
         ${helpBox("places", "¿Para qué sirven los lugares?", [

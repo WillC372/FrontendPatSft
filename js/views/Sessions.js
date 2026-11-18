@@ -4,6 +4,7 @@ import { icon } from "../ui/Icons.js";
 import { confirmDialog, emptyState, loading, toast } from "../ui/Components.js";
 import { duration, IDLE_MS, period } from "./SessionText.js";
 import { LOCALE } from "../core/Locale.js";
+import { SETTINGS_NAV, subNav } from "../ui/SubNav.js";
 
 const PAGE_SIZE = 10;
 const stamp = new Intl.DateTimeFormat(LOCALE, { hour: "2-digit", minute: "2-digit", second: "2-digit" });
@@ -82,9 +83,9 @@ export const sessionsView = {
   name: "sessions",
   title: "Historial de sesiones",
   async render(root) {
-    root.innerHTML = `
+    root.innerHTML = `${subNav("sessions", SETTINGS_NAV)}
       <div class="row-between reveal">
-        <div><h1>Historial de sesiones</h1>
+        <div><h1>Actividad y sesiones</h1>
           <p class="muted">Cada vez que inicias sesión empieza una sesión nueva. Aquí queda lo que hiciste en cada una, desde que entraste hasta que la cerraste.</p></div>
         <button class="btn" data-close-others>${icon("logout")}Cerrar mis otras sesiones</button>
       </div>

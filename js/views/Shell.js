@@ -6,21 +6,23 @@ import { liveStream } from "../core/LiveStream.js";
 import { browserMeter } from "../core/BrowserMeter.js";
 import { esc, fmt, own, relativeTime } from "../core/Format.js";
 import { icon, logo } from "../ui/Icons.js";
+import { PARENT_TAB } from "../ui/SubNav.js";
 import { avatarMarkup, avatarUrl, forgetAvatar } from "../core/Avatar.js";
 import { openAccountDialog } from "./AccountDialog.js";
 import { confirmDialog, toast } from "../ui/Components.js";
 import { AquaBot } from "./AquaBot.js";
 
-// Bottom bar (every screen size) with every screen of the app; "Medir", the main action, sits in the middle.
+// Bottom bar (every screen size); "Medir", the main action, sits in the middle. Perfiles lives inside Lugares, the
+// meter and the activity inside Configuración, and the official data inside Aqua's library (see ui/SubNav.js).
 // [route, label, icon, full name for screen readers when the label is shortened]
 const LEFT = [["dashboard", "Inicio", "home"], ["history", "Historial", "history"], ["places", "Lugares", "pin"],
   ["care", "Cuidado", "flask", "Cuidado del agua: dosis, tratamientos y recordatorios"]];
-const RIGHT = [["profiles", "Perfiles", "profiles"], ["devices", "Medidor", "bluetooth", "Conectar medidor"],
-  ["official", "Datos oficiales", "globe"], ["sessions", "Sesiones", "clock"], ["billing", "Plan", "card", "Plan y pagos"],
-  ["settings", "Configuración", "settings"]];
+const RIGHT = [["billing", "Plan", "card", "Plan y pagos"], ["settings", "Configuración", "settings", null, "Ajustes"]];
 const ADMIN = ["admin", "Admin", "users", "Administración"];
 
-const tab = ([r, label, ic, full]) => `<a class="tab-link" data-route="${r}" data-tab="${r}" href="#/${r}"${full ? ` aria-label="${full}" title="${full}"` : ""}>${icon(ic)}<span>${label}</span></a>`;
+// A label too long for a phone has a short one ("Ajustes"); the full name stays for screen readers.
+const tab = ([r, label, ic, full, short]) => `<a class="tab-link" data-route="${r}" data-tab="${r}" href="#/${r}"${full || short ? ` aria-label="${full || label}" title="${full || label}"` : ""}>${icon(ic)}${short
+  ? `<span class="tab-full">${label}</span><span class="tab-short" aria-hidden="true">${short}</span>` : `<span>${label}</span>`}</a>`;
 
 // Frame of the authenticated application: top bar, bottom bar, Aqua (the AI) and alerts.
 export class Shell {
@@ -83,7 +85,7 @@ export class Shell {
 
   activate(name, title) {
     this.root.querySelectorAll("[data-route]").forEach((link) => {
-      const active = link.dataset.route === name;
+      const active = link.dataset.route === (PARENT_TAB[name] || name);
       link.classList.toggle("active", active);
       if (active) link.setAttribute("aria-current", "page"); else link.removeAttribute("aria-current");
     });
