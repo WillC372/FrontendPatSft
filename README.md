@@ -182,15 +182,15 @@ Se registran los errores de consola y las peticiones fallidas. La accesibilidad 
 
 ## Requerimientos y MockUps
 
-Los requerimientos funcionales (RF-01 a RF-21) y no funcionales (RNF-01 a RNF-07) están en [`docs/Requerimientos.md`](docs/Requerimientos.md), cada uno como historia de usuario (**Como**… **quiero**… **para**…), con descripción, criterios de aceptación y su MockUp. Los mismos textos están en [`docs/issues/`](docs/issues/) para crear los Issues del repositorio (instrucciones abajo).
+Los requerimientos funcionales (RF-01 a RF-22) y no funcionales (RNF-01 a RNF-07) están en [`docs/Requerimientos.md`](docs/Requerimientos.md), cada uno como historia de usuario (**Como**… **quiero**… **para**…), con descripción, criterios de aceptación y su MockUp. Los mismos textos están en [`docs/issues/`](docs/issues/) para crear los Issues del repositorio (instrucciones abajo).
 
 | | |
 |---|---|
 | ![MockUp1](docs/mockups/MockUp1.png) | ![MockUp5](docs/mockups/MockUp5.png) |
 | ![MockUp7](docs/mockups/MockUp7.png) | ![MockUp14](docs/mockups/MockUp14.png) |
-| ![MockUp18](docs/mockups/MockUp18.png) | ![MockUp24](docs/mockups/MockUp24.png) |
+| ![MockUp33](docs/mockups/MockUp33.png) | ![MockUp34](docs/mockups/MockUp34.png) |
 
-Los MockUps son capturas de la aplicación publicada en tema claro (el predeterminado), tomadas antes del rediseño con barra inferior y el robot Aqua: las funciones son las mismas, pero la navegación se ve distinta. Las mediciones que aparecen son registros manuales de prueba de una cuenta temporal; no son mediciones de agua real.
+Los MockUps son capturas de la aplicación publicada en tema claro (el predeterminado), con la navegación por barra inferior y el robot Aqua. Las mediciones que aparecen son registros manuales de prueba de una cuenta temporal; no son mediciones de agua real.
 
 ### Issues
 

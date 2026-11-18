@@ -3,7 +3,7 @@
 Requerimientos funcionales (RF) y no funcionales (RNF) de la aplicación, escritos como historias de usuario con su descripción,
 criterios de aceptación y MockUp. Cada uno está también como Issue del repositorio (ver [`issues/`](issues/)).
 
-Los MockUps son capturas de la aplicación publicada (https://frontendpatsft.vercel.app) en tema claro, tomadas el 16 de noviembre de 2026.
+Los MockUps son capturas de la aplicación publicada (https://frontendpatsft.vercel.app) en tema claro, tomadas el 18 de noviembre de 2026 con la navegación por barra inferior y el robot Aqua.
 Las mediciones que aparecen son registros manuales de prueba de una cuenta temporal, borrada después; en las capturas de
 administración se difuminaron las cuentas reales.
 
@@ -16,7 +16,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 | [RF-01](#rf-01) | Registro, inicio y cierre de sesión | Como visitante, quiero crear una cuenta e iniciar sesión con mi correo y contraseña, con la opción «Recordarme», para guardar mis mediciones y verlas desde cualquier equipo. | Hecho | [MockUp1](mockups/MockUp1.png), [MockUp2](mockups/MockUp2.png) |
 | [RF-02](#rf-02) | Recuperación de contraseña por correo | Como usuario que olvidó su contraseña, quiero recibir un enlace por correo para crear una nueva, para recuperar el acceso sin perder mis datos. | Hecho | [MockUp3](mockups/MockUp3.png) |
 | [RF-03](#rf-03) | Acceso de demostración por rol | Como profesor o evaluador, quiero entrar con un botón como Usuario Premium o como Administrador, para revisar la aplicación sin crear una cuenta. | Hecho | [MockUp4](mockups/MockUp4.png) |
-| [RF-04](#rf-04) | Inicio (panel principal) | Como usuario, quiero ver en una pantalla el último pH, su estado, mi perfil activo y las alertas, para saber de un vistazo si mi agua está bien. | Hecho | [MockUp5](mockups/MockUp5.png) |
+| [RF-04](#rf-04) | Inicio (panel principal) | Como usuario, quiero ver en una pantalla el último pH, su estado, mi perfil activo y las alertas, para saber de un vistazo si mi agua está bien. | Hecho | [MockUp5](mockups/MockUp5.png), [MockUp36](mockups/MockUp36.png) |
 | [RF-05](#rf-05) | Registrar una medición y ver su resultado | Como usuario, quiero registrar un valor de pH (y opcionalmente la temperatura), para saber si está en rango y guardarlo en mi historial. | Hecho | [MockUp6](mockups/MockUp6.png) |
 | [RF-06](#rf-06) | Historial, gráficas y exportación | Como usuario, quiero filtrar mis mediciones por periodo, origen y estado, verlas en gráfica y exportarlas, para analizar cómo cambia mi agua con el tiempo. | Hecho | [MockUp7](mockups/MockUp7.png) |
 | [RF-07](#rf-07) | Conectar y calibrar un medidor de pH | Como usuario con un medidor, quiero conectarlo al computador por USB o Bluetooth y calibrarlo desde la app, para que las mediciones lleguen solas y sean exactas. | Parcial | [MockUp8](mockups/MockUp8.png) |
@@ -26,7 +26,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 | [RF-11](#rf-11) | Diagnóstico y recomendaciones con IA y fuentes | Como usuario, quiero un diagnóstico de mi agua con recomendaciones respaldadas por normas, para saber qué hacer y en qué se basa. | Hecho | [MockUp14](mockups/MockUp14.png), [MockUp15](mockups/MockUp15.png) |
 | [RF-12](#rf-12) | Simulador de escenarios | Como usuario, quiero probar qué pasaría con el pH si cambio una condición, para decidir una corrección antes de aplicarla. | Hecho | [MockUp16](mockups/MockUp16.png) |
 | [RF-13](#rf-13) | Informes inteligentes y PDF | Como usuario, quiero pedir un informe del estado de mi agua en un periodo y descargarlo en PDF, para compartirlo o guardarlo. | Hecho | [MockUp17](mockups/MockUp17.png) |
-| [RF-14](#rf-14) | Asistente IA con respuesta en vivo | Como usuario, quiero hacer preguntas sobre el pH y el cuidado del agua y ver la respuesta mientras se escribe, para resolver dudas sin esperar. | Hecho | [MockUp18](mockups/MockUp18.png) |
+| [RF-14](#rf-14) | Asistente IA con respuesta en vivo | Como usuario, quiero hacer preguntas sobre el pH y el cuidado del agua y ver la respuesta mientras se escribe, para resolver dudas sin esperar. | Hecho | [MockUp18](mockups/MockUp18.png), [MockUp35](mockups/MockUp35.png) |
 | [RF-15](#rf-15) | Lectura de pH por foto | Como usuario sin medidor electrónico, quiero tomar una foto de una tira reactiva o de la pantalla de mi medidor, para registrar el pH sin escribirlo. | Parcial | [MockUp19](mockups/MockUp19.png) |
 | [RF-16](#rf-16) | Planes Gratuito y Premium con pagos | Como usuario, quiero pasar a Premium pagando en línea, para tener más días de análisis y más consultas de IA. | Parcial | [MockUp20](mockups/MockUp20.png) |
 | [RF-17](#rf-17) | Configuración de la cuenta | Como usuario, quiero elegir el tema (claro, oscuro o automático) y las notificaciones, para usar la app a mi gusto. | Hecho | [MockUp21](mockups/MockUp21.png) |
@@ -34,6 +34,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 | [RF-19](#rf-19) | Historial de sesiones y de operaciones | Como usuario, quiero ver mis sesiones (inicio, fin, duración, navegador) y lo que hice en cada una, para detectar accesos que no reconozco. | Hecho | [MockUp23](mockups/MockUp23.png) |
 | [RF-20](#rf-20) | Datos oficiales de referencia (USGS) | Como usuario, quiero comparar mi pH con mediciones oficiales de estaciones de agua, para tener una referencia real. | Hecho | [MockUp24](mockups/MockUp24.png) |
 | [RF-21](#rf-21) | Administración de usuarios y consumo de IA | Como administrador, quiero gestionar cuentas (plan, rol, estado) y ver el consumo y costo de la IA, para controlar el sistema y sus gastos. | Hecho | [MockUp25](mockups/MockUp25.png), [MockUp26](mockups/MockUp26.png) |
+| [RF-22](#rf-22) | Aqua: robot de la IA y recorrido guiado | Como usuario nuevo, quiero que un asistente me explique para qué sirve cada parte y me deje usar la IA desde cualquier pantalla, para aprender a usar la app sin manual y encontrar las funciones de IA en un solo lugar. | Hecho | [MockUp33](mockups/MockUp33.png), [MockUp34](mockups/MockUp34.png) |
 
 ## Requerimientos no funcionales
 
@@ -42,7 +43,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 | [RNF-01](#rnf-01) | Seguridad | Como usuario, quiero que mi contraseña y mi sesión estén protegidas, para que nadie más vea ni cambie mis datos. | Hecho | [MockUp27](mockups/MockUp27.png) |
 | [RNF-02](#rnf-02) | Rendimiento | Como usuario, quiero que la app y el asistente respondan rápido, para no quedarme esperando. | Hecho | [MockUp28](mockups/MockUp28.png) |
 | [RNF-03](#rnf-03) | Disponibilidad | Como usuario, quiero que la app esté disponible cuando la abra, para no esperar a que el servidor arranque. | Parcial | [MockUp29](mockups/MockUp29.png) |
-| [RNF-04](#rnf-04) | Usabilidad, accesibilidad y diseño adaptable | Como usuario de computador o celular, quiero una interfaz clara que funcione en cualquier pantalla, para usarla cómodamente donde esté. | Hecho | [MockUp30](mockups/MockUp30.png) |
+| [RNF-04](#rnf-04) | Usabilidad, accesibilidad y diseño adaptable | Como usuario de computador o celular, quiero una interfaz clara que funcione en cualquier pantalla, para usarla cómodamente donde esté. | Hecho | [MockUp30](mockups/MockUp30.png), [MockUp37](mockups/MockUp37.png) |
 | [RNF-05](#rnf-05) | Privacidad de los datos | Como usuario, quiero que mis datos personales no salgan del sistema, para confiar en la app. | Hecho | [MockUp31](mockups/MockUp31.png) |
 | [RNF-06](#rnf-06) | Mantenibilidad y calidad del código | Como desarrollador del proyecto, quiero un código organizado, documentado y con pruebas automáticas, para cambiarlo sin romper lo que funciona. | Hecho | — |
 | [RNF-07](#rnf-07) | Compatibilidad e instalación | Como usuario, quiero usar la app en mi navegador o instalarla como aplicación, para tenerla a mano. | Hecho | [MockUp32](mockups/MockUp32.png) |
@@ -114,17 +115,22 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Como** usuario, **quiero** ver en una pantalla el último pH, su estado, mi perfil activo y las alertas, **para** saber de un vistazo si mi agua está bien.
 
-**Descripción.** Indicador de pH con color por estado, perfil de agua activo, último diagnóstico de IA, alertas recientes, accesos a medir (medidor, foto o registro manual) y la referencia oficial del USGS.
+**Descripción.** Pantalla sin saturar: indicador de pH con color por estado, qué significa el valor (ácida, neutra o alcalina) en la escala 0–14, perfil activo y su rango, referencia oficial del USGS, la sugerencia de Aqua con el último diagnóstico y las alertas sin leer (solo si hay). El botón «Medir» de la barra inferior y «Medir ahora» abren las tres formas de medir.
 
 **Criterios de aceptación**
 
 - [x] El indicador muestra la última medición y su estado según el perfil activo.
 - [x] Si no hay mediciones, se muestra cómo registrar la primera.
-- [x] Desde el Inicio se puede medir con el medidor, por foto o con registro manual.
+- [x] «Medir» ofrece medir con el medidor, por foto o escribiendo el valor.
+- [x] Al guardar una medición, el Inicio se actualiza sin recargar la página.
 
-**MockUp5** · Inicio (panel principal)
+**MockUp5** · Inicio (panel principal) con la barra inferior y Aqua
 
 ![MockUp5](mockups/MockUp5.png)
+
+**MockUp36** · Medir: las tres formas de registrar el pH
+
+![MockUp36](mockups/MockUp36.png)
 
 ### RF-05
 
@@ -306,7 +312,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Como** usuario, **quiero** hacer preguntas sobre el pH y el cuidado del agua y ver la respuesta mientras se escribe, **para** resolver dudas sin esperar.
 
-**Descripción.** Chat con memoria por conversación, citas, botones Detener, Copiar y Descargar, y respuesta en vivo (Server-Sent Events). Si un modelo no empieza o se congela, otro reescribe la respuesta. Rechaza temas ajenos al agua.
+**Descripción.** Se abre desde Aqua, el robot, en cualquier pantalla (chat dentro de su panel) o en pantalla completa con la lista de conversaciones. Chat con memoria por conversación, citas, botones Detener, Copiar y Descargar, y respuesta en vivo (Server-Sent Events). Si un modelo no empieza o se congela, otro reescribe la respuesta. Rechaza temas ajenos al agua.
 
 **Criterios de aceptación**
 
@@ -318,6 +324,10 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 **MockUp18** · Asistente IA (respuesta completa)
 
 ![MockUp18](mockups/MockUp18.png)
+
+**MockUp35** · Chat con Aqua dentro de su panel (celular)
+
+![MockUp35](mockups/MockUp35.png)
 
 ### RF-15
 
@@ -451,6 +461,30 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 ![MockUp26](mockups/MockUp26.png)
 
+### RF-22
+
+**Aqua: robot de la IA y recorrido guiado** · Funcional · Estado: Hecho
+
+**Como** usuario nuevo, **quiero** que un asistente me explique para qué sirve cada parte y me deje usar la IA desde cualquier pantalla, **para** aprender a usar la app sin manual y encontrar las funciones de IA en un solo lugar.
+
+**Descripción.** Aqua, un robot con forma de gota, flota en todas las pantallas y es la única entrada a la inteligencia artificial: su panel permite preguntar, chatear y abrir el diagnóstico, las anomalías, las recomendaciones, la predicción, la red neuronal, los escenarios, el aprendizaje automático, los informes, la biblioteca normativa, el consumo y la lectura por foto. La primera vez que una persona entra, Aqua hace un recorrido guiado señalando cada botón con un globo de texto, y al abrir cada pantalla dice en una frase para qué sirve.
+
+**Criterios de aceptación**
+
+- [x] Aqua aparece en todas las pantallas de la sesión y la IA no aparece en el menú.
+- [x] Desde el panel de Aqua se abre cada función de IA y el chat.
+- [x] El recorrido sale solo la primera vez, se puede saltar y se repite desde Aqua o desde «Más».
+- [x] El recorrido y el panel se usan con teclado (flechas, Tab y Esc) y con lector de pantalla.
+- [x] Los consejos de Aqua al cambiar de pantalla se pueden desactivar.
+
+**MockUp33** · Recorrido guiado: Aqua señala el botón Medir
+
+![MockUp33](mockups/MockUp33.png)
+
+**MockUp34** · Panel de Aqua con el chat y las funciones de IA
+
+![MockUp34](mockups/MockUp34.png)
+
 ### RNF-01
 
 **Seguridad** · No funcional · Estado: Hecho
@@ -513,7 +547,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Como** usuario de computador o celular, **quiero** una interfaz clara que funcione en cualquier pantalla, **para** usarla cómodamente donde esté.
 
-**Descripción.** Diseño adaptable a celular y computador, tema claro predeterminado y oscuro opcional, navegación por teclado y lector de pantalla. Revisión con axe-core: 0 hallazgos en 16 pantallas, en tema claro y oscuro, en computador y teléfono.
+**Descripción.** Navegación con barra inferior de cinco botones (Inicio, Historial, Medir, Perfiles y Más), igual en celular y computador, para que cada función esté a un toque sin saturar la pantalla. Tema claro predeterminado y oscuro opcional, navegación por teclado y lector de pantalla. Revisión con axe-core: 0 hallazgos en 18 pantallas, el recorrido, el panel de Aqua y las hojas «Medir» y «Más», en tema claro y oscuro, en computador y teléfono.
 
 **Criterios de aceptación**
 
@@ -524,6 +558,10 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 **MockUp30** · Inicio en un celular
 
 ![MockUp30](mockups/MockUp30.png)
+
+**MockUp37** · Más: el resto de las funciones
+
+![MockUp37](mockups/MockUp37.png)
 
 ### RNF-05
 
@@ -584,7 +622,7 @@ _Requerimiento sin pantalla propia: se comprueba con las pruebas automáticas y 
 | [MockUp2](mockups/MockUp2.png) | Crear cuenta | RF-01 |
 | [MockUp3](mockups/MockUp3.png) | Recuperar contraseña | RF-02 |
 | [MockUp4](mockups/MockUp4.png) | Botones de acceso de demostración | RF-03 |
-| [MockUp5](mockups/MockUp5.png) | Inicio (panel principal) | RF-04 |
+| [MockUp5](mockups/MockUp5.png) | Inicio (panel principal) con la barra inferior y Aqua | RF-04 |
 | [MockUp6](mockups/MockUp6.png) | Registro manual de una medición | RF-05 |
 | [MockUp7](mockups/MockUp7.png) | Historial con gráfica (30 días) | RF-06 |
 | [MockUp8](mockups/MockUp8.png) | Conexión del medidor | RF-07 |
@@ -612,3 +650,8 @@ _Requerimiento sin pantalla propia: se comprueba con las pruebas automáticas y 
 | [MockUp30](mockups/MockUp30.png) | Inicio en un celular | RNF-04 |
 | [MockUp31](mockups/MockUp31.png) | Datos enmascarados para el administrador de demostración | RNF-05 |
 | [MockUp32](mockups/MockUp32.png) | Inicio de sesión en un celular | RNF-07 |
+| [MockUp33](mockups/MockUp33.png) | Recorrido guiado: Aqua señala el botón Medir | RF-22 |
+| [MockUp34](mockups/MockUp34.png) | Panel de Aqua con el chat y las funciones de IA | RF-22 |
+| [MockUp35](mockups/MockUp35.png) | Chat con Aqua dentro de su panel (celular) | RF-14 |
+| [MockUp36](mockups/MockUp36.png) | Medir: las tres formas de registrar el pH | RF-04 |
+| [MockUp37](mockups/MockUp37.png) | Más: el resto de las funciones | RNF-04 |
