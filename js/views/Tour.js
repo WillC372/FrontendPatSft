@@ -60,7 +60,14 @@ export function startTour(steps) {
         card.style.top = `${Math.max(12, (vh - card.offsetHeight) / 2)}px`;
         return;
       }
-      const r = el.getBoundingClientRect();
+      // The frame covers the element and whatever it draws outside its own box (the raised circle of "Medir").
+      const r = [...el.querySelectorAll("*")].reduce((box, child) => {
+        const c = child.getBoundingClientRect();
+        if (!c.width || !c.height) return box;
+        return { left: Math.min(box.left, c.left), top: Math.min(box.top, c.top), right: Math.max(box.right, c.right), bottom: Math.max(box.bottom, c.bottom) };
+      }, (({ left, top, right, bottom }) => ({ left, top, right, bottom }))(el.getBoundingClientRect()));
+      r.width = r.right - r.left;
+      r.height = r.bottom - r.top;
       const pad = 6;
       spot.hidden = false;
       Object.assign(spot.style, { left: `${r.left - pad}px`, top: `${r.top - pad}px`, width: `${r.width + pad * 2}px`, height: `${r.height + pad * 2}px` });
