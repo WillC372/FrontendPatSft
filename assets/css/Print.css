@@ -6,7 +6,7 @@
   }
   html, body { background: #fff !important; color: #111; }
   body::before, body::after { display: none !important; }
-  .sidebar, .topbar, .bottom-nav, .demo-banner, .toasts, .offline-bar, .skip-link, .wake-overlay,
+  .topbar, .tabbar, .aqua, .tour, .demo-banner, .toasts, .offline-bar, .skip-link, .wake-overlay,
   .btn, button, .tabs, .modal-backdrop, .ia-menu, .gauge-actions, .splash, [data-chart] .chart-tooltip { display: none !important; }
   .shell { display: block; }
   .page { padding: 0; gap: 12px; }

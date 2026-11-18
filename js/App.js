@@ -87,7 +87,7 @@ async function show(view, route) {
   }
   if (stale()) done?.(); else cleanup = done;
   // Keyboard and screen reader users continue at the new screen instead of the link they pressed.
-  if (!stale() && document.activeElement?.closest?.(".sidebar, .bottom-nav, .quick-links")) page.focus({ preventScroll: true });
+  if (!stale() && document.activeElement?.closest?.(".tabbar, .sheet-options, .aqua-panel")) page.focus({ preventScroll: true });
 }
 
 ctx.router = new Router(show)

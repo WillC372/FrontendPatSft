@@ -51,25 +51,10 @@
 .ph-scale-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 8px; font-variant-numeric: tabular-nums; }
 .ph-scale-band { position: absolute; top: 0; height: 12px; background: rgba(255,255,255,.22); box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.75); border-radius: 3px; }
 
-.ai-panel { overflow: hidden; }
-.ai-panel-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; align-items: center; }
 .brain-holo { position: relative; display: grid; place-items: center; min-height: 170px; }
 .brain-holo svg.brain { width: 150px; height: 150px; color: var(--primary-2); filter: drop-shadow(0 0 16px rgba(34, 199, 240, .8)); animation: brain-glow 3.2s ease-in-out infinite; }
 .brain-holo .pedestal { position: absolute; bottom: 4px; width: 130px; height: 26px; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(34, 199, 240, .6), transparent 70%); animation: pedestal 3.2s ease-in-out infinite; }
 .brain-holo .beam { position: absolute; bottom: 16px; width: 110px; height: 120px; background: linear-gradient(0deg, rgba(34, 199, 240, .28), transparent); clip-path: polygon(10% 100%, 90% 100%, 100% 0, 0 0); }
-.check-list { display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
-.check-list div { display: flex; gap: 8px; align-items: center; }
-.check-list svg { width: 18px; height: 18px; flex: none; }
-.check-list .ok svg { color: var(--ok); }
-.check-list .bad svg { color: var(--warn); }
-.recommend { display: flex; gap: 12px; padding: 14px; border-radius: 14px; border: 1px solid var(--border-strong); background: var(--surface-2); margin-top: 12px; }
-.recommend > svg { width: 26px; height: 26px; color: #ffd166; flex: none; }
-.recommend strong { color: #ffd166; font-family: var(--font-display); }
-.quick-links { display: grid; gap: 10px; }
-.quick-link { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); text-decoration: none; font-weight: 700; transition: transform .2s, border-color .2s; }
-.quick-link svg { width: 22px; height: 22px; color: var(--primary-2); }
-.quick-link svg:last-child { margin-left: auto; width: 18px; color: var(--muted); }
-.quick-link:hover { transform: translateX(3px); border-color: var(--border-strong); }
 
 /* Charts */
 .chart { position: relative; width: 100%; }
@@ -93,7 +78,6 @@
 .legend i { width: 14px; height: 4px; border-radius: 2px; display: inline-block; }
 
 /* AI center */
-.ia-layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 20px; align-items: start; }
 .ia-menu { display: flex; flex-direction: column; gap: 6px; position: sticky; top: 90px; }
 .ia-menu-head { display: grid; justify-items: center; text-align: center; gap: 6px; padding: 8px 0 14px; }
 .ia-menu-head svg { width: 64px; height: 64px; color: var(--primary-2); filter: drop-shadow(0 0 12px rgba(34,199,240,.7)); animation: brain-glow 3.2s ease-in-out infinite; }
@@ -102,7 +86,6 @@
 .ia-menu button:hover { background: var(--surface-2); }
 .ia-menu button.active { background: var(--gradient-primary); color: #fff; box-shadow: var(--glow); }
 @media (max-width: 960px) {
-  .ia-layout { grid-template-columns: minmax(0, 1fr); }
   .ia-menu { position: static; flex-direction: row; overflow-x: auto; padding-bottom: 4px; }
   .ia-menu-head { display: none; }
   .ia-menu button { white-space: nowrap; }
@@ -591,4 +574,3 @@ select.input.cam-select { width: auto; flex: none; padding-top: 8px; padding-bot
 @media (max-width: 520px) { .dist-legend { grid-template-columns: 1fr; } }
 .detail-status { margin: 0 0 8px; font-size: 14px; }
 .name-form { gap: 6px; flex-wrap: nowrap; } .name-form .input { min-width: 0; flex: 1 1 160px; padding: 6px 10px; }
-.reference-value { font-family: var(--font-display); font-size: 30px; line-height: 1; min-width: 56px; }

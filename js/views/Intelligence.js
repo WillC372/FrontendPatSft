@@ -1,6 +1,9 @@
 import { api } from "../core/Api.js";
 import { esc, fmt } from "../core/Format.js";
-import { brainHolo, icon } from "../ui/Icons.js";
+import { icon } from "../ui/Icons.js";
+import { aquaFace } from "../ui/AquaFace.js";
+import { bus } from "../core/EventBus.js";
+import { AI_FUNCTIONS } from "./AiFunctions.js";
 import { emptyState, loading, statusBadge, toast, withBusy } from "../ui/Components.js";
 import { lineChart } from "../ui/Charts.js";
 import { flask } from "../ui/Illustrations.js";
@@ -12,19 +15,8 @@ import { assistantPane } from "./AssistantPane.js";
 import { usagePane } from "./UsagePane.js";
 import { deepPane } from "./DeepPane.js";
 
-const PANES = [
-  ["diagnosis", "Diagnóstico IA", "sparkle"],
-  ["anomalies", "Detección de anomalías", "activity"],
-  ["ml", "Aprendizaje automático", "brain"],
-  ["deep", "Red neuronal (LSTM)", "trend"],
-  ["forecast", "Predicción de tendencias", "trend"],
-  ["scenario", "Simulador de escenarios", "flask"],
-  ["recommendations", "Recomendaciones", "shield"],
-  ["reports", "Agente de informes", "file"],
-  ["assistant", "Asistente IA", "message"],
-  ["library", "Biblioteca normativa", "book"],
-  ["usage", "Consumo y costos", "database"],
-];
+// The functions are chosen from Aqua's panel (the robot): this screen shows the chosen one.
+const PANES = AI_FUNCTIONS;
 
 function adviceBlock(advice) {
   return `
@@ -405,26 +397,24 @@ export const intelligenceView = {
   async render(root, ctx) {
     const initial = PANES.some(([k]) => k === ctx.route.sub) ? ctx.route.sub : "diagnosis";
     root.innerHTML = `
-      <div class="ia-layout">
-        <nav class="card ia-menu" aria-label="Funciones de IA">
-          <div class="ia-menu-head">${brainHolo()}<h2 class="h-sm">Análisis inteligente</h2><small class="muted">Estadística, reglas de dominio e IA</small></div>
-          ${PANES.map(([key, label, ic]) => `<button data-pane="${key}">${icon(ic)}${label}</button>`).join("")}
-        </nav>
-        <section class="card glow" data-pane-host style="min-height:420px"></section>
-      </div>`;
+      <nav class="ia-head reveal" aria-label="Función de Aqua">
+        <button type="button" class="ia-head-bot" data-aqua-open aria-label="Abrir a Aqua para elegir otra función">${aquaFace()}</button>
+        <div class="ia-head-text"><small class="muted">Funciones de Aqua</small><strong data-pane-title></strong><span class="muted" data-pane-desc></span></div>
+        <button type="button" class="btn btn-pill" data-aqua-open>${icon("sparkle")}Otras funciones</button>
+      </nav>
+      <section class="card glow" data-pane-host style="min-height:420px"></section>`;
     const host = root.querySelector("[data-pane-host]");
     const open = (key) => {
-      root.querySelectorAll("[data-pane]").forEach((b) => {
-        b.classList.toggle("active", b.dataset.pane === key);
-        b.setAttribute("aria-pressed", String(b.dataset.pane === key));
-      });
+      const [, title, , desc] = PANES.find(([k]) => k === key);
+      root.querySelector("[data-pane-title]").textContent = title;
+      root.querySelector("[data-pane-desc]").textContent = desc;
       host.classList.remove("page-enter");
       void host.offsetWidth;
       host.classList.add("page-enter");
       history.replaceState(null, "", `#/intelligence/${key}`);
       panes[key](host);
     };
-    root.querySelectorAll("[data-pane]").forEach((b) => b.addEventListener("click", () => open(b.dataset.pane)));
+    root.querySelectorAll("[data-aqua-open]").forEach((b) => b.addEventListener("click", () => bus.emit("aqua:open")));
     open(initial);
     return null;
   },

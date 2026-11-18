@@ -16,17 +16,18 @@ function aiBubble(text, model, citations = [], extra = "") {
 /**
  * Assistant with memory: list of conversations, stored history and follow-up questions that use the previous context.
  */
-export async function assistantPane(host) {
+export async function assistantPane(host, { compact = false } = {}) {
   host.innerHTML = loading();
   let status;
   try { status = await api.get("/intelligence/ai-status"); } catch (error) { host.innerHTML = emptyState("error", "No disponible", error.message); return; }
   let current = null;
   // Answer being written: only one at a time, and it can be stopped.
   let running = null;
+  host.classList.toggle("assistant-compact", compact);
   host.innerHTML = `
-    <div class="row-between"><h2>Asistente IA</h2>
+    <div class="row-between"><h2 class="${compact ? "sr-only" : ""}">Asistente IA</h2>
       <span class="badge ${status.configured ? "badge-ok" : "badge-warn"}" data-quota>${status.configured ? `${status.usedToday}/${status.dailyQuota} consultas hoy` : "IA no configurada"}</span></div>
-    <div class="row" style="margin-top:10px">${status.providers.map((p) => `<span class="badge ${p.configured ? "badge-info" : ""}" style="${p.configured ? "" : "opacity:.5"}">${p.order}. ${esc(p.provider)} · ${esc(p.model)}${p.configured ? "" : " (sin clave)"}</span>`).join("")}</div>
+    <div class="row assistant-providers" style="margin-top:10px">${status.providers.map((p) => `<span class="badge ${p.configured ? "badge-info" : ""}" style="${p.configured ? "" : "opacity:.5"}">${p.order}. ${esc(p.provider)} · ${esc(p.model)}${p.configured ? "" : " (sin clave)"}</span>`).join("")}</div>
     ${status.configured ? "" : `<div class="banner banner-warn" style="margin-top:14px">${icon("alert")}<p>El servidor no tiene una clave de IA configurada (Gemini o Groq). El asistente no está disponible; los análisis estadísticos siguen funcionando.</p></div>`}
     <div class="assistant-layout" style="margin-top:14px">
       <aside class="conv-list card" aria-label="Conversaciones">
@@ -35,12 +36,12 @@ export async function assistantPane(host) {
         <button class="btn btn-ghost conv-clear" data-clear>${icon("trash")}Borrar todas</button>
       </aside>
       <div class="stack" style="gap:10px;min-width:0">
-        <div class="row-between"><strong data-title>Nueva conversación</strong><div class="row" style="gap:8px"><span class="badge" data-memory hidden></span>
+        <div class="row-between assistant-titlebar"><strong data-title>Nueva conversación</strong><div class="row" style="gap:8px"><span class="badge" data-memory hidden></span>
           <button type="button" class="btn btn-ghost btn-sm" data-download-chat hidden>${icon("download")}Descargar</button></div></div>
-        <div class="chat card" data-chat></div>
+        <div class="chat card" data-chat role="log" aria-label="Conversación con Aqua" tabindex="0"></div>
         <div class="row" data-suggestions>${SUGGESTIONS.map((s) => `<button class="tab" data-q="${esc(s)}">${esc(s)}</button>`).join("")}</div>
         <form class="row" data-form>
-          <input class="input" style="flex:1;min-width:200px" name="q" maxlength="500" placeholder="Escribe tu pregunta... puedes repreguntar sobre lo anterior" aria-label="Pregunta" ${status.configured ? "" : "disabled"}>
+          <input class="input" style="flex:1;min-width:${compact ? 140 : 200}px" name="q" maxlength="500" placeholder="${compact ? "Escribe tu pregunta..." : "Escribe tu pregunta... puedes repreguntar sobre lo anterior"}" aria-label="Pregunta" ${status.configured ? "" : "disabled"}>
           <button class="btn btn-primary" type="submit" data-send ${status.configured ? "" : "disabled"}>${icon("send")}Enviar</button>
           <button class="btn" type="button" data-stop hidden>${icon("pause")}Detener</button>
         </form>
@@ -54,7 +55,11 @@ export async function assistantPane(host) {
   bindReferenceMarks(chat);
 
   const greet = () => {
-    chat.innerHTML = `<div class="bubble ai">Hola, soy AquaSense Intelligence. Pregúntame lo que quieras sobre el agua y su pH: tus mediciones, piscinas, acuarios, agua potable, riego, cómo corregir el pH, medidores y calibración, o cómo usar AquaSense. Recuerdo lo que hablamos en esta conversación.<small class="muted">Uso tus datos registrados, cito normas oficiales cuando aplican y no respondo temas ajenos al agua.</small></div>`;
+    if (compact) {
+      chat.innerHTML = `<div class="bubble ai">Hola, soy Aqua. Pregúntame sobre tus mediciones, piscinas, acuarios, agua potable, riego o calibración. Recuerdo lo que hablamos.<small class="muted">Uso tus datos, cito normas oficiales y no respondo temas ajenos al agua.</small></div>`;
+      return;
+    }
+    chat.innerHTML = `<div class="bubble ai">Hola, soy Aqua, el asistente de AquaSense. Pregúntame lo que quieras sobre el agua y su pH: tus mediciones, piscinas, acuarios, agua potable, riego, cómo corregir el pH, medidores y calibración, o cómo usar AquaSense. Recuerdo lo que hablamos en esta conversación.<small class="muted">Uso tus datos registrados, cito normas oficiales cuando aplican y no respondo temas ajenos al agua.</small></div>`;
   };
   const setMemory = (turns, omitted) => {
     memory.hidden = !turns;

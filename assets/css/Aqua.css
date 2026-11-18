@@ -1,0 +1,150 @@
+/* Aqua (the AI robot), its panel, the guided tour and the option sheets of "Medir" and "Más". */
+
+/* ---------- floating robot ---------- */
+.aqua { position: fixed; right: 18px; bottom: 98px; z-index: 50; }
+.aqua-bot {
+  position: relative; display: block; width: 68px; height: 68px; padding: 0; border: 0; background: none; cursor: pointer;
+  filter: drop-shadow(0 8px 14px rgba(10, 80, 150, .35)); animation: aqua-float 3.4s ease-in-out infinite;
+}
+.aqua-bot .aqua-face { width: 100%; height: 100%; display: block; transition: transform .2s; }
+.aqua-bot:hover .aqua-face { transform: scale(1.06) rotate(-4deg); }
+.aqua-bot:focus-visible { outline-offset: 4px; border-radius: 50%; }
+.aqua-ring { position: absolute; inset: 8px 6px 0; border-radius: 50%; border: 2px solid var(--primary-2); opacity: 0; animation: aqua-ping 3.4s ease-out infinite; pointer-events: none; }
+.aqua.open .aqua-ring, .aqua.on-ai .aqua-ring { display: none; }
+.aqua.on-ai .aqua-bot::after { content: ""; position: absolute; right: 4px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--ok); border: 2px solid var(--bg); }
+.aqua-face .aqua-eye { animation: aqua-blink 4.6s infinite; transform-origin: center; transform-box: fill-box; }
+.aqua-face .aqua-antenna { animation: aqua-wiggle 4s ease-in-out infinite; transform-origin: 60px 14px; }
+@keyframes aqua-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes aqua-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+@keyframes aqua-wiggle { 0%, 70%, 100% { transform: rotate(0); } 78% { transform: rotate(-12deg); } 86% { transform: rotate(10deg); } }
+@keyframes aqua-ping { 0%, 60% { transform: scale(.9); opacity: 0; } 70% { opacity: .55; } 100% { transform: scale(1.35); opacity: 0; } }
+
+/* What Aqua says next to it. */
+.aqua-say {
+  position: absolute; right: 8px; bottom: 80px; width: max-content; max-width: min(280px, calc(100vw - 40px));
+  display: flex; gap: 6px; align-items: flex-start; padding: 10px 8px 10px 14px; border-radius: 16px 16px 4px 16px;
+  background: var(--surface-solid); border: 1px solid var(--border-strong); box-shadow: var(--shadow); font-size: 14px; animation: pop-in .25s ease;
+}
+.aqua-say p { color: var(--text); }
+.aqua-say-x { flex: none; width: 24px; height: 24px; display: grid; place-items: center; border: 0; border-radius: 50%; background: none; color: var(--muted); }
+.aqua-say-x svg { width: 14px; height: 14px; }
+.aqua-say-x:hover { background: var(--surface-2); color: var(--text); }
+
+/* ---------- panel ---------- */
+.aqua-panel {
+  position: absolute; right: 0; bottom: 78px; width: min(420px, calc(100vw - 24px)); max-height: min(680px, calc(100dvh - 200px));
+  display: flex; flex-direction: column; border-radius: 22px; background: var(--surface-solid); border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow); overflow: hidden; transform-origin: bottom right; animation: aqua-open .28s cubic-bezier(.2, .9, .3, 1.15);
+}
+@keyframes aqua-open { from { opacity: 0; transform: translateY(14px) scale(.92); } to { opacity: 1; transform: none; } }
+.aqua-head { display: flex; align-items: center; gap: 10px; padding: 12px 12px 10px 14px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, var(--surface-2), transparent); }
+.aqua-head .aqua-head-face { width: 40px; height: 40px; flex: none; }
+.aqua-head h2 { font-size: 18px; }
+.aqua-head small { display: block; font-size: 12px; }
+.aqua-head [data-aqua-close] { margin-left: auto; }
+.aqua-head [data-aqua-back] svg { transform: rotate(180deg); }
+.aqua-body { padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.aqua-bubble { align-self: flex-start; max-width: 92%; padding: 10px 14px; border-radius: 16px 16px 16px 4px; background: var(--surface-2); border: 1px solid var(--border); font-weight: 600; }
+.aqua-ask { display: flex; gap: 8px; }
+.aqua-ask .input { flex: 1; min-width: 0; border-radius: 999px; }
+.aqua-ask .icon-btn { border-radius: 50%; flex: none; }
+.aqua-chat-btn, .aqua-fn, .sheet-option {
+  display: flex; align-items: center; gap: 12px; width: 100%; padding: 11px 12px; border-radius: 14px; border: 1px solid var(--border);
+  background: var(--surface-2); color: var(--text); text-decoration: none; text-align: left; font: inherit; cursor: pointer; transition: border-color .2s, transform .2s;
+}
+.aqua-chat-btn:hover, .aqua-fn:hover, .sheet-option:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+.aqua-chat-btn { background: var(--gradient-primary); color: #fff; border-color: transparent; }
+.aqua-chat-btn small { color: rgba(255, 255, 255, .88); }
+.aqua-chat-btn svg, .aqua-fn svg { width: 22px; height: 22px; flex: none; }
+.aqua-chat-btn svg:last-child { margin-left: auto; width: 18px; }
+.aqua-fn svg { color: var(--primary-2); }
+.aqua-chat-btn strong, .aqua-fn strong, .sheet-option strong { display: block; font-size: 14px; line-height: 1.3; }
+.aqua-chat-btn small, .aqua-fn small, .sheet-option small { display: block; font-size: 12px; line-height: 1.35; }
+.aqua-fn small { color: var(--muted); }
+.aqua-group { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-top: 6px; }
+.aqua-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.aqua-grid .aqua-fn { align-items: flex-start; padding: 10px; }
+.aqua-foot { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; margin-top: 6px; padding-top: 12px; border-top: 1px solid var(--border); }
+.aqua-tips { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); cursor: pointer; }
+.aqua-full { color: var(--primary); align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; }
+.aqua-full svg { width: 16px; height: 16px; }
+
+/* The assistant inside the panel: one column, no list of conversations (it is on the full screen). */
+.assistant-compact .assistant-layout { grid-template-columns: minmax(0, 1fr); margin-top: 6px !important; }
+.assistant-compact .assistant-providers, .assistant-compact .conv-items, .assistant-compact .conv-clear { display: none; }
+.aqua-chat { position: relative; }
+.assistant-compact .conv-list { position: absolute; top: 12px; right: 14px; padding: 0; background: none; border: 0; box-shadow: none; display: block; }
+.assistant-compact .conv-list [data-new] { width: auto; padding: 5px 12px; font-size: 13px; }
+.assistant-compact .assistant-titlebar { display: none; }
+.assistant-compact .chat { max-height: 38dvh; min-height: 140px; }
+@media (max-width: 760px) { .assistant-compact .chat { max-height: calc(100dvh - 470px); min-height: 150px; } }
+.assistant-compact [data-suggestions] { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+.assistant-compact [data-suggestions] .tab { white-space: nowrap; font-size: 12.5px; }
+.assistant-compact .bubble { max-width: 92%; font-size: 14px; }
+
+@media (min-width: 761px) {
+  .aqua { right: 24px; bottom: 24px; }
+  .aqua-panel { max-height: min(700px, calc(100dvh - 130px)); }
+}
+@media (max-width: 760px) {
+  .aqua { right: 10px; bottom: 92px; }
+  .aqua-bot { width: 58px; height: 58px; }
+  .aqua.open { left: 8px; right: 8px; }
+  .aqua.open .aqua-bot { margin-left: auto; }
+  .aqua-panel { left: 0; right: 0; width: auto; bottom: 66px; max-height: calc(100dvh - 180px); }
+  .aqua-say { bottom: 66px; }
+}
+
+/* ---------- AI screen header and Aqua's card on Inicio ---------- */
+.ia-head { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); }
+.ia-head-bot, .aqua-tip-bot { flex: none; width: 54px; height: 54px; padding: 0; border: 0; background: none; cursor: pointer; }
+.ia-head-bot .aqua-face, .aqua-tip-bot .aqua-face { width: 100%; height: 100%; }
+.ia-head-text { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.ia-head-text strong { font-family: var(--font-display); font-size: 20px; line-height: 1.2; }
+.ia-head-text span { font-size: 13.5px; }
+.aqua-tip { display: flex; gap: 14px; align-items: flex-start; }
+.aqua-tip strong { font-family: var(--font-display); }
+.aqua-tip p { margin-top: 2px; color: var(--text-soft); }
+.aqua-tip .ai-last { margin-top: 10px; }
+.profile-mini svg { width: 16px; height: 16px; }
+.btn-lg { padding: 13px 26px; font-size: 16px; }
+@media (max-width: 760px) { .ia-head { flex-wrap: wrap; } .ia-head > .btn { width: 100%; justify-content: center; } }
+
+/* ---------- sheets of "Medir" and "Más" ---------- */
+.sheet-options { display: grid; gap: 10px; }
+.sheet-ic { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--gradient-primary); color: #fff; }
+.sheet-ic svg { width: 22px; height: 22px; }
+.sheet-option > svg:last-child { margin-left: auto; width: 18px; height: 18px; color: var(--muted); flex: none; }
+.sheet-option small { color: var(--muted); }
+.sheet-danger .sheet-ic { background: var(--crit-bg); color: var(--crit); }
+
+/* ---------- guided tour ---------- */
+.tour { position: fixed; inset: 0; z-index: 70; }
+.tour-spot {
+  position: fixed; border-radius: 18px; box-shadow: 0 0 0 9999px rgba(4, 18, 38, .62); border: 2px solid var(--primary-2);
+  transition: left .35s ease, top .35s ease, width .35s ease, height .35s ease; pointer-events: none;
+}
+.tour-spot:not([hidden]) { animation: tour-glow 1.6s ease-in-out infinite; }
+.tour-spot[hidden] + .tour-card { box-shadow: 0 0 0 9999px rgba(4, 18, 38, .62), var(--shadow); }
+@keyframes tour-glow { 0%, 100% { outline: 0 solid transparent; } 50% { outline: 6px solid rgba(34, 199, 240, .35); } }
+.tour-card {
+  position: fixed; display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 20px;
+  background: var(--surface-solid); border: 1px solid var(--border-strong); box-shadow: var(--shadow); transition: left .35s ease, top .35s ease;
+}
+.tour-pop { animation: pop-in .3s ease; }
+.tour-top { display: flex; align-items: center; gap: 12px; }
+.tour-bot { width: 52px; height: 52px; flex: none; animation: aqua-float 3s ease-in-out infinite; }
+.tour-count { display: block; font-size: 12px; font-weight: 700; color: var(--primary); }
+:root[data-theme="light"] .aqua-panel .badge-ok { color: #0c6a3c; }
+.tour-top h2 { font-size: 19px; }
+.tour-card p { color: var(--text-soft); }
+.tour-dots { display: flex; gap: 6px; }
+.tour-dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--track); transition: width .25s, background .25s; }
+.tour-dots i.on { width: 20px; border-radius: 4px; background: var(--primary-2); }
+.tour-actions { display: flex; align-items: center; gap: 8px; }
+.tour-arrow { position: absolute; width: 16px; height: 16px; background: var(--surface-solid); transform: translateX(-50%) rotate(45deg); }
+.tour-arrow.up { top: -9px; border-left: 1px solid var(--border-strong); border-top: 1px solid var(--border-strong); }
+.tour-arrow.down { bottom: -9px; border-right: 1px solid var(--border-strong); border-bottom: 1px solid var(--border-strong); }
+.ref-line { margin-top: 8px; }
+.ref-line svg { width: 15px; height: 15px; vertical-align: -3px; margin-right: 5px; color: var(--primary-2); }
+.assistant-compact > .row-between:first-child { justify-content: flex-start; min-height: 30px; }
