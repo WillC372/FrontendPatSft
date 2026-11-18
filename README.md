@@ -194,7 +194,7 @@ Los MockUps son capturas de la aplicación publicada en tema claro (el predeterm
 
 ### Issues
 
-Los 28 requerimientos están creados como Issues del repositorio ([#1 a #28](https://github.com/WillC372/FrontendPatSft/issues)), con las etiquetas *requerimiento funcional* o *requerimiento no funcional*, *historia de usuario* y su estado. Los scripts de [`docs/issues/`](docs/issues/) (`crear-issues.ps1` para Windows y `crear-issues.sh` para Mac o Linux) sirven para crearlos en otro repositorio con `gh`; saltan los que ya existen.
+Los 29 requerimientos están creados como Issues del repositorio ([#1 a #29](https://github.com/WillC372/FrontendPatSft/issues); RF-22 es el #29 porque se agregó después), con las etiquetas *requerimiento funcional* o *requerimiento no funcional*, *historia de usuario* y su estado. Los scripts de [`docs/issues/`](docs/issues/) (`crear-issues.ps1` para Windows y `crear-issues.sh` para Mac o Linux) sirven para crearlos en otro repositorio con `gh`; saltan los que ya existen.
 
 ## Solución de problemas
 
