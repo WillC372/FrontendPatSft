@@ -1,4 +1,4 @@
-import { LANG, LANG_KEY, IS_SPANISH } from "./Locale.js";
+import { LANG, LANG_KEY, LANGUAGES, IS_SPANISH, SUPPORTED } from "./Locale.js";
 
 // The whole interface in the language each person chooses. The app is written in Spanish; this module watches the
 // page and replaces every text (and placeholders, labels and tooltips) with its translation, including what appears
@@ -11,9 +11,9 @@ import { LANG, LANG_KEY, IS_SPANISH } from "./Locale.js";
 
 const API = "https://aquasense-backend-willc372.onrender.com/api/v1/i18n";
 const DICT_KEY = (lang) => `aquasense.i18n.${lang}`;
-const RTL = new Set(["ar", "he", "fa", "ur"]);
-// Scripts the server's PDF font cannot draw (or needs shaping for): their reports are printed from the browser.
-const PDF_IN_BROWSER = new Set(["zh-Hans", "zh-Hant", "ja", "ko", "hi", "bn", "ur", "pa", "mr", "te", "ta", "gu", "kn", "ml", "ar", "he", "fa", "th", "am"]);
+const RTL = new Set();
+// Every language of the app is drawn in the server's PDF (Chinese and Japanese with their own font).
+const PDF_IN_BROWSER = new Set();
 const SKIP = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "CODE", "PRE", "TEXTAREA", "svg", "SVG", "KBD", "SAMP", "VAR", "MATH", "CANVAS", "VIDEO", "AUDIO", "IFRAME", "TEMPLATE"]);
 const INLINE = new Set(["B", "STRONG", "EM", "I", "U", "SMALL", "A", "SPAN", "ABBR", "MARK", "SUB", "SUP", "Q", "S", "LABEL", "TIME", "DFN", "CITE", "BDI"]);
 const ATTRS = ["placeholder", "title", "aria-label", "alt", "aria-description", "aria-roledescription", "data-tip"];
@@ -390,6 +390,7 @@ export const i18n = {
 
   /** Changes the language: the page reloads so every screen, date and number is built again in it. */
   change(lang, { beforeSignIn = false } = {}) {
+    if (!SUPPORTED.has(lang)) lang = "es";
     if (lang === LANG) return;
     try {
       localStorage.setItem(LANG_KEY, lang);
@@ -406,7 +407,7 @@ export const i18n = {
   syncWithAccount(accountLang, save) {
     let pending = false;
     try { pending = localStorage.getItem(`${LANG_KEY}.pending`) === "1"; localStorage.removeItem(`${LANG_KEY}.pending`); } catch { /* ignore */ }
-    const account = accountLang || "es";
+    const account = SUPPORTED.has(accountLang) ? accountLang : "es";
     if (account === LANG) return;
     if (pending) { save(LANG); return; }
     this.change(account);
@@ -414,10 +415,6 @@ export const i18n = {
 
   /** Languages offered, with their name in their own language. */
   async languages() {
-    try {
-      const res = await fetch(`${API}/languages`);
-      if (res.ok) return await res.json();
-    } catch { /* offline */ }
-    return [{ code: "es", name: "Español", rtl: false, pdf: true }];
+    return LANGUAGES;
   },
 };
