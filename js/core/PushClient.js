@@ -8,6 +8,15 @@ const toBytes = (b64url) => {
   return Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
 };
 
+/** The browser's own messages are in English and technical: say what happened and what to do. */
+function subscribeError(error) {
+  const text = `${error?.name || ""} ${error?.message || ""}`;
+  if (/permission/i.test(text)) return "El navegador no dio permiso para los avisos. Actívalos desde el candado junto a la dirección de la página.";
+  if (/incognito|private/i.test(text)) return "En una ventana privada o de incógnito el navegador no permite avisos. Abre la app en una ventana normal.";
+  if (/push service|not available|network/i.test(text)) return "El servicio de avisos del navegador no respondió. Revisa tu conexión e inténtalo de nuevo; si sigue igual, prueba con Chrome, Edge o Firefox.";
+  return "No se pudieron activar los avisos en este navegador. Inténtalo de nuevo o prueba con otro navegador.";
+}
+
 export const pushClient = {
   supported() {
     return "serviceWorker" in navigator && "PushManager" in window && "Notification" in window && window.isSecureContext;
@@ -46,7 +55,13 @@ export const pushClient = {
     await navigator.serviceWorker.ready;
     const { publicKey } = await api.get("/push/key");
     let sub = await reg.pushManager.getSubscription();
-    if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: toBytes(publicKey) });
+    if (!sub) {
+      try {
+        sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: toBytes(publicKey) });
+      } catch (error) {
+        throw new Error(subscribeError(error));
+      }
+    }
     const json = sub.toJSON();
     await api.post("/push/subscriptions", { endpoint: json.endpoint, keys: json.keys, label: deviceLabel() });
     return sub;
