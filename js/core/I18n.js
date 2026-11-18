@@ -193,8 +193,9 @@ function translateText(node) {
 
 /** A text box filled in by the app (not yet edited by the person) shows its suggestion in the language too. */
 function translateValue(el) {
-  if (el.nodeName !== "INPUT" || !["text", "search"].includes((el.getAttribute("type") || "text").toLowerCase())) return;
-  const value = el.getAttribute("value");
+  const area = el.nodeName === "TEXTAREA";
+  if (!area && (el.nodeName !== "INPUT" || !["text", "search"].includes((el.getAttribute("type") || "text").toLowerCase()))) return;
+  const value = area ? el.defaultValue : el.getAttribute("value");
   if (!value || el.value !== value) return;
   const state = attrState.get(el)?.get("value");
   if (state && value === state.applied && !state.waiting) return;
@@ -204,7 +205,7 @@ function translateValue(el) {
   let states = attrState.get(el);
   if (!states) attrState.set(el, (states = new Map()));
   if (translated === null) { states.set("value", { src, applied: value, waiting: true }); return; }
-  el.setAttribute("value", translated);
+  if (area) el.defaultValue = translated; else el.setAttribute("value", translated);
   el.value = translated;
   states.set("value", { src, applied: translated });
 }
@@ -239,7 +240,7 @@ function walk(root) {
   if (root.nodeType !== 1 || skipped(root)) return;
   const visit = (el) => {
     // Charts and icons: only their accessible name (aria-label, title) is text to translate.
-    if (el.nodeName === "svg" || el.nodeName === "SVG") { translateAttrs(el); return; }
+    if (el.nodeName === "svg" || el.nodeName === "SVG" || el.nodeName === "TEXTAREA") { translateAttrs(el); return; }
     if (SKIP.has(el.nodeName) || el.getAttribute("translate") === "no" || el.classList.contains("notranslate") || el.isContentEditable) return;
     translateAttrs(el);
     if (translateUnit(el)) {
