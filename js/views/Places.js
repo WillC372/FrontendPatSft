@@ -1,9 +1,11 @@
 import { api } from "../core/Api.js";
 import { bus } from "../core/EventBus.js";
 import { session } from "../core/Session.js";
-import { esc, fmt, relativeTime } from "../core/Format.js";
+import { esc, fmt, own, relativeTime } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
+import { bindHelp, helpBox } from "../ui/Help.js";
 import { confirmDialog, emptyState, loading, modal, showFieldErrors, toast, withBusy } from "../ui/Components.js";
+import { LOCALE } from "../core/Locale.js";
 
 export const PLACE_KINDS = [
   ["POOL", "Piscina", "pool"], ["SPA", "Jacuzzi o spa", "pool"], ["AQUARIUM", "Acuario", "fish"], ["POND", "Estanque", "fish"],
@@ -15,7 +17,7 @@ const VOLUME_UNITS = [["L", "litros", 1], ["m3", "m³", 1000], ["gal", "galones 
 
 export function volumeText(liters) {
   if (!liters) return "Volumen sin indicar";
-  return liters >= 10000 ? `${(liters / 1000).toLocaleString("es", { maximumFractionDigits: 1 })} m³` : `${Math.round(liters).toLocaleString("es")} L`;
+  return liters >= 10000 ? `${(liters / 1000).toLocaleString(LOCALE, { maximumFractionDigits: 1 })} m³` : `${Math.round(liters).toLocaleString(LOCALE)} L`;
 }
 
 /** Makes a place the active one; the whole app (Inicio, Historial, IA...) then shows it. */
@@ -149,11 +151,18 @@ export const placesView = {
       }
       const demo = session.user?.demo;
       root.innerHTML = `
-        <div class="row-between reveal"><div><h1>Lugares</h1><p class="muted">Cada piscina, acuario o tanque con su propio historial, perfil y volumen. El lugar activo es el que ves en toda la app.</p></div>
+        <div class="row-between reveal"><div><h1>Lugares</h1><p class="muted">Cada sitio con agua que mides, por separado.</p></div>
           <button class="btn btn-primary btn-pill" data-new>${icon("plus")}Nuevo lugar</button></div>
+        ${helpBox("places", "¿Para qué sirven los lugares?", [
+          ["pin", "Un lugar es un sitio con agua que mides", "Por ejemplo tu piscina, la pecera de la sala o el tanque del techo. Cada uno guarda sus propias mediciones, sin mezclarse con las de los otros."],
+          ["drop", "«Mi agua» es tu primer lugar", "Se creó solo cuando te registraste y ahí están todas tus mediciones. Si solo mides un sitio, no necesitas hacer nada más. Puedes cambiarle el nombre con «Editar»."],
+          ["check", "El lugar «En uso» es el que ves en toda la app", "Arriba, junto a tu nombre, aparece el lugar en el que estás. Tócalo para cambiar: Inicio, Historial, Medir y Cuidado pasan a mostrar ese lugar."],
+          ["calc", "El volumen sirve para la calculadora", "Con los litros de la piscina o la pecera, la pantalla Cuidado te dice cuánto producto echar."],
+          ["share", "Compartir es opcional", "Si quieres que tu familia o tu técnico vean ese lugar desde su propia cuenta, toca «Compartir» y dales el código. Ellos lo escriben abajo, en «Unirme con un código»."],
+        ])}
         <div class="grid places-grid">
           ${places.map((p) => `<article class="card place-card ${p.active ? "active" : ""} reveal">
-            <div class="card-head"><div class="card-title"><span class="place-ic">${icon(kindIcon(p.kind))}</span>${esc(p.name)}</div>
+            <div class="card-head"><div class="card-title"><span class="place-ic">${icon(kindIcon(p.kind))}</span>${own(p.name)}</div>
               ${p.active ? `<span class="badge badge-ok">${icon("check")}En uso</span>` : ""}</div>
             <p class="muted small">${esc(p.kindLabel)} · ${volumeText(p.volumeLiters)} · Perfil ${esc(p.profileName)} (${p.idealMin.toFixed(1)} - ${p.idealMax.toFixed(1)})</p>
             <p class="small">${p.measurements} ${p.measurements === 1 ? "medición" : "mediciones"}${p.lastMeasuredAt ? ` · última ${relativeTime(p.lastMeasuredAt)}` : ""}</p>
@@ -177,6 +186,7 @@ export const placesView = {
           <form class="row" data-join style="margin-top:10px"><input class="input mono" name="code" maxlength="12" placeholder="ABCD-2345" aria-label="Código para unirse" style="flex:1;min-width:160px;text-transform:uppercase" autocomplete="off">
             <button class="btn btn-primary" type="submit">${icon("arrowRight")}Unirme</button></form>
         </section>`}`;
+      bindHelp(root);
       const find = (id) => places.find((p) => p.id === Number(id));
       root.querySelector("[data-new]").addEventListener("click", () => placeForm());
       root.querySelectorAll("[data-use]").forEach((b) => b.addEventListener("click", (e) => withBusy(e.currentTarget, async () => {

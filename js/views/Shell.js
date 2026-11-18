@@ -4,7 +4,7 @@ import { session } from "../core/Session.js";
 import { theme } from "../core/Theme.js";
 import { liveStream } from "../core/LiveStream.js";
 import { browserMeter } from "../core/BrowserMeter.js";
-import { esc, fmt, relativeTime } from "../core/Format.js";
+import { esc, fmt, own, relativeTime } from "../core/Format.js";
 import { icon, logo } from "../ui/Icons.js";
 import { avatarMarkup, avatarUrl, forgetAvatar } from "../core/Avatar.js";
 import { openAccountDialog } from "./AccountDialog.js";
@@ -39,7 +39,7 @@ export class Shell {
             <h1 class="topbar-h1" data-title></h1>
             <div class="topbar-actions">
               <div class="place-menu-wrap">
-                <button type="button" class="place-chip" data-place-chip aria-haspopup="menu" aria-expanded="false" aria-controls="place-menu">${icon("pin")}<span data-place-name>Mi agua</span>${icon("chevronRight", "user-chev")}</button>
+                <button type="button" class="place-chip" data-place-chip aria-haspopup="menu" aria-expanded="false" aria-controls="place-menu" title="Lugar que estás viendo. Toca para cambiar de piscina, acuario o tanque.">${icon("pin")}<span data-place-name>Mi agua</span>${icon("chevronRight", "user-chev")}</button>
                 <div class="dropdown place-menu" id="place-menu" role="menu" aria-label="Elegir lugar" data-place-menu hidden></div>
               </div>
               <a class="device-chip" href="#/devices" data-device-pill aria-label="Estado del medidor"></a>
@@ -49,9 +49,9 @@ export class Shell {
                 <div class="dropdown" data-alerts hidden></div>
               </div>
               <div class="user-menu-wrap">
-                <button type="button" class="user-chip" data-account aria-haspopup="menu" aria-expanded="false" aria-controls="user-menu" aria-label="Tu cuenta: ${esc(user?.fullName || "")}"><span data-avatar>${avatarMarkup(user, null)}</span><span class="user-name">${esc(user?.fullName?.split(" ")[0] || "")}</span>${icon("chevronRight", "user-chev")}</button>
+                <button type="button" class="user-chip" data-account aria-haspopup="menu" aria-expanded="false" aria-controls="user-menu" aria-label="Tu cuenta: ${esc(user?.fullName || "")}"><span data-avatar>${avatarMarkup(user, null)}</span><span class="user-name" translate="no">${esc(user?.fullName?.split(" ")[0] || "")}</span>${icon("chevronRight", "user-chev")}</button>
                 <div class="dropdown user-menu" id="user-menu" role="menu" aria-label="Tu cuenta" data-user-menu hidden>
-                  <div class="user-menu-head"><span data-avatar-big>${avatarMarkup(user, null, "avatar-lg")}</span><div><strong>${esc(user?.fullName || "")}</strong><small class="muted">${esc(user?.email || "")}</small>
+                  <div class="user-menu-head"><span data-avatar-big>${avatarMarkup(user, null, "avatar-lg")}</span><div translate="no"><strong>${esc(user?.fullName || "")}</strong><small class="muted">${esc(user?.email || "")}</small>
                     <small class="muted">${user?.role === "ADMIN" ? "Administrador" : "Usuario"} · ${user?.role === "ADMIN" ? "sin límites" : user?.plan === "PREMIUM" ? "Premium" : "Plan gratuito"}</small></div></div>
                   <button type="button" class="user-menu-item" role="menuitem" data-my-account>${icon("user")}Mi cuenta</button>
                   <button type="button" class="user-menu-item danger" role="menuitem" data-logout>${icon("logout")}Cerrar sesión</button>
@@ -230,7 +230,10 @@ export class Shell {
       const active = this.places.find((p) => p.active) || this.places[0];
       const chip = this.root.querySelector("[data-place-chip]");
       if (!active || !chip) return;
-      chip.querySelector("[data-place-name]").textContent = active.name;
+      const label = chip.querySelector("[data-place-name]");
+      label.textContent = active.name;
+      // The person's own name for the place is not translated ("Mi agua", created by the app, is).
+      if (active.name === "Mi agua") label.removeAttribute("translate"); else label.setAttribute("translate", "no");
       chip.setAttribute("aria-label", `Lugar: ${active.name}. Cambiar de lugar`);
       chip.classList.toggle("shared", active.role !== "OWNER");
     } catch { /* the chip keeps its text */ }
@@ -238,9 +241,9 @@ export class Shell {
 
   #renderPlaceMenu() {
     const menu = this.root.querySelector("[data-place-menu]");
-    menu.innerHTML = `<p class="menu-title">Tus lugares</p>${(this.places || []).map((p) => `<button type="button" class="user-menu-item ${p.active ? "current" : ""}" role="menuitemradio" aria-checked="${p.active}" data-place="${p.id}">
-        ${icon(p.active ? "check" : "pin")}<span>${esc(p.name)}<small class="muted">${esc(p.kindLabel)}${p.role !== "OWNER" ? ` · ${esc(p.roleLabel)}` : ""}</small></span></button>`).join("")}
-      <a class="user-menu-item" role="menuitem" href="#/places" data-manage>${icon("settings")}Administrar lugares</a>`;
+    menu.innerHTML = `<p class="menu-title">¿Qué agua quieres ver?</p><p class="menu-hint">Cada lugar guarda sus propias mediciones. Elige uno y toda la app cambia a ese lugar.</p>${(this.places || []).map((p) => `<button type="button" class="user-menu-item ${p.active ? "current" : ""}" role="menuitemradio" aria-checked="${p.active}" data-place="${p.id}">
+        ${icon(p.active ? "check" : "pin")}<span>${own(p.name)}<small class="muted">${esc(p.kindLabel)}${p.role !== "OWNER" ? ` · ${esc(p.roleLabel)}` : ""}</small></span></button>`).join("")}
+      <a class="user-menu-item" role="menuitem" href="#/places" data-manage>${icon("plus")}Crear, editar o compartir lugares</a>`;
   }
 
   #bindPlaceMenu() {

@@ -68,10 +68,10 @@ export async function measureWithDevice(button) {
 
 // Other parameters that can be written with the pH: [name, label, maximum in mg/L].
 export const PARAM_FIELDS = [
-  ["freeChlorine", "Cloro libre (mg/L)", 20],
-  ["totalAlkalinity", "Alcalinidad total (mg/L)", 500],
-  ["calciumHardness", "Dureza cálcica (mg/L)", 2000],
-  ["cyanuricAcid", "Ácido cianúrico (mg/L)", 300],
+  ["freeChlorine", "Cloro libre (mg/L)", 20, "El que desinfecta. Piscina: 1 a 3."],
+  ["totalAlkalinity", "Alcalinidad total (mg/L)", 500, "Evita que el pH suba y baje solo. Piscina: 80 a 120."],
+  ["calciumHardness", "Dureza cálcica (mg/L)", 2000, "Calcio del agua; muy baja daña el revestimiento. Piscina: 200 a 400."],
+  ["cyanuricAcid", "Ácido cianúrico (mg/L)", 300, "Protege el cloro del sol. Piscina exterior: 30 a 50."],
 ];
 
 export async function manualEntry() {
@@ -87,9 +87,9 @@ export async function manualEntry() {
         <div class="field"><label for="mm-at">Fecha y hora</label><input class="input" id="mm-at" name="measuredAt" type="datetime-local" value="${now}" max="${now}"><div class="field-error" data-error-for="measuredAt"></div></div>
         <details class="more-params">
           <summary>${icon("flask")}Otros parámetros (opcional)</summary>
-          <p class="muted small">Si los mediste con tiras o un kit. Todo en mg/L (ppm); la alcalinidad y la dureza como CaCO<sub>3</sub>.</p>
+          <p class="muted small">Solo si tienes un kit de prueba de piscina o acuario (tiras o gotas): el medidor de pH no mide esto. Si no lo tienes, déjalo vacío. Sirve para ver el estado completo del agua en Inicio y para que la calculadora acierte. Todo en mg/L (ppm).</p>
           <div class="grid grid-2">
-            ${PARAM_FIELDS.map(([name, label, max]) => `<div class="field"><label for="mm-${name}">${label}</label><input class="input" id="mm-${name}" name="${name}" type="number" step="0.1" min="0" max="${max}" inputmode="decimal"><div class="field-error" data-error-for="${name}"></div></div>`).join("")}
+            ${PARAM_FIELDS.map(([name, label, max, hint]) => `<div class="field"><label for="mm-${name}">${label}</label><input class="input" id="mm-${name}" name="${name}" type="number" step="0.1" min="0" max="${max}" inputmode="decimal" aria-describedby="mm-${name}-hint"><small class="param-hint" id="mm-${name}-hint">${hint}</small><div class="field-error" data-error-for="${name}"></div></div>`).join("")}
           </div>
         </details>
         <div class="field"><label for="mm-note">Nota (opcional)</label><input class="input" id="mm-note" name="note" maxlength="300"></div>

@@ -1,12 +1,13 @@
 import { api } from "../core/Api.js";
 import { bus } from "../core/EventBus.js";
 import { session } from "../core/Session.js";
-import { esc, relativeTime } from "../core/Format.js";
+import { esc, own, relativeTime } from "../core/Format.js";
 import { icon, PROFILE_ICONS } from "../ui/Icons.js";
 import { aquaFace } from "../ui/AquaFace.js";
 import { emptyState, loading, sourceBadge, statusBadge, toast } from "../ui/Components.js";
 import { createGauge, phScale } from "../ui/Gauge.js";
 import { animateWater } from "../ui/Water.js";
+import { LOCALE } from "../core/Locale.js";
 
 const NATURE_TEXT = {
   ACIDIC: "El pH está por debajo del neutro. Revisa si es adecuado para el uso del agua.",
@@ -41,7 +42,7 @@ export const dashboardView = {
     // Three blocks: the last value, what it means, and what Aqua suggests. Everything else is one tap away in the bottom bar.
     root.innerHTML = `
       <div class="row-between welcome reveal">
-        <div><h1>¡Hola, ${esc(firstName)}!</h1><p>${latest ? `Así está el agua de <strong>${esc(place?.name || "tu lugar")}</strong>.` : `Empieza midiendo el agua de <strong>${esc(place?.name || "tu lugar")}</strong> con el botón «Medir» de abajo.`}</p>
+        <div><h1>¡Hola, <span translate="no">${esc(firstName)}</span>!</h1><p>${latest ? `Así está el agua de <strong>${own(place?.name || "tu lugar")}</strong>.` : `Empieza midiendo el agua de <strong>${own(place?.name || "tu lugar")}</strong> con el botón «Medir» de abajo.`}</p>
           ${place && place.role !== "OWNER" ? `<p class="small muted">${icon("share")}Lugar compartido por ${esc(place.ownerName || "otra persona")} · ${esc(place.roleLabel)}</p>` : ""}</div>
         ${session.user?.role === "ADMIN" ? `<span class="badge badge-info">${icon("shield")}Administrador · sin límites</span>` : data.plan === "PREMIUM" ? `<span class="badge badge-info">${icon("star")}Premium</span>` : `<a class="badge badge-info" href="#/billing">Plan gratuito</a>`}
       </div>
@@ -86,8 +87,9 @@ export const dashboardView = {
           <div data-due></div>
           ${params.length ? `<section class="card reveal" aria-labelledby="params-title">
             <div class="card-head"><div class="card-title" id="params-title">${icon("flask")}Otros parámetros</div><a class="btn btn-sm btn-pill" href="#/care">Calcular dosis ${icon("chevronRight")}</a></div>
+            <p class="muted small" style="margin:-4px 0 10px">Lo que anotaste de tu kit de prueba además del pH. Verde está bien; amarillo o rojo, revisa el consejo o usa la calculadora.</p>
             <div class="params-grid">${params.map((p) => `<div class="param ${p.status}"><span>${esc(p.label)}</span>
-              <strong class="num">${p.value.toLocaleString("es", { maximumFractionDigits: 1 })} <small>mg/L</small></strong>
+              <strong class="num">${p.value.toLocaleString(LOCALE, { maximumFractionDigits: 1 })} <small>mg/L</small></strong>
               <small class="muted">${p.range ? `Orientativo ${p.range.low}–${p.range.high}` : "Sin rango general"} · ${relativeTime(p.measuredAt)}</small>
               ${p.advice ? `<small>${esc(p.advice)}</small>` : ""}</div>`).join("")}</div>
             <p class="muted small" style="margin-top:8px">Rangos orientativos para ${esc((place?.kindLabel || "este tipo de agua").toLowerCase())}; revisa la norma o el fabricante de tus productos.</p>

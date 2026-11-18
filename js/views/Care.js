@@ -1,10 +1,13 @@
 import { api } from "../core/Api.js";
 import { bus } from "../core/EventBus.js";
-import { esc, fmt, relativeTime } from "../core/Format.js";
+import { esc, fmt, own, relativeTime } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
+import { bindHelp, helpBox } from "../ui/Help.js";
+import { pushClient } from "../core/PushClient.js";
 import { confirmDialog, emptyState, loading, modal, showFieldErrors, toast, withBusy } from "../ui/Components.js";
 import { GOALS, PRODUCTS, amountText, dose } from "../core/DoseCalc.js";
 import { placeForm, volumeText } from "./Places.js";
+import { LOCALE } from "../core/Locale.js";
 
 // Products of the treatment log (same codes as the server) and their units.
 export const TREATMENTS = [
@@ -88,10 +91,21 @@ export function reminderForm(existing = null) {
         <label><input type="checkbox" name="byPush" ${existing ? (existing.byPush ? "checked" : "") : "checked"}> En este celular o computador (activa los avisos en Configuración)</label>
         <label><input type="checkbox" name="byEmail" ${existing?.byEmail ? "checked" : ""}> Por correo</label>
       </fieldset>
+      <p class="push-hint" data-push-hint hidden></p>
     </form>`,
     onMount: (node) => {
       const kind = node.querySelector("#rm-kind");
       kind.addEventListener("change", () => { node.querySelector("[data-custom-title]").hidden = kind.value !== "CUSTOM"; });
+      // A reminder "en este celular" only arrives if notifications were turned on in this browser: say so before saving.
+      const hint = node.querySelector("[data-push-hint]");
+      const push = node.querySelector("[name=byPush]");
+      const check = async () => {
+        const on = await pushClient.current().catch(() => null);
+        hint.hidden = !push.checked || Boolean(on);
+        hint.innerHTML = `${icon("alert")}<span>Los avisos de este dispositivo están apagados, así que el recordatorio solo se verá en Inicio. Para que te llegue al celular, actívalos en <a href="#/settings">Configuración → Avisos</a>.</span>`;
+      };
+      push.addEventListener("change", check);
+      check();
     },
     actions: [
       { label: "Cancelar", className: "btn-ghost", value: null },
@@ -122,7 +136,7 @@ function calculatorCard(place, latest) {
   const goals = Object.entries(GOALS);
   return `<section class="card reveal calc-card" aria-labelledby="calc-title">
     <div class="card-head"><div class="card-title" id="calc-title">${icon("calc")}Calculadora de dosis</div>
-      <span class="muted small">${esc(place.name)} · ${volumeText(place.volumeLiters)}</span></div>
+      <span class="muted small">${own(place.name)} · ${volumeText(place.volumeLiters)}</span></div>
     ${isAquarium(place.kind) ? `<div class="banner banner-warn">${icon("alert")}<p>En acuarios y estanques usa productos hechos para peces y cambia el pH como mucho 0,2 por día. Los productos de piscina pueden matarlos.</p></div>` : ""}
     <form class="stack" data-calc novalidate>
       <div class="grid grid-2">
@@ -159,7 +173,12 @@ export const careView = {
     latest.ph = dashboard.latest?.ph ?? null;
     latest.cyanuricAcid = latest.cyanuricAcid ?? null;
     root.innerHTML = `
-      <div class="reveal"><h1>Cuidado del agua</h1><p class="muted">Calcula cuánto producto usar, anota lo que le haces al agua de <strong>${esc(place.name)}</strong> y programa recordatorios.</p></div>
+      <div class="reveal"><h1>Cuidado del agua</h1><p class="muted">Calcula cuánto producto usar, anota lo que le haces al agua de <strong>${own(place.name)}</strong> y programa recordatorios.</p></div>
+      ${helpBox("care", "¿Para qué sirve esta pantalla?", [
+        ["calc", "Calculadora de dosis: cuánto producto echar", "Ejemplo: tu piscina de 40 000 litros está en pH 7,9 y la quieres en 7,5. Eliges «Bajar el pH» y el producto que tienes, y te dice «270 mL de ácido muriático». Así no echas de más ni de menos."],
+        ["flask", "Tratamientos: tu cuaderno de lo que le haces al agua", "Anota cada vez que echas cloro, ácido o cambias agua. Así recuerdas qué hiciste y cuándo, y Aqua lo tiene en cuenta al revisar tus mediciones."],
+        ["bell", "Recordatorios: tareas que se repiten", "Por ejemplo «medir el pH cada 3 días» o «limpiar el filtro cada semana». Cuando toca, aparece en Inicio en «Para hoy» y, si quieres, te llega un aviso al celular o un correo."],
+      ])}
       ${calculatorCard(place, latest)}
       <div class="grid grid-2">
         <section class="card reveal" aria-labelledby="tr-title">
@@ -174,6 +193,7 @@ export const careView = {
         </section>
       </div>`;
 
+    bindHelp(root);
     // ---------- calculator ----------
     const form = root.querySelector("[data-calc]");
     const goal = form.querySelector("#calc-goal");
@@ -227,8 +247,8 @@ export const careView = {
         const list = await api.get("/treatments", { days: 90 });
         if (ctx.stale()) return;
         host.innerHTML = list.length ? `<ul class="list treatments">${list.map((t) => `<li>
-            <span><strong>${esc(t.productLabel)}</strong>${t.amount ? ` · <span class="num">${Number(t.amount).toLocaleString("es")} ${esc(t.unit)}</span>` : ""}
-            <br><small class="muted">${relativeTime(t.appliedAt)}${t.byName ? ` · por ${esc(t.byName)}` : ""}${t.note ? ` · ${esc(t.note)}` : ""}</small></span>
+            <span><strong>${esc(t.productLabel)}</strong>${t.amount ? ` · <span class="num">${Number(t.amount).toLocaleString(LOCALE)} ${esc(t.unit)}</span>` : ""}
+            <br><small class="muted">${relativeTime(t.appliedAt)}${t.byName ? ` · por <span translate="no">${esc(t.byName)}</span>` : ""}${t.note ? ` · <span translate="no">${esc(t.note)}</span>` : ""}</small></span>
             ${place.canEdit ? `<button type="button" class="icon-btn btn btn-ghost" data-del-tr="${t.id}" aria-label="Borrar tratamiento ${esc(t.productLabel)}">${icon("trash")}</button>` : ""}</li>`).join("")}</ul>`
           : `<p class="muted small">Aún no hay tratamientos en los últimos 90 días. Anota aquí cada producto que agregues: así Aqua y tú verán su efecto en las mediciones.</p>`;
         host.querySelectorAll("[data-del-tr]").forEach((b) => b.addEventListener("click", async () => {
