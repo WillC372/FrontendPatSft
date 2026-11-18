@@ -18,6 +18,11 @@ export const fmt = {
   },
 };
 
+/** "3 de 20" consultas, or "3 · sin límite" for administrators (the server sends a huge quota for them). */
+export function quotaText(used, quota, joiner = " de ") {
+  return quota >= 1_000_000 ? `${used} · sin límite` : `${used}${joiner}${quota}`;
+}
+
 export function esc(value) {
   return String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }

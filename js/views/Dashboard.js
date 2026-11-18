@@ -40,7 +40,7 @@ export const dashboardView = {
     root.innerHTML = `
       <div class="row-between welcome reveal">
         <div><h1>¡Hola, ${esc(firstName)}!</h1><p>${latest ? "Así está tu agua ahora." : "Empieza midiendo tu agua con el botón «Medir» de abajo."}</p></div>
-        ${data.plan === "PREMIUM" ? `<span class="badge badge-info">${icon("star")}Premium</span>` : `<a class="badge badge-info" href="#/billing">Plan gratuito</a>`}
+        ${session.user?.role === "ADMIN" ? `<span class="badge badge-info">${icon("shield")}Administrador · sin límites</span>` : data.plan === "PREMIUM" ? `<span class="badge badge-info">${icon("star")}Premium</span>` : `<a class="badge badge-info" href="#/billing">Plan gratuito</a>`}
       </div>
 
       <div class="grid grid-home">

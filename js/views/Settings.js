@@ -2,7 +2,7 @@ import { api } from "../core/Api.js";
 import { bus } from "../core/EventBus.js";
 import { session } from "../core/Session.js";
 import { theme } from "../core/Theme.js";
-import { esc, fmt } from "../core/Format.js";
+import { esc, fmt, quotaText } from "../core/Format.js";
 import { icon, logo } from "../ui/Icons.js";
 import { avatarMarkup, avatarUrl } from "../core/Avatar.js";
 import { openAccountDialog } from "./AccountDialog.js";
@@ -100,7 +100,7 @@ export const settingsView = {
               <dt>Miembro desde</dt><dd>${fmt.dateTime(me.createdAt)}</dd>
               ${current ? `<dt>Sesión actual</dt><dd>Desde ${fmt.dateTime(current.startedAt)} · vence ${fmt.dateTime(current.expiresAt)}${current.rememberMe ? " (recordada)" : ""}</dd>` : ""}
               <dt>Análisis histórico</dt><dd>Hasta ${ai.maxAnalysisDays} días</dd>
-              <dt>Consultas IA hoy</dt><dd>${ai.configured ? `${ai.usedToday} de ${ai.dailyQuota}` : "IA no configurada en el servidor"}</dd></dl>
+              <dt>Consultas IA hoy</dt><dd>${ai.configured ? quotaText(ai.usedToday, ai.dailyQuota) : "IA no configurada en el servidor"}</dd></dl>
             ${me.premiumUntil ? `<p class="muted" style="margin-top:10px">Premium activo hasta el ${new Intl.DateTimeFormat("es-CO", { dateStyle: "long" }).format(new Date(me.premiumUntil))}.</p>` : ""}
             <div class="banner banner-info" style="margin-top:14px">${icon("star")}<p>Premium amplía el análisis histórico a 365 días, la predicción a 7 días y la cuota diaria de IA a 200 consultas.</p>
               <a class="btn btn-primary btn-pill" href="#/billing" style="margin-left:auto;white-space:nowrap">${icon("card")}${me.plan === "PREMIUM" ? "Ver plan y pagos" : "Mejorar a Premium"}</a></div>

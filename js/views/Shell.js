@@ -47,8 +47,8 @@ export class Shell {
                 <button type="button" class="user-chip" data-account aria-haspopup="menu" aria-expanded="false" aria-controls="user-menu" aria-label="Tu cuenta: ${esc(user?.fullName || "")}"><span data-avatar>${avatarMarkup(user, null)}</span><span class="user-name">${esc(user?.fullName?.split(" ")[0] || "")}</span>${icon("chevronRight", "user-chev")}</button>
                 <div class="dropdown user-menu" id="user-menu" role="menu" aria-label="Tu cuenta" data-user-menu hidden>
                   <div class="user-menu-head"><span data-avatar-big>${avatarMarkup(user, null, "avatar-lg")}</span><div><strong>${esc(user?.fullName || "")}</strong><small class="muted">${esc(user?.email || "")}</small>
-                    <small class="muted">${user?.role === "ADMIN" ? "Administrador" : "Usuario"} · ${user?.plan === "PREMIUM" ? "Premium" : "Plan gratuito"}</small></div></div>
-                  <button type="button" class="user-menu-item" role="menuitem" data-my-account>${icon("user")}Mi cuenta y foto</button>
+                    <small class="muted">${user?.role === "ADMIN" ? "Administrador" : "Usuario"} · ${user?.role === "ADMIN" ? "sin límites" : user?.plan === "PREMIUM" ? "Premium" : "Plan gratuito"}</small></div></div>
+                  <button type="button" class="user-menu-item" role="menuitem" data-my-account>${icon("user")}Mi cuenta</button>
                   <button type="button" class="user-menu-item danger" role="menuitem" data-logout>${icon("logout")}Cerrar sesión</button>
                 </div>
               </div>

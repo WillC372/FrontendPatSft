@@ -1,6 +1,6 @@
 import { api } from "../core/Api.js";
 import { bus } from "../core/EventBus.js";
-import { esc, fmt } from "../core/Format.js";
+import { esc, fmt, quotaText } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { toast } from "../ui/Components.js";
 import { openCamera } from "../core/CameraAccess.js";
@@ -114,7 +114,7 @@ export function cameraMeter(host) {
       const s = await api.get("/intelligence/ai-status");
       quota = { used: s.usedToday, limit: s.dailyQuota, configured: s.configured };
       $("[data-cam-quota]").innerHTML = s.configured
-        ? `${icon("sparkle")}<span>Consultas de IA hoy: <strong>${s.usedToday}</strong> de ${s.dailyQuota} (plan ${s.plan === "PREMIUM" ? "Premium" : "gratuito"}). Cada lectura usa una.</span>`
+        ? `${icon("sparkle")}<span>Consultas de IA hoy: <strong>${quotaText(s.usedToday, s.dailyQuota)}</strong> (${s.dailyQuota >= 1_000_000 ? "administrador" : `plan ${s.plan === "PREMIUM" ? "Premium" : "gratuito"}`}). Cada lectura usa una.</span>`
         : `${icon("alert")}<span>La IA no está configurada en el servidor: la lectura por cámara no está disponible.</span>`;
     } catch { /* the quota line is informative only */ }
   }

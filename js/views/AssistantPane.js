@@ -1,5 +1,5 @@
 import { api } from "../core/Api.js";
-import { esc, fmt } from "../core/Format.js";
+import { esc, fmt, quotaText } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { confirmDialog, emptyState, loading, toast } from "../ui/Components.js";
 import { bindReferenceMarks, chatCitations, withReferenceMarks } from "./Citations.js";
@@ -26,7 +26,7 @@ export async function assistantPane(host, { compact = false } = {}) {
   host.classList.toggle("assistant-compact", compact);
   host.innerHTML = `
     <div class="row-between"><h2 class="${compact ? "sr-only" : ""}">Asistente IA</h2>
-      <span class="badge ${status.configured ? "badge-ok" : "badge-warn"}" data-quota>${status.configured ? `${status.usedToday}/${status.dailyQuota} consultas hoy` : "IA no configurada"}</span></div>
+      <span class="badge ${status.configured ? "badge-ok" : "badge-warn"}" data-quota>${status.configured ? `${quotaText(status.usedToday, status.dailyQuota, "/")} consultas hoy` : "IA no configurada"}</span></div>
     <div class="row assistant-providers" style="margin-top:10px">${status.providers.map((p) => `<span class="badge ${p.configured ? "badge-info" : ""}" style="${p.configured ? "" : "opacity:.5"}">${p.order}. ${esc(p.provider)} · ${esc(p.model)}${p.configured ? "" : " (sin clave)"}</span>`).join("")}</div>
     ${status.configured ? "" : `<div class="banner banner-warn" style="margin-top:14px">${icon("alert")}<p>El servidor no tiene una clave de IA configurada (Gemini o Groq). El asistente no está disponible; los análisis estadísticos siguen funcionando.</p></div>`}
     <div class="assistant-layout" style="margin-top:14px">
@@ -173,7 +173,7 @@ export async function assistantPane(host, { compact = false } = {}) {
       setMemory(a.memoryTurns + 2, a.omittedTurns);
       const quota = host.querySelector("[data-quota]");
       status.usedToday += 1;
-      quota.textContent = `${status.usedToday}/${status.dailyQuota} consultas hoy`;
+      quota.textContent = `${quotaText(status.usedToday, status.dailyQuota, "/")} consultas hoy`;
       if (isNew) loadList().catch(() => {}); else list.querySelector(`[data-cid="${current}"] small`)?.replaceChildren(document.createTextNode("Actualizada ahora"));
     } catch (error) {
       const bubble = chat.querySelector("[data-typing]");

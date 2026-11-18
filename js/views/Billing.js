@@ -1,4 +1,5 @@
 import { api } from "../core/Api.js";
+import { session } from "../core/Session.js";
 import { esc, fmt } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { emptyState, loading, toast, withBusy } from "../ui/Components.js";
@@ -16,6 +17,18 @@ function returnedReference(route) {
 }
 
 function planCard(p) {
+  if (session.user?.role === "ADMIN") {
+    return `
+    <section class="card plan-card premium reveal">
+      <div class="card-head"><div class="card-title">${icon("shield")}Tu plan</div><span class="badge badge-info">Administrador</span></div>
+      <p class="plan-until">Los administradores no tienen límites y no pagan.</p>
+      <div class="compare">
+        <div><span>Análisis histórico</span><strong>Todo</strong><small>sin límite de días</small></div>
+        <div><span>Predicción</span><strong>7 días</strong><small>el máximo del modelo</small></div>
+        <div><span>Consultas de IA al día</span><strong>Sin límite</strong><small>administrador</small></div>
+      </div>
+    </section>`;
+  }
   const premium = p.plan === "PREMIUM";
   return `
     <section class="card plan-card ${premium ? "premium" : ""} reveal">
