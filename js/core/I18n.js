@@ -191,7 +191,26 @@ function translateText(node) {
   nodeState.set(node, { src, applied: value });
 }
 
+/** A text box filled in by the app (not yet edited by the person) shows its suggestion in the language too. */
+function translateValue(el) {
+  if (el.nodeName !== "INPUT" || !["text", "search"].includes((el.getAttribute("type") || "text").toLowerCase())) return;
+  const value = el.getAttribute("value");
+  if (!value || el.value !== value) return;
+  const state = attrState.get(el)?.get("value");
+  if (state && value === state.applied && !state.waiting) return;
+  const src = state && value === state.applied ? state.src : value;
+  if (!translatable(src)) return;
+  const translated = lookup(src);
+  let states = attrState.get(el);
+  if (!states) attrState.set(el, (states = new Map()));
+  if (translated === null) { states.set("value", { src, applied: value, waiting: true }); return; }
+  el.setAttribute("value", translated);
+  el.value = translated;
+  states.set("value", { src, applied: translated });
+}
+
 function translateAttrs(el) {
+  translateValue(el);
   for (const name of ATTRS) {
     const value = el.getAttribute(name);
     if (!value) continue;
