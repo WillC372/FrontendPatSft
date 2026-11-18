@@ -1,4 +1,4 @@
-# Requerimientos de AquaSense AI
+# Requerimientos de Aqua Assistant AI
 
 Requerimientos funcionales (RF) y no funcionales (RNF) de la aplicación, escritos como historias de usuario con su descripción,
 criterios de aceptación y MockUp. Cada uno está también como Issue del repositorio (ver [`issues/`](issues/)).
@@ -174,7 +174,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Como** usuario con un medidor, **quiero** conectarlo al computador por USB o Bluetooth y calibrarlo desde la app, **para** que las mediciones lleguen solas y sean exactas.
 
-**Descripción.** Desde Chrome o Edge (Web Serial) la app abre el puerto del medidor y admite tres protocolos: firmware AquaSense (ESP32), Atlas Scientific EZO-pH y medidores de laboratorio que envían texto. La calibración usa el valor de cada solución buffer (por ejemplo 6.86 y 4.00). Para medidores sin cable, la lectura por cámara.
+**Descripción.** Desde Chrome o Edge (Web Serial) la app abre el puerto del medidor y admite tres protocolos: firmware Aqua Assistant (ESP32), Atlas Scientific EZO-pH y medidores de laboratorio que envían texto. La calibración usa el valor de cada solución buffer (por ejemplo 6.86 y 4.00). Para medidores sin cable, la lectura por cámara.
 
 **Criterios de aceptación**
 
