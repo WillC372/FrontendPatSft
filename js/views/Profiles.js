@@ -83,7 +83,7 @@ export const profilesView = {
               <div class="actions">
                 ${p.active ? "" : `<button class="btn btn-sm btn-primary" data-activate="${p.id}">Activar</button>`}
                 <button class="btn btn-sm" data-duplicate="${p.id}" title="Duplicar para personalizar">${icon("copy")}Duplicar</button>
-                ${p.systemProfile ? "" : `<button class="btn btn-sm" data-edit="${p.id}">${icon("edit")}</button><button class="btn btn-sm btn-danger" data-delete="${p.id}">${icon("trash")}</button>`}
+                ${p.systemProfile ? "" : `<button class="btn btn-sm" data-edit="${p.id}" aria-label="Editar el perfil ${esc(p.name)}" title="Editar">${icon("edit")}</button><button class="btn btn-sm btn-danger" data-delete="${p.id}" aria-label="Borrar el perfil ${esc(p.name)}" title="Borrar">${icon("trash")}</button>`}
               </div>
             </article>`).join("")}
           <button class="profile-card add reveal" data-new>${icon("plus")}<strong>Personalizado</strong><small class="muted">Crea un perfil con tus propios rangos</small></button>
