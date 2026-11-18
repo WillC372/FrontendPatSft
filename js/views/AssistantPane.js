@@ -4,12 +4,13 @@ import { icon } from "../ui/Icons.js";
 import { confirmDialog, emptyState, loading, toast } from "../ui/Components.js";
 import { bindReferenceMarks, chatCitations, withReferenceMarks } from "./Citations.js";
 import { conversationText, copyText, liveText } from "./AnswerText.js";
+import { voice } from "../core/Voice.js";
 
 const SUGGESTIONS = ["¿Cómo está mi agua esta semana?", "¿Qué pH es recomendable para una piscina?", "¿Cómo subo el pH de un acuario sin dañar a los peces?", "¿Cómo calibro un medidor de pH?"];
 
 function aiBubble(text, model, citations = [], extra = "") {
   const meta = `Generado por IA · ${esc(model || "")}${citations.length ? " · con citas verificadas" : ""}${extra}`;
-  return `<div class="bubble ai" data-copy-text="${esc(copyText(text, citations))}">${withReferenceMarks(String(text).replace(/\*\*/g, "").trim(), citations)}`
+  return `<div class="bubble ai" data-copy-text="${esc(copyText(text, citations))}"><span translate="no">${withReferenceMarks(String(text).replace(/\*\*/g, "").trim(), citations)}</span>`
     + `<small class="muted bubble-meta"><span>${meta}</span><button type="button" class="copy-btn" data-copy aria-label="Copiar respuesta" title="Copiar respuesta">${icon("copy")}</button></small>${chatCitations(citations)}</div>`;
 }
 
@@ -82,7 +83,7 @@ export async function assistantPane(host, { compact = false } = {}) {
       const c = await api.get(`/intelligence/chat/conversations/${id}`);
       current = c.id;
       title.textContent = c.title;
-      chat.innerHTML = c.messages.map((m) => m.role === "USER" ? `<div class="bubble user">${esc(m.content)}</div>`
+      chat.innerHTML = c.messages.map((m) => m.role === "USER" ? `<div class="bubble user" translate="no">${esc(m.content)}</div>`
         : aiBubble(m.content, m.model, m.citations || [])).join("");
       setMemory(Math.min(c.messages.length, 12), Math.max(0, c.messages.length - 12));
       chat.scrollTop = chat.scrollHeight;
@@ -98,16 +99,20 @@ export async function assistantPane(host, { compact = false } = {}) {
     greet();
     list.querySelectorAll("[data-cid]").forEach((x) => x.classList.remove("active"));
   };
+  const spoken = (r) => { voice.speak(r?.answer || ""); return r; };
   // The answer appears as the model writes it (streaming); if the stream cannot be used, the normal request is made.
   const answer = async (question, signal) => {
     const body = { question, ...(current ? { conversationId: current } : {}) };
     let text = "";
     let result = null;
     let failure = null;
+    // Aqua reads the answer aloud sentence by sentence while it arrives (unless the voice is off).
+    let speaker = voice.stream();
     try {
       await api.stream("/intelligence/chat/stream", body, (name, data) => {
         if (name === "delta") {
           text += data.t || "";
+          speaker.push(liveText(text));
           const live = chat.querySelector("[data-typing]");
           if (!live) return;
           live.classList.remove("typing");
@@ -117,6 +122,8 @@ export async function assistantPane(host, { compact = false } = {}) {
         } else if (name === "restart") {
           // The first model froze half way and another one writes the answer from the start.
           text = "";
+          speaker.stop();
+          speaker = voice.stream();
           const live = chat.querySelector("[data-typing]");
           if (live) {
             live.classList.add("typing");
@@ -129,15 +136,16 @@ export async function assistantPane(host, { compact = false } = {}) {
         }
       }, signal);
     } catch (error) {
-      if (error.name === "AbortError") throw Object.assign(new Error("stopped"), { stopped: true, text });
+      if (error.name === "AbortError") { speaker.stop(); throw Object.assign(new Error("stopped"), { stopped: true, text }); }
       if (text || error.status) throw Object.assign(error, { text });
-      return api.post("/intelligence/chat", body);
+      return spoken(await api.post("/intelligence/chat", body));
     }
     if (failure) throw Object.assign(new Error(failure.message || "La IA no pudo responder. Intenta de nuevo."), { text });
     if (!result) {
       if (text) throw Object.assign(new Error("Se cortó la conexión mientras llegaba la respuesta. Vuelve a preguntar."), { text });
-      return api.post("/intelligence/chat", body);
+      return spoken(await api.post("/intelligence/chat", body));
     }
+    speaker.end(liveText(text) || result.answer || "");
     return result;
   };
   const setRunning = (controller) => {
@@ -157,7 +165,7 @@ export async function assistantPane(host, { compact = false } = {}) {
     return true;
   };
   const send = async (question) => {
-    chat.insertAdjacentHTML("beforeend", `<div class="bubble user">${esc(question)}</div><div class="bubble ai typing" data-typing><span></span><span></span><span></span></div>`);
+    chat.insertAdjacentHTML("beforeend", `<div class="bubble user" translate="no">${esc(question)}</div><div class="bubble ai typing" data-typing translate="no"><span></span><span></span><span></span></div>`);
     chat.scrollTop = chat.scrollHeight;
     const controller = new AbortController();
     setRunning(controller);

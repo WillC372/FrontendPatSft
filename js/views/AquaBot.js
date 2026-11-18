@@ -4,6 +4,9 @@ import { esc } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { aquaFace } from "../ui/AquaFace.js";
 import { toast } from "../ui/Components.js";
+import { api } from "../core/Api.js";
+import { voice } from "../core/Voice.js";
+import { i18n } from "../core/I18n.js";
 import { AI_FUNCTIONS } from "./AiFunctions.js";
 import { startTour, tourRunning } from "./Tour.js";
 
@@ -63,15 +66,17 @@ export class AquaBot {
     this.node.innerHTML = `
       <div class="aqua-say" data-say hidden><p data-say-text></p><button type="button" class="aqua-say-x" data-say-close aria-label="Cerrar consejo de Aqua">${icon("close")}</button></div>
       <button type="button" class="aqua-bot" data-aqua aria-expanded="false" aria-controls="aqua-panel" aria-label="Aqua, asistente de IA: chatear y funciones de inteligencia artificial">${aquaFace()}<span class="aqua-ring" aria-hidden="true"></span><span class="aqua-splash" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span></button>
+      <span class="aqua-floor" aria-hidden="true"><i class="shadow"></i><i class="ripple"></i><i class="ripple"></i></span>
       <section class="aqua-panel" id="aqua-panel" role="dialog" aria-labelledby="aqua-title" hidden>
         <div class="aqua-head">
           <button type="button" class="icon-btn btn btn-ghost" data-aqua-back aria-label="Volver a las funciones" hidden>${icon("chevronRight")}</button>
           ${aquaFace("aqua-head-face")}
           <div><h2 id="aqua-title">Aqua</h2><small class="muted" data-aqua-sub>Tu asistente de agua con IA</small></div>
+          <button type="button" class="icon-btn btn btn-ghost" data-aqua-voice aria-pressed="${voice.enabled}" aria-label="Voz de Aqua" title="Voz de Aqua: tócalo para que hable o se quede callada">${icon(voice.enabled ? "volume" : "volumeOff")}</button>
           <button type="button" class="icon-btn btn btn-ghost" data-aqua-close aria-label="Cerrar a Aqua">${icon("close")}</button>
         </div>
         <div class="aqua-body" data-aqua-home>
-          <div class="aqua-bubble">Hola${first ? `, ${first}` : ""}. ¿En qué te puedo ayudar?</div>
+          <div class="aqua-bubble">Hola${first ? `, <span translate="no">${first}</span>` : ""}. ¿En qué te puedo ayudar?</div>
           <form class="aqua-ask" data-aqua-ask>
             <input class="input" name="q" maxlength="500" placeholder="Pregúntame lo que quieras..." aria-label="Pregúntale a Aqua" autocomplete="off">
             <button class="btn btn-primary icon-btn" type="submit" aria-label="Enviar pregunta">${icon("send")}</button>
@@ -103,11 +108,20 @@ export class AquaBot {
     this.panel.hidden = false;
     this.bot.setAttribute("aria-expanded", "true");
     this.node.classList.add("open");
-    if (mode === "chat") this.#showChat(); else this.#showHome();
+    if (mode === "chat") this.#showChat(); else { this.#showHome(); this.greet(); }
+  }
+
+  /** "Hola, Ana. ¿En qué te puedo ayudar?" out loud, in the app's language (unless the voice is off). */
+  async greet() {
+    if (!voice.enabled) return;
+    const first = session.user?.fullName?.split(" ")[0] || "";
+    const [hello, ask] = await Promise.all([i18n.tAsync("Hola"), i18n.tAsync("¿En qué te puedo ayudar?")]);
+    if (this.isOpen) voice.speak(`${hello}${first ? `, ${first}` : ""}. ${ask}`);
   }
 
   close({ focusBot = true } = {}) {
     if (!this.isOpen) return;
+    voice.stop();
     this.panel.hidden = true;
     this.bot.setAttribute("aria-expanded", "false");
     this.node.classList.remove("open");
@@ -261,6 +275,23 @@ export class AquaBot {
   #bindLife() {
     const face = this.bot.querySelector(".aqua-face");
     this.#offs.push(bus.on("ai:busy", (count) => this.node.classList.toggle("thinking", count > 0)));
+    // The mouth moves while Aqua speaks.
+    this.#offs.push(bus.on("voice:speaking", (on) => this.node.classList.toggle("talking", on)));
+    const voiceBtn = this.node.querySelector("[data-aqua-voice]");
+    const showVoice = (on) => {
+      voiceBtn.innerHTML = icon(on ? "volume" : "volumeOff");
+      voiceBtn.setAttribute("aria-pressed", String(on));
+    };
+    this.#offs.push(bus.on("voice:enabled", showVoice));
+    voiceBtn.hidden = !voice.supported();
+    voiceBtn.addEventListener("click", async () => {
+      voice.setEnabled(!voice.enabled);
+      toast(voice.enabled ? "Aqua volverá a hablar." : "Aqua ya no hablará; solo escribirá las respuestas.", "info", 2500);
+      try {
+        const settings = await api.get("/users/me/settings");
+        await api.put("/users/me/settings", { ...settings, voiceEnabled: voice.enabled });
+      } catch { /* it stays changed in this visit */ }
+    });
     const still = matchMedia("(prefers-reduced-motion: reduce)");
     if (still.matches) return;
     let frame = 0;
@@ -279,7 +310,8 @@ export class AquaBot {
     };
     document.addEventListener("pointermove", look, { passive: true });
     this.#offs.push(() => document.removeEventListener("pointermove", look));
-    const TRICKS = ["jump", "wink", "look-around", "spin"];
+    // It already hops and flips on its own; the occasional tricks are the face ones.
+    const TRICKS = ["wink", "look-around"];
     const trick = () => {
       if (!this.isOpen && !document.hidden && !this.node.classList.contains("thinking")) {
         const name = TRICKS[Math.floor(Math.random() * TRICKS.length)];

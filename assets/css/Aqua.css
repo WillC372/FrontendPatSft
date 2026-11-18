@@ -4,12 +4,31 @@
 .aqua { position: fixed; right: 18px; bottom: 98px; z-index: 50; }
 .aqua-bot {
   position: relative; display: block; width: 68px; height: 68px; padding: 0; border: 0; background: none; cursor: pointer;
-  filter: drop-shadow(0 8px 14px rgba(10, 80, 150, .35)); animation: aqua-float 3.4s ease-in-out infinite;
+  filter: drop-shadow(0 8px 14px rgba(10, 80, 150, .35)); transform-origin: 50% 100%;
+  animation: aqua-hop 2.6s cubic-bezier(.3, .7, .4, 1) infinite;
 }
-.aqua-bot .aqua-face { width: 100%; height: 100%; display: block; transition: transform .2s; }
-.aqua-bot:hover .aqua-face { transform: scale(1.06) rotate(-4deg); }
+.aqua-bot .aqua-face { width: 100%; height: 100%; display: block; transition: scale .2s; animation: aqua-flip 10.4s ease-in-out infinite; }
+.aqua-bot:hover .aqua-face { scale: 1.08; }
+/* "Saltarina": Aqua bounces on its own like a drop: squashes when it lands, leaves ripples and, now and then, flips. */
+.aqua-floor { position: absolute; left: 50%; bottom: -6px; width: 0; height: 0; pointer-events: none; }
+.aqua-floor i { position: absolute; left: -24px; top: -5px; width: 48px; height: 10px; border-radius: 50%; }
+.aqua-floor .shadow { background: rgba(10, 80, 150, .22); animation: aqua-shadow 2.6s cubic-bezier(.3, .7, .4, 1) infinite; }
+.aqua-floor .ripple { border: 2px solid #3fb4ff; opacity: 0; animation: aqua-ripple 2.6s ease-out infinite; }
+.aqua-floor .ripple + .ripple { animation-delay: .15s; }
+@keyframes aqua-hop {
+  0%, 50%, 100% { transform: none; } 58% { transform: scale(1.14, .86); } 70% { transform: translateY(-26px) scale(.92, 1.1); }
+  82% { transform: translateY(0) scale(1.16, .84); } 90% { transform: scale(.96, 1.05); }
+}
+@keyframes aqua-flip { 0%, 72% { transform: rotate(0); } 77%, 100% { transform: rotate(360deg); } }
+@keyframes aqua-shadow { 0%, 50%, 100% { transform: scale(1); opacity: 1; } 70% { transform: scale(.55); opacity: .45; } 82% { transform: scale(1.15); } }
+@keyframes aqua-ripple { 0%, 80% { transform: scale(.6); opacity: 0; } 82% { opacity: .9; } 100% { transform: scale(2.2); opacity: 0; } }
+/* While its panel is open or it is talking it stays calm, floating, so it does not distract. */
+.aqua.open .aqua-bot, .aqua.talking .aqua-bot { animation: aqua-float 3.4s ease-in-out infinite; }
+.aqua.open .aqua-bot .aqua-face, .aqua.talking .aqua-bot .aqua-face { animation: none; }
+.aqua.open .aqua-floor .ripple, .aqua.talking .aqua-floor .ripple { display: none; }
+.aqua.open .aqua-floor .shadow, .aqua.talking .aqua-floor .shadow { animation: none; }
 .aqua-bot:focus-visible { outline-offset: 4px; border-radius: 50%; }
-.aqua-ring { position: absolute; inset: 8px 6px 0; border-radius: 50%; border: 2px solid var(--primary-2); opacity: 0; animation: aqua-ping 3.4s ease-out infinite; pointer-events: none; }
+.aqua-ring { display: none; }
 .aqua.open .aqua-ring, .aqua.on-ai .aqua-ring { display: none; }
 .aqua.on-ai .aqua-bot::after { content: ""; position: absolute; right: 4px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--ok); border: 2px solid var(--bg); }
 /* ---------- Aqua comes alive: water sways inside the drop, bubbles rise, the eyes blink and follow the pointer ---------- */
@@ -188,3 +207,6 @@
 .ref-line svg { width: 15px; height: 15px; vertical-align: -3px; margin-right: 5px; color: var(--primary-2); }
 .assistant-compact > .row-between:first-child { justify-content: flex-start; min-height: 30px; }
 .pill-text { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* The face in Aqua's panel also moves its mouth while it speaks. */
+.aqua.talking .aqua-head-face .aqua-mouth { opacity: 0; }
+.aqua.talking .aqua-head-face .aqua-mouth-open { opacity: 1; animation: aqua-talk .32s ease-in-out infinite alternate; transform-origin: 60px 86px; transform-box: view-box; }
