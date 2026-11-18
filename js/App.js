@@ -11,6 +11,10 @@ import { waitForServer } from "./core/ServerWake.js";
 import { watchSessionExpiry } from "./core/SessionTimer.js";
 import { refreshRelativeTimes } from "./core/Format.js";
 import { lazyView } from "./core/LazyView.js";
+import { cleanStorage } from "./core/StorageJanitor.js";
+
+// What this browser kept from old versions or from accounts that no longer use it is removed when the app opens.
+cleanStorage();
 
 // Screens of the signed-in application, loaded on first use.
 const dashboardView = lazyView({ name: "dashboard", title: "Inicio" }, () => import("./views/Dashboard.js"), "dashboardView");
