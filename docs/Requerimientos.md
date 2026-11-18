@@ -35,6 +35,13 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 | [RF-20](#rf-20) | Datos oficiales de referencia (USGS) | Como usuario, quiero comparar mi pH con mediciones oficiales de estaciones de agua, para tener una referencia real. | Hecho | [MockUp24](mockups/MockUp24.png) |
 | [RF-21](#rf-21) | Administración de usuarios y consumo de IA | Como administrador, quiero gestionar cuentas (plan, rol, estado) y ver el consumo y costo de la IA, para controlar el sistema y sus gastos. | Hecho | [MockUp25](mockups/MockUp25.png), [MockUp26](mockups/MockUp26.png) |
 | [RF-22](#rf-22) | Aqua: robot de la IA y recorrido guiado | Como usuario nuevo, quiero que un asistente me explique para qué sirve cada parte y me deje usar la IA desde cualquier pantalla, para aprender a usar la app sin manual y encontrar las funciones de IA en un solo lugar. | Hecho | [MockUp33](mockups/MockUp33.png), [MockUp34](mockups/MockUp34.png) |
+| [RF-23](#rf-23) | Varios lugares y otros parámetros del agua | Como persona con piscina y acuario, quiero llevar cada agua por separado y anotar también cloro, alcalinidad, dureza y ácido cianúrico, para que sus mediciones no se mezclen y ver el estado completo del agua. | Hecho | [MockUp38](mockups/MockUp38.png), [MockUp42](mockups/MockUp42.png) |
+| [RF-24](#rf-24) | Calculadora de dosis y registro de tratamientos | Como dueño de una piscina o acuario, quiero saber cuánto producto echar y anotar lo que le hago al agua, para corregirla sin pasarme y recordar qué hice. | Hecho | [MockUp40](mockups/MockUp40.png), [MockUp41](mockups/MockUp41.png) |
+| [RF-25](#rf-25) | Recordatorios y avisos fuera de la app | Como usuario, quiero que la app me recuerde medir o limpiar el filtro y me avise si el agua sale de rango aunque no la tenga abierta, para no olvidar el mantenimiento ni enterarme tarde de un problema. | Parcial | [MockUp41](mockups/MockUp41.png) |
+| [RF-26](#rf-26) | Compartir un lugar con un código | Como dueño de un lugar, quiero compartirlo con mi familia o mi técnico mediante un código, para que lo vean o midan desde su propia cuenta. | Hecho | [MockUp39](mockups/MockUp39.png) |
+| [RF-27](#rf-27) | Historial de calibraciones | Como usuario con medidor, quiero ver cada calibración que hice, para saber cuándo recalibrar o cambiar la sonda. | Hecho | [MockUp43](mockups/MockUp43.png) |
+| [RF-28](#rf-28) | Toda la app en el idioma elegido | Como usuario que no habla español, quiero elegir mi idioma entre 61 opciones y ver toda la app en él, para entender y usar todas las funciones. | Hecho | [MockUp44](mockups/MockUp44.png), [MockUp45](mockups/MockUp45.png) |
+| [RF-29](#rf-29) | Voz de Aqua | Como usuario, quiero que Aqua me salude y me lea sus respuestas con una voz natural, y poder apagarla, para usar el asistente sin tener que leer todo. | Hecho | [MockUp44](mockups/MockUp44.png) |
 
 ## Requerimientos no funcionales
 
@@ -42,7 +49,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 |---|---|---|---|---|
 | [RNF-01](#rnf-01) | Seguridad | Como usuario, quiero que mi contraseña y mi sesión estén protegidas, para que nadie más vea ni cambie mis datos. | Hecho | [MockUp27](mockups/MockUp27.png) |
 | [RNF-02](#rnf-02) | Rendimiento | Como usuario, quiero que la app y el asistente respondan rápido, para no quedarme esperando. | Hecho | [MockUp28](mockups/MockUp28.png) |
-| [RNF-03](#rnf-03) | Disponibilidad | Como usuario, quiero que la app esté disponible cuando la abra, para no esperar a que el servidor arranque. | Parcial | [MockUp29](mockups/MockUp29.png) |
+| [RNF-03](#rnf-03) | Disponibilidad | Como usuario, quiero que la app esté disponible cuando la abra, para no esperar a que el servidor arranque. | Hecho | [MockUp29](mockups/MockUp29.png) |
 | [RNF-04](#rnf-04) | Usabilidad, accesibilidad y diseño adaptable | Como usuario de computador o celular, quiero una interfaz clara que funcione en cualquier pantalla, para usarla cómodamente donde esté. | Hecho | [MockUp30](mockups/MockUp30.png), [MockUp37](mockups/MockUp37.png) |
 | [RNF-05](#rnf-05) | Privacidad de los datos | Como usuario, quiero que mis datos personales no salgan del sistema, para confiar en la app. | Hecho | [MockUp31](mockups/MockUp31.png) |
 | [RNF-06](#rnf-06) | Mantenibilidad y calidad del código | Como desarrollador del proyecto, quiero un código organizado, documentado y con pruebas automáticas, para cambiarlo sin romper lo que funciona. | Hecho | — |
@@ -467,7 +474,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Como** usuario nuevo, **quiero** que un asistente me explique para qué sirve cada parte y me deje usar la IA desde cualquier pantalla, **para** aprender a usar la app sin manual y encontrar las funciones de IA en un solo lugar.
 
-**Descripción.** Aqua, un robot con forma de gota, flota en todas las pantallas y es la única entrada a la inteligencia artificial: su panel permite preguntar, chatear y abrir el diagnóstico, las anomalías, las recomendaciones, la predicción, la red neuronal, los escenarios, el aprendizaje automático, los informes, la biblioteca normativa, el consumo y la lectura por foto. La primera vez que una persona entra, Aqua hace un recorrido guiado señalando cada botón con un globo de texto, y al abrir cada pantalla dice en una frase para qué sirve.
+**Descripción.** Aqua, un robot con forma de gota, salta solo en todas las pantallas (se aplasta al caer, deja ondas y a veces da una voltereta) y es la única entrada a la inteligencia artificial: su panel permite preguntar, chatear y abrir el diagnóstico, las anomalías, las recomendaciones, la predicción, la red neuronal, los escenarios, el aprendizaje automático, los informes, la biblioteca normativa, el consumo y la lectura por foto. La primera vez que una persona entra, Aqua hace un recorrido guiado señalando cada botón con un globo de texto, y al abrir cada pantalla dice en una frase para qué sirve.
 
 **Criterios de aceptación**
 
@@ -484,6 +491,150 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 **MockUp34** · Panel de Aqua con el chat y las funciones de IA
 
 ![MockUp34](mockups/MockUp34.png)
+
+### RF-23
+
+**Varios lugares y otros parámetros del agua** · Funcional · Estado: Hecho
+
+**Como** persona con piscina y acuario, **quiero** llevar cada agua por separado y anotar también cloro, alcalinidad, dureza y ácido cianúrico, **para** que sus mediciones no se mezclen y ver el estado completo del agua.
+
+**Descripción.** Cada lugar (piscina, acuario, estanque, tanque, agua potable, riego, hidroponía u otro) tiene su historial, su perfil y su volumen. «Mi agua» se crea sola al registrarse. Arriba, junto al nombre, se ve el lugar en uso y se cambia con un toque; Inicio, Historial, Medir, Cuidado y la IA pasan a ese lugar. La medición manual tiene una sección opcional «Otros parámetros» (cloro libre, alcalinidad total, dureza cálcica y ácido cianúrico) con rangos orientativos según el tipo de lugar. Cada pantalla nueva explica en un cuadro «¿Para qué sirve?» con ejemplos.
+
+**Criterios de aceptación**
+
+- [x] Las mediciones de un lugar no aparecen en otro.
+- [x] Al cambiar de lugar arriba, toda la app muestra ese lugar sin recargar.
+- [x] Los otros parámetros se guardan con la medición y el Inicio los muestra con su estado (bien, bajo o alto).
+- [x] Un lugar se puede crear, renombrar, cambiar de volumen y borrar (con sus datos) por su dueño.
+
+**MockUp38** · Lugares con el cuadro «¿Para qué sirven?»
+
+![MockUp38](mockups/MockUp38.png)
+
+**MockUp42** · Otros parámetros del agua en Inicio
+
+![MockUp42](mockups/MockUp42.png)
+
+### RF-24
+
+**Calculadora de dosis y registro de tratamientos** · Funcional · Estado: Hecho
+
+**Como** dueño de una piscina o acuario, **quiero** saber cuánto producto echar y anotar lo que le hago al agua, **para** corregirla sin pasarme y recordar qué hice.
+
+**Descripción.** La calculadora usa el volumen del lugar y las últimas mediciones: para el pH aplica el sistema carbonato del agua con la alcalinidad (corregida por el ácido cianúrico); para cloro, alcalinidad, dureza y estabilizador, balances de masa según la concentración del producto. Indica la cantidad total, pide agregar primero la mitad y avisa de los efectos secundarios. El resultado se registra con un toque como tratamiento; el registro guarda producto, cantidad, fecha, quién lo hizo y una nota.
+
+**Criterios de aceptación**
+
+- [x] Bajar una piscina de 40 000 L de pH 7,9 a 7,5 con alcalinidad 90 mg/L indica unos 270 mL de ácido muriático al 31,45 %.
+- [x] Sin alcalinidad, la calculadora pide el dato en lugar de inventar un resultado.
+- [x] El resultado se presenta como estimación y recomienda medir antes de agregar el resto.
+- [x] Los tratamientos se ven por lugar y quien solo puede ver el lugar no puede registrarlos.
+
+**MockUp40** · Calculadora de dosis con resultado
+
+![MockUp40](mockups/MockUp40.png)
+
+**MockUp41** · Tratamientos y recordatorios
+
+![MockUp41](mockups/MockUp41.png)
+
+### RF-25
+
+**Recordatorios y avisos fuera de la app** · Funcional · Estado: Parcial
+
+**Como** usuario, **quiero** que la app me recuerde medir o limpiar el filtro y me avise si el agua sale de rango aunque no la tenga abierta, **para** no olvidar el mantenimiento ni enterarme tarde de un problema.
+
+**Descripción.** Recordatorios que se repiten cada cierto número de días («Mide el pH hoy», «Limpia el filtro», cambio de agua, calibración o uno propio). Cuando toca, aparecen en Inicio en «Para hoy» con el botón «Hecho» y llegan como notificación al celular o computador (Web Push, cifrado según RFC 8291 y firmado con VAPID) y, si se marca, por correo. Las alertas de mediciones fuera de rango también llegan por notificación y por correo (como mucho uno por hora). Configuración permite activar los avisos en cada dispositivo y probarlos.
+
+**Criterios de aceptación**
+
+- [x] Un recordatorio vencido aparece en «Para hoy» y se notifica una sola vez por vencimiento.
+- [x] «Hecho» lo pasa a la siguiente fecha.
+- [x] Con los avisos activos en un dispositivo, «Probar» muestra una notificación en él.
+- [ ] Pendiente: confirmar la recepción en un celular real (el navegador de pruebas no tiene servicio de notificaciones).
+
+**MockUp41** · Tratamientos y recordatorios
+
+![MockUp41](mockups/MockUp41.png)
+
+### RF-26
+
+**Compartir un lugar con un código** · Funcional · Estado: Hecho
+
+**Como** dueño de un lugar, **quiero** compartirlo con mi familia o mi técnico mediante un código, **para** que lo vean o midan desde su propia cuenta.
+
+**Descripción.** El dueño genera un código de 8 caracteres y elige si quien se una solo puede ver o también medir y registrar. La otra persona lo escribe en «Unirme con un código». El dueño ve quién se unió, puede quitarlo o desactivar el código; quien se unió puede salir. Las alertas del lugar llegan a todas las personas con acceso.
+
+**Criterios de aceptación**
+
+- [x] Con un código válido el lugar aparece en la otra cuenta con su rol.
+- [x] Quien solo puede ver no puede medir ni registrar: el servidor lo rechaza.
+- [x] Un código desactivado o inexistente muestra un mensaje claro.
+- [x] Las cuentas de demostración no pueden compartir ni unirse.
+
+**MockUp39** · Compartir un lugar con un código
+
+![MockUp39](mockups/MockUp39.png)
+
+### RF-27
+
+**Historial de calibraciones** · Funcional · Estado: Hecho
+
+**Como** usuario con medidor, **quiero** ver cada calibración que hice, **para** saber cuándo recalibrar o cambiar la sonda.
+
+**Descripción.** Cada punto calibrado (por USB o desde el ESP32) queda registrado con el medidor, la solución buffer, lo que marcaba antes, la diferencia y si el medidor lo aceptó. Se ve en la pantalla Medidor.
+
+**Criterios de aceptación**
+
+- [x] Al calibrar un punto aparece una fila nueva con fecha, solución y lectura.
+- [x] Los intentos fallidos también quedan registrados.
+
+**MockUp43** · Historial de calibraciones
+
+![MockUp43](mockups/MockUp43.png)
+
+### RF-28
+
+**Toda la app en el idioma elegido** · Funcional · Estado: Hecho
+
+**Como** usuario que no habla español, **quiero** elegir mi idioma entre 61 opciones y ver toda la app en él, **para** entender y usar todas las funciones.
+
+**Descripción.** Selector en Configuración y en la pantalla de inicio de sesión. Un traductor cambia cada texto, botón, etiqueta, mensaje y aviso de la pantalla, incluidos los que aparecen después. Cada texto se traduce una vez por idioma con la IA y el servidor lo guarda y comparte, así que después es inmediato; las negritas y los enlaces dentro de una frase se conservan con marcadores y los números viajan como {0}. Fechas, números y tiempos relativos usan el formato del idioma y el árabe, el hebreo, el persa y el urdu se muestran de derecha a izquierda. Las respuestas de la IA, los diagnósticos, los informes del agente, los correos y las notificaciones también salen en el idioma de la persona; el PDF del servidor, en los idiomas de escritura latina, griega o cirílica, y en los demás se imprime la pantalla ya traducida. Lo que escribe la persona (nombres, notas, chats) no se traduce.
+
+**Criterios de aceptación**
+
+- [x] Al elegir un idioma la app se recarga en él y la elección queda en la cuenta.
+- [x] En inglés, las pantallas principales no muestran textos en español (prueba automática en 17 pantallas).
+- [x] Si la traducción de un texto falla, se muestra en español y se reintenta.
+- [x] Las cuentas de demostración guardan el idioma solo en el navegador.
+- [x] La primera vez en un idioma sin traducciones guardadas la pantalla tarda unos segundos en traducirse.
+
+**MockUp44** · Idioma y voz de Aqua en Configuración
+
+![MockUp44](mockups/MockUp44.png)
+
+**MockUp45** · La app en inglés
+
+![MockUp45](mockups/MockUp45.png)
+
+### RF-29
+
+**Voz de Aqua** · Funcional · Estado: Hecho
+
+**Como** usuario, **quiero** que Aqua me salude y me lea sus respuestas con una voz natural, y poder apagarla, **para** usar el asistente sin tener que leer todo.
+
+**Descripción.** Al abrir a Aqua dice «Hola, (nombre). ¿En qué te puedo ayudar?» y lee cada respuesta frase por frase mientras la escribe, en el idioma de la app. Usa las voces del dispositivo y elige la más natural (voces neuronales de Edge, de Google en Chrome o mejoradas de iPhone y Android). Se apaga con el botón de altavoz del panel de Aqua o en Configuración, donde también se elige la voz y la velocidad; apagada, Aqua solo escribe. Mientras habla, mueve la boca.
+
+**Criterios de aceptación**
+
+- [x] Con la voz activa, abrir a Aqua dice el saludo con el nombre de la persona.
+- [x] Las respuestas se leen mientras llegan y se detienen al cerrar el panel.
+- [x] Con la voz apagada no se dice nada y la elección queda en la cuenta.
+- [x] La calidad de la voz depende de las voces instaladas en el dispositivo.
+
+**MockUp44** · Idioma y voz de Aqua en Configuración
+
+![MockUp44](mockups/MockUp44.png)
 
 ### RNF-01
 
@@ -524,18 +675,18 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 ### RNF-03
 
-**Disponibilidad** · No funcional · Estado: Parcial
+**Disponibilidad** · No funcional · Estado: Hecho
 
 **Como** usuario, **quiero** que la app esté disponible cuando la abra, **para** no esperar a que el servidor arranque.
 
-**Descripción.** Frontend en Vercel, API en Render y base PostgreSQL en Neon. Un monitor de UptimeRobot consulta /actuator/health/liveness cada 5 minutos para que el servidor gratuito no se apague; esa dirección no consulta la base de datos. Si el servidor estaba apagado, la app muestra «Activando el servidor…» mientras arranca.
+**Descripción.** Frontend en Vercel, API en Render y base PostgreSQL en Neon. El propio servidor se consulta cada 10 minutos en /actuator/health/liveness (dirección que no toca la base de datos) para que el plan gratuito no lo apague; además puede usarse un monitor externo. Si el servidor estaba apagado, la app muestra «Activando el servidor…» mientras arranca.
 
 **Criterios de aceptación**
 
 - [x] /actuator/health/liveness responde 200 sin iniciar sesión.
 - [x] Tras 20 minutos sin uso, la API responde en menos de 2 segundos.
 - [x] Si el servidor tarda, la app avisa en lugar de mostrar un error.
-- [ ] Pendiente: confirmar que el monitor de UptimeRobot está activo (la prueba del 15 de noviembre encontró el servidor apagado).
+- [x] En la prueba del 17 de noviembre, tras 22 minutos sin uso la API respondió en 0,46 s.
 
 **MockUp29** · Aviso mientras el servidor arranca
 
@@ -547,7 +698,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Como** usuario de computador o celular, **quiero** una interfaz clara que funcione en cualquier pantalla, **para** usarla cómodamente donde esté.
 
-**Descripción.** Navegación con una barra inferior que tiene todas las pantallas con su ícono (Inicio, Historial, Perfiles, Medidor, Medir, Datos oficiales, Sesiones, Plan, Configuración y Admin para administradores), igual en celular y computador; en el celular se desliza hacia los lados. La sesión se cierra solo desde el menú del usuario (la inicial o el nombre, arriba a la derecha). Tema claro predeterminado y oscuro opcional, navegación por teclado y lector de pantalla. Revisión con axe-core: 0 hallazgos en 18 pantallas, el recorrido, el panel de Aqua y las hojas «Medir» y «Más», en tema claro y oscuro, en computador y teléfono.
+**Descripción.** Navegación con una barra inferior que tiene todas las pantallas con su ícono (Inicio, Historial, Lugares, Cuidado, Medir, Perfiles, Medidor, Datos oficiales, Sesiones, Plan, Configuración y Admin para administradores), igual en celular y computador; en el celular se desliza hacia los lados. La sesión se cierra solo desde el menú del usuario (la inicial o el nombre, arriba a la derecha). Tema claro predeterminado y oscuro opcional, navegación por teclado y lector de pantalla. Revisión con axe-core: 0 hallazgos en 18 pantallas, el recorrido, el panel de Aqua y las hojas «Medir» y «Más», en tema claro y oscuro, en computador y teléfono.
 
 **Criterios de aceptación**
 
@@ -569,7 +720,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Como** usuario, **quiero** que mis datos personales no salgan del sistema, **para** confiar en la app.
 
-**Descripción.** A los modelos de IA solo se envían valores de pH, fechas y datos del perfil de agua, nunca nombres ni correos. La foto de perfil es privada y sin metadatos. El administrador de demostración ve enmascarados los datos de las cuentas reales. Los datos simulados nunca se presentan como mediciones reales.
+**Descripción.** A los modelos de IA solo se envían valores de pH, fechas y datos del perfil de agua, nunca nombres ni correos. Para traducir la interfaz solo se envían los textos de la app: lo que escribe la persona (nombres, notas, chats) se marca para no traducirse. La foto de perfil es privada y sin metadatos. El administrador de demostración ve enmascarados los datos de las cuentas reales. Los datos simulados nunca se presentan como mediciones reales.
 
 **Criterios de aceptación**
 
@@ -655,3 +806,11 @@ _Requerimiento sin pantalla propia: se comprueba con las pruebas automáticas y 
 | [MockUp35](mockups/MockUp35.png) | Chat con Aqua dentro de su panel (celular) | RF-14 |
 | [MockUp36](mockups/MockUp36.png) | Medir: las tres formas de registrar el pH | RF-04 |
 | [MockUp37](mockups/MockUp37.png) | Menú del usuario con «Cerrar sesión» y la barra con todas las pantallas | RNF-04 |
+| [MockUp38](mockups/MockUp38.png) | Lugares con el cuadro «¿Para qué sirven?» | RF-23 |
+| [MockUp39](mockups/MockUp39.png) | Compartir un lugar con un código | RF-26 |
+| [MockUp40](mockups/MockUp40.png) | Calculadora de dosis con resultado | RF-24 |
+| [MockUp41](mockups/MockUp41.png) | Tratamientos y recordatorios | RF-24 |
+| [MockUp42](mockups/MockUp42.png) | Otros parámetros del agua en Inicio | RF-23 |
+| [MockUp43](mockups/MockUp43.png) | Historial de calibraciones | RF-27 |
+| [MockUp44](mockups/MockUp44.png) | Idioma y voz de Aqua en Configuración | RF-28 |
+| [MockUp45](mockups/MockUp45.png) | La app en inglés | RF-28 |
