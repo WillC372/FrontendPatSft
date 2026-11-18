@@ -1,0 +1,69 @@
+/* Places, other parameters, care (dose calculator, treatments, reminders), calibrations and notifications. */
+
+/* ---------- place selector in the top bar ---------- */
+.place-menu-wrap { position: relative; }
+.place-chip {
+  display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 10px 0 12px; border-radius: 999px; max-width: 220px;
+  border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.place-chip > svg:first-child { width: 16px; height: 16px; color: var(--primary-2); flex: none; }
+.place-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.place-chip.shared { border-style: dashed; }
+.place-chip .user-chev { width: 14px; height: 14px; flex: none; color: var(--muted); transform: rotate(90deg); transition: transform .2s; }
+.place-chip[aria-expanded="true"] .user-chev { transform: rotate(-90deg); }
+.place-menu { width: min(300px, calc(100vw - 24px)); padding: 8px; display: grid; gap: 2px; left: 0; right: auto; }
+.place-menu .menu-title { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 4px 10px 6px; }
+.place-menu .user-menu-item span { display: grid; min-width: 0; }
+.place-menu .user-menu-item small { font-size: 12px; font-weight: 500; }
+.place-menu .user-menu-item.current { background: var(--surface-2); }
+.place-menu a.user-menu-item { text-decoration: none; border-top: 1px solid var(--border); border-radius: 0 0 10px 10px; margin-top: 4px; }
+@media (max-width: 760px) {
+  .place-chip { max-width: 120px; padding: 0 8px; }
+  /* On a phone the chip sits mid-bar: the menu spans the screen under the bar instead of hanging off one edge. */
+  .place-menu { position: fixed; left: 12px; right: 12px; width: auto; top: calc(env(safe-area-inset-top, 0px) + 62px); }
+}
+
+/* ---------- places screen ---------- */
+.places-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+.place-card { display: flex; flex-direction: column; gap: 10px; }
+.place-card.active { border-color: var(--primary-2); box-shadow: var(--glow-strong); }
+.place-ic { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: var(--surface-2); color: var(--primary-2); }
+.place-ic svg { width: 20px; height: 20px; }
+.place-actions { margin-top: auto; gap: 6px; }
+.join-card form .input { letter-spacing: .08em; }
+.share-code { display: grid; gap: 8px; padding: 14px; border-radius: 14px; border: 1px dashed var(--border-strong); background: var(--surface-2); text-align: center; justify-items: center; }
+.share-code strong { font-size: 30px; letter-spacing: .12em; color: var(--text); }
+.segmented { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; padding: 3px; gap: 3px; background: var(--surface-2); }
+.segmented label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; cursor: pointer; font-weight: 700; font-size: 14px; }
+.segmented label:has(input:checked) { background: var(--gradient-primary); color: #fff; }
+.segmented input { accent-color: #fff; }
+.list.members li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+
+/* ---------- other parameters ---------- */
+.more-params { border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; background: var(--surface-2); }
+.more-params summary { cursor: pointer; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.more-params summary svg { width: 18px; height: 18px; color: var(--primary-2); }
+.more-params[open] summary { margin-bottom: 8px; }
+.params-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 10px; }
+.param { display: grid; gap: 2px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-2); min-width: 0; }
+.param span { font-size: 12.5px; color: var(--muted); }
+.param strong { font-size: 20px; font-family: var(--font-display); }
+.param small { font-size: 12px; }
+.param.LOW, .param.HIGH { border-color: color-mix(in srgb, var(--warn) 55%, transparent); background: var(--warn-bg); }
+.param.OK { border-color: color-mix(in srgb, var(--ok) 45%, transparent); }
+
+/* ---------- care ---------- */
+.dose-result { display: grid; gap: 12px; margin-top: 14px; padding: 16px; border-radius: 16px; border: 1px solid var(--border-strong); background: var(--surface-2); }
+.dose-amount { display: grid; gap: 2px; }
+.dose-amount strong { font-size: clamp(30px, 6vw, 42px); font-family: var(--font-display); color: var(--primary); line-height: 1.1; }
+.list.treatments li, .list.reminders li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.list.treatments li > span, .list.reminders li > span:first-child { min-width: 0; }
+.list.reminders li.due strong { color: var(--warn); }
+fieldset.checks { border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; display: grid; gap: 8px; }
+fieldset.checks legend { font-weight: 700; font-size: 14px; padding: 0 4px; }
+fieldset.checks label { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; }
+.due-card .list li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; }
+
+/* ---------- calibrations ---------- */
+.table-wrap table.calibrations td.dev-bad { color: var(--warn); font-weight: 700; }
+.table-wrap table.calibrations td.dev-ok { color: var(--ok); font-weight: 700; }

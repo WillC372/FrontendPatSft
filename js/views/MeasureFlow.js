@@ -66,6 +66,14 @@ export async function measureWithDevice(button) {
   return result;
 }
 
+// Other parameters that can be written with the pH: [name, label, maximum in mg/L].
+export const PARAM_FIELDS = [
+  ["freeChlorine", "Cloro libre (mg/L)", 20],
+  ["totalAlkalinity", "Alcalinidad total (mg/L)", 500],
+  ["calciumHardness", "Dureza cálcica (mg/L)", 2000],
+  ["cyanuricAcid", "Ácido cianúrico (mg/L)", 300],
+];
+
 export async function manualEntry() {
   const now = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
   return modal({
@@ -77,6 +85,13 @@ export async function manualEntry() {
           <div class="field"><label for="mm-t">Temperatura °C (opcional)</label><input class="input" id="mm-t" name="temperatureC" type="number" step="0.1" min="-5" max="100" placeholder="24.0"><div class="field-error" data-error-for="temperatureC"></div></div>
         </div>
         <div class="field"><label for="mm-at">Fecha y hora</label><input class="input" id="mm-at" name="measuredAt" type="datetime-local" value="${now}" max="${now}"><div class="field-error" data-error-for="measuredAt"></div></div>
+        <details class="more-params">
+          <summary>${icon("flask")}Otros parámetros (opcional)</summary>
+          <p class="muted small">Si los mediste con tiras o un kit. Todo en mg/L (ppm); la alcalinidad y la dureza como CaCO<sub>3</sub>.</p>
+          <div class="grid grid-2">
+            ${PARAM_FIELDS.map(([name, label, max]) => `<div class="field"><label for="mm-${name}">${label}</label><input class="input" id="mm-${name}" name="${name}" type="number" step="0.1" min="0" max="${max}" inputmode="decimal"><div class="field-error" data-error-for="${name}"></div></div>`).join("")}
+          </div>
+        </details>
         <div class="field"><label for="mm-note">Nota (opcional)</label><input class="input" id="mm-note" name="note" maxlength="300"></div>
       </form>`,
     actions: [
@@ -101,12 +116,24 @@ export async function manualEntry() {
             showFieldErrors(form, { temperatureC: "Escribe una temperatura entre -5 y 100 °C." });
             return false;
           }
+          const params = {};
+          for (const [name, label, max] of PARAM_FIELDS) {
+            if (data[name] === "" || data[name] === undefined) continue;
+            const value = Number.parseFloat(data[name]);
+            if (Number.isNaN(value) || value < 0 || value > max) {
+              form.querySelector(".more-params").open = true;
+              showFieldErrors(form, { [name]: `${label}: escribe un valor entre 0 y ${max}.` });
+              return false;
+            }
+            params[name] = value;
+          }
           try {
             const saved = await api.post("/measurements", {
               ph,
               temperatureC: data.temperatureC ? Number.parseFloat(data.temperatureC) : null,
               measuredAt: data.measuredAt ? new Date(data.measuredAt).toISOString() : null,
               note: data.note || null,
+              ...params,
             });
             toast(`Medición guardada: pH ${fmt.ph(saved.ph)} (${saved.statusLabel.toLowerCase()}).`, "ok");
             bus.emit("measurement:saved", saved);

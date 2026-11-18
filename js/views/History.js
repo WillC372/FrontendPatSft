@@ -106,8 +106,10 @@ export const historyView = {
           pager.innerHTML = "";
           return;
         }
+        // Columns of other parameters only when some measurement of the page has them.
+        const withParams = result.content.some((m) => m.params && Object.values(m.params).some((v) => v !== null));
         tableHost.innerHTML = `<div class="table-wrap"><table>
-          <thead><tr><th>Fecha y hora</th><th>pH</th><th>Estado</th><th>Origen</th><th>Perfil</th><th>Validación</th><th><span class="sr-only">Acciones</span></th></tr></thead>
+          <thead><tr><th>Fecha y hora</th><th>pH</th><th>Estado</th><th>Origen</th><th>Perfil</th><th>Validación</th>${withParams ? "<th>Cloro</th><th>Alcalinidad</th><th>Dureza</th><th>Ác. cianúrico</th>" : ""}<th><span class="sr-only">Acciones</span></th></tr></thead>
           <tbody>${result.content.map((m) => `<tr>
             <td class="num">${fmt.dateTime(m.measuredAt)}</td>
             <td class="mono"><strong>${fmt.ph(m.ph)}</strong></td>
@@ -115,6 +117,7 @@ export const historyView = {
             <td>${sourceBadge(m.source)}</td>
             <td>${esc(m.profileName)}</td>
             <td title="${esc(m.validationNotes || "")}">${esc(m.validationLabel)}</td>
+            ${withParams ? ["freeChlorine", "totalAlkalinity", "calciumHardness", "cyanuricAcid"].map((k) => `<td class="num">${m.params?.[k] != null ? Number(m.params[k]).toLocaleString("es", { maximumFractionDigits: 1 }) : "—"}</td>`).join("") : ""}
             <td><button class="btn btn-ghost btn-sm" data-detail="${m.id}" aria-label="Ver detalle">${icon("info")}</button>
                 <button class="btn btn-ghost btn-sm" data-delete="${m.id}" aria-label="Eliminar">${icon("trash")}</button></td>
           </tr>`).join("")}</tbody></table></div>`;

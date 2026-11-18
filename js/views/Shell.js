@@ -13,9 +13,10 @@ import { AquaBot } from "./AquaBot.js";
 
 // Bottom bar (every screen size) with every screen of the app; "Medir", the main action, sits in the middle.
 // [route, label, icon, full name for screen readers when the label is shortened]
-const LEFT = [["dashboard", "Inicio", "home"], ["history", "Historial", "history"], ["profiles", "Perfiles", "profiles"],
-  ["devices", "Medidor", "bluetooth", "Conectar medidor"]];
-const RIGHT = [["official", "Datos oficiales", "globe"], ["sessions", "Sesiones", "clock"], ["billing", "Plan", "card", "Plan y pagos"],
+const LEFT = [["dashboard", "Inicio", "home"], ["history", "Historial", "history"], ["places", "Lugares", "pin"],
+  ["care", "Cuidado", "flask", "Cuidado del agua: dosis, tratamientos y recordatorios"]];
+const RIGHT = [["profiles", "Perfiles", "profiles"], ["devices", "Medidor", "bluetooth", "Conectar medidor"],
+  ["official", "Datos oficiales", "globe"], ["sessions", "Sesiones", "clock"], ["billing", "Plan", "card", "Plan y pagos"],
   ["settings", "Configuración", "settings"]];
 const ADMIN = ["admin", "Admin", "users", "Administración"];
 
@@ -37,6 +38,10 @@ export class Shell {
             <a class="topbar-brand" href="#/dashboard" aria-label="Aqua Assistant AI, ir al inicio">${logo("")}<span>Aqua Assistant <b>AI</b></span></a>
             <h1 class="topbar-h1" data-title></h1>
             <div class="topbar-actions">
+              <div class="place-menu-wrap">
+                <button type="button" class="place-chip" data-place-chip aria-haspopup="menu" aria-expanded="false" aria-controls="place-menu">${icon("pin")}<span data-place-name>Mi agua</span>${icon("chevronRight", "user-chev")}</button>
+                <div class="dropdown place-menu" id="place-menu" role="menu" aria-label="Elegir lugar" data-place-menu hidden></div>
+              </div>
               <a class="device-chip" href="#/devices" data-device-pill aria-label="Estado del medidor"></a>
               <button class="btn btn-ghost icon-btn" data-theme-toggle aria-label="Cambiar tema">${icon(document.documentElement.dataset.theme === "dark" ? "sun" : "moon")}</button>
               <div style="position:relative">
@@ -72,6 +77,7 @@ export class Shell {
     this.#bind();
     this.refreshDevice();
     this.refreshAlerts();
+    this.refreshPlace();
     this.aqua.maybeFirstTour();
   }
 
@@ -171,6 +177,7 @@ export class Shell {
       this.page.scrollIntoView({ block: "start" });
     });
     this.#bindUserMenu();
+    this.#bindPlaceMenu();
     // The photo is downloaded after the frame is drawn, and again whenever the user changes it.
     const showAvatar = async (current) => {
       const slot = this.root.querySelector("[data-avatar]");
@@ -215,6 +222,77 @@ export class Shell {
   }
 
   #closePanel;
+
+  /** The active place in the top bar, and the list to change it. */
+  async refreshPlace() {
+    try {
+      this.places = await api.get("/places");
+      const active = this.places.find((p) => p.active) || this.places[0];
+      const chip = this.root.querySelector("[data-place-chip]");
+      if (!active || !chip) return;
+      chip.querySelector("[data-place-name]").textContent = active.name;
+      chip.setAttribute("aria-label", `Lugar: ${active.name}. Cambiar de lugar`);
+      chip.classList.toggle("shared", active.role !== "OWNER");
+    } catch { /* the chip keeps its text */ }
+  }
+
+  #renderPlaceMenu() {
+    const menu = this.root.querySelector("[data-place-menu]");
+    menu.innerHTML = `<p class="menu-title">Tus lugares</p>${(this.places || []).map((p) => `<button type="button" class="user-menu-item ${p.active ? "current" : ""}" role="menuitemradio" aria-checked="${p.active}" data-place="${p.id}">
+        ${icon(p.active ? "check" : "pin")}<span>${esc(p.name)}<small class="muted">${esc(p.kindLabel)}${p.role !== "OWNER" ? ` · ${esc(p.roleLabel)}` : ""}</small></span></button>`).join("")}
+      <a class="user-menu-item" role="menuitem" href="#/places" data-manage>${icon("settings")}Administrar lugares</a>`;
+  }
+
+  #bindPlaceMenu() {
+    const chip = this.root.querySelector("[data-place-chip]");
+    const menu = this.root.querySelector("[data-place-menu]");
+    const items = () => [...menu.querySelectorAll("[role^=menuitem]")];
+    const close = (focusChip = false) => {
+      if (menu.hidden) return;
+      menu.hidden = true;
+      chip.setAttribute("aria-expanded", "false");
+      if (focusChip) chip.focus();
+    };
+    chip.addEventListener("click", async (event) => {
+      event.stopPropagation();
+      if (!menu.hidden) { close(); return; }
+      this.#renderPlaceMenu();
+      menu.hidden = false;
+      chip.setAttribute("aria-expanded", "true");
+      (menu.querySelector(".current") || items()[0])?.focus();
+    });
+    menu.addEventListener("keydown", (event) => {
+      const list = items();
+      const at = list.indexOf(document.activeElement);
+      if (event.key === "Escape") { event.preventDefault(); close(true); }
+      else if (event.key === "ArrowDown") { event.preventDefault(); list[(at + 1) % list.length].focus(); }
+      else if (event.key === "ArrowUp") { event.preventDefault(); list[(at - 1 + list.length) % list.length].focus(); }
+      else if (event.key === "Tab") close();
+    });
+    menu.addEventListener("click", async (event) => {
+      const item = event.target.closest("[data-place]");
+      if (event.target.closest("[data-manage]")) { close(); return; }
+      if (!item) return;
+      close();
+      if (item.classList.contains("current")) return;
+      try {
+        const place = await api.post(`/places/${item.dataset.place}/activate`);
+        toast(`Ahora estás en "${place.name}".`, "ok", 2500);
+        bus.emit("place:changed", place);
+      } catch (error) {
+        toast(error.message, "error");
+      }
+    });
+    const outside = (event) => { if (!menu.hidden && !menu.contains(event.target) && !chip.contains(event.target)) close(); };
+    document.addEventListener("click", outside);
+    this.#offs.push(() => document.removeEventListener("click", outside));
+    // Another place means other measurements, alerts and analyses: the open screen is drawn again.
+    this.#offs.push(bus.on("place:changed", () => {
+      this.refreshPlace();
+      this.refreshAlerts();
+      this.ctx.router.resolve();
+    }));
+  }
 
   /** On a phone the bar scrolls sideways: the open screen is brought into view. */
   #centerActive() {

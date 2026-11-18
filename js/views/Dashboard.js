@@ -34,12 +34,15 @@ export const dashboardView = {
     const latest = data.latest;
     const profile = data.activeProfile;
     const device = data.device;
+    const place = data.place;
+    const params = (data.parameters || []).filter((p) => p.value !== null && p.value !== undefined);
     const connected = device.ownedByYou && (device.state === "CONNECTED" || device.state === "LIVE");
 
     // Three blocks: the last value, what it means, and what Aqua suggests. Everything else is one tap away in the bottom bar.
     root.innerHTML = `
       <div class="row-between welcome reveal">
-        <div><h1>¡Hola, ${esc(firstName)}!</h1><p>${latest ? "Así está tu agua ahora." : "Empieza midiendo tu agua con el botón «Medir» de abajo."}</p></div>
+        <div><h1>¡Hola, ${esc(firstName)}!</h1><p>${latest ? `Así está el agua de <strong>${esc(place?.name || "tu lugar")}</strong>.` : `Empieza midiendo el agua de <strong>${esc(place?.name || "tu lugar")}</strong> con el botón «Medir» de abajo.`}</p>
+          ${place && place.role !== "OWNER" ? `<p class="small muted">${icon("share")}Lugar compartido por ${esc(place.ownerName || "otra persona")} · ${esc(place.roleLabel)}</p>` : ""}</div>
         ${session.user?.role === "ADMIN" ? `<span class="badge badge-info">${icon("shield")}Administrador · sin límites</span>` : data.plan === "PREMIUM" ? `<span class="badge badge-info">${icon("star")}Premium</span>` : `<a class="badge badge-info" href="#/billing">Plan gratuito</a>`}
       </div>
 
@@ -55,7 +58,7 @@ export const dashboardView = {
             <small class="muted num" data-gauge-meta>${latest ? relativeTime(latest.measuredAt) : "Aún no has medido"}</small>
           </div>
           <div class="gauge-actions">
-            <button class="btn btn-primary btn-pill btn-lg" data-measure-now>${icon("drop")}Medir ahora</button>
+            ${place?.canEdit === false ? `<span class="badge">${icon("eye")}Solo puedes ver este lugar</span>` : `<button class="btn btn-primary btn-pill btn-lg" data-measure-now>${icon("drop")}Medir ahora</button>`}
             ${connected ? `<button class="btn btn-pill" data-live>${icon(device.state === "LIVE" ? "pause" : "play")}${device.state === "LIVE" ? "Detener vivo" : "Tiempo real"}</button>` : ""}
           </div>
           <canvas class="splash" data-splash aria-hidden="true"></canvas>
@@ -80,6 +83,15 @@ export const dashboardView = {
               <button type="button" class="btn btn-sm btn-pill" style="margin-top:10px" data-aqua-open>${icon("message")}Preguntarle a Aqua</button></div>
           </section>
 
+          <div data-due></div>
+          ${params.length ? `<section class="card reveal" aria-labelledby="params-title">
+            <div class="card-head"><div class="card-title" id="params-title">${icon("flask")}Otros parámetros</div><a class="btn btn-sm btn-pill" href="#/care">Calcular dosis ${icon("chevronRight")}</a></div>
+            <div class="params-grid">${params.map((p) => `<div class="param ${p.status}"><span>${esc(p.label)}</span>
+              <strong class="num">${p.value.toLocaleString("es", { maximumFractionDigits: 1 })} <small>mg/L</small></strong>
+              <small class="muted">${p.range ? `Orientativo ${p.range.low}–${p.range.high}` : "Sin rango general"} · ${relativeTime(p.measuredAt)}</small>
+              ${p.advice ? `<small>${esc(p.advice)}</small>` : ""}</div>`).join("")}</div>
+            <p class="muted small" style="margin-top:8px">Rangos orientativos para ${esc((place?.kindLabel || "este tipo de agua").toLowerCase())}; revisa la norma o el fabricante de tus productos.</p>
+          </section>` : ""}
           ${data.unreadAlerts ? `<section class="card reveal">
             <div class="card-head"><div class="card-title">${icon("bell")}Alertas</div><span class="badge badge-warn">${data.unreadAlerts} sin leer</span></div>
             ${data.recentAlerts.slice(0, 2).map((a) => `<div class="alert-item ${esc(a.severity)}">${icon(a.severity === "CRITICAL" ? "error" : "alert")}<div><strong>${esc(a.title)}</strong><p>${esc(a.message)}</p><small class="muted">${relativeTime(a.createdAt)}</small></div></div>`).join("")}
@@ -91,7 +103,23 @@ export const dashboardView = {
       <p class="disclaimer">${icon("info")}${esc(data.disclaimer)}</p>`;
 
     root.querySelectorAll("[data-aqua-open]").forEach((b) => b.addEventListener("click", () => bus.emit("aqua:open")));
-    root.querySelector("[data-measure-now]").addEventListener("click", () => root.ownerDocument.querySelector("[data-measure-tab]")?.click());
+    // Reminders that are due today, with "Hecho" right here.
+    api.get("/reminders").then((list) => {
+      const due = list.filter((r) => r.due);
+      const holder = root.querySelector("[data-due]");
+      if (ctx.stale() || !holder || !due.length) return;
+      holder.innerHTML = `<section class="card due-card reveal" aria-labelledby="due-title"><div class="card-head"><div class="card-title" id="due-title">${icon("bell")}Para hoy</div>
+        <a class="btn btn-sm btn-pill" href="#/care">Ver todo ${icon("chevronRight")}</a></div>
+        <ul class="list">${due.map((r) => `<li><span><strong>${esc(r.title)}</strong>${r.placeName ? `<br><small class="muted">${esc(r.placeName)}</small>` : ""}</span>
+          <button type="button" class="btn btn-sm btn-primary" data-done="${r.id}">${icon("check")}Hecho</button></li>`).join("")}</ul></section>`;
+      holder.querySelectorAll("[data-done]").forEach((b) => b.addEventListener("click", async () => {
+        b.disabled = true;
+        try { await api.post(`/reminders/${b.dataset.done}/done`); toast("¡Hecho! El próximo se cuenta desde ahora.", "ok"); b.closest("li").remove(); }
+        catch (error) { b.disabled = false; toast(error.message, "error"); }
+        if (!holder.querySelector("li")) holder.innerHTML = "";
+      }));
+    }).catch(() => {});
+    root.querySelector("[data-measure-now]")?.addEventListener("click", () => root.ownerDocument.querySelector("[data-measure-tab]")?.click());
 
     // What Aqua suggests (rules and statistics of the server), loaded after the main values are on screen.
     api.get("/intelligence/overview").then((overview) => {
