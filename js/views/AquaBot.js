@@ -64,7 +64,7 @@ export class AquaBot {
           <button type="button" class="icon-btn btn btn-ghost" data-aqua-close aria-label="Cerrar a Aqua">${icon("close")}</button>
         </div>
         <div class="aqua-body" data-aqua-home>
-          <div class="aqua-bubble">Hola${first ? `, ${first}` : ""}. ¿En qué te ayudo con tu agua?</div>
+          <div class="aqua-bubble">Hola${first ? `, ${first}` : ""}. ¿En qué te puedo ayudar?</div>
           <form class="aqua-ask" data-aqua-ask>
             <input class="input" name="q" maxlength="500" placeholder="Pregúntame lo que quieras..." aria-label="Pregúntale a Aqua" autocomplete="off">
             <button class="btn btn-primary icon-btn" type="submit" aria-label="Enviar pregunta">${icon("send")}</button>
