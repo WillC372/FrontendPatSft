@@ -5,9 +5,13 @@ import { session } from "../core/Session.js";
 import { theme } from "../core/Theme.js";
 import { esc, fmt, quotaText } from "../core/Format.js";
 import { icon, logo } from "../ui/Icons.js";
+import { bindHelp, helpBox } from "../ui/Help.js";
+import { i18n } from "../core/I18n.js";
+import { voice } from "../core/Voice.js";
 import { avatarMarkup, avatarUrl } from "../core/Avatar.js";
 import { openAccountDialog } from "./AccountDialog.js";
 import { confirmDialog, emptyState, loading, passwordChecklist, showFieldErrors, toast, withBusy } from "../ui/Components.js";
+import { LOCALE_CO } from "../core/Locale.js";
 
 const SECTIONS = [["appearance", "Apariencia", "sun"], ["measurement", "Notificaciones y medición", "bell"], ["account", "Cuenta y plan", "user"], ["activity", "Actividad", "history"], ["about", "Acerca de", "info"]];
 
@@ -78,12 +82,27 @@ export const settingsView = {
                 `<button role="radio" data-theme-option="${v}" aria-checked="${draft.theme === v}" class="${draft.theme === v ? "active" : ""}">${icon(ic)}${l}</button>`).join("")}
             </div>
             <p class="muted" style="margin-top:10px;font-size:13px">"Automático" sigue la preferencia de tu sistema operativo. La elección se guarda en tu cuenta.</p>
-            <div class="setting-row"><div><strong>Idioma</strong><p>Los textos están en español; la estructura admite otros idiomas.</p></div>
-              <select class="input" style="width:auto" data-language aria-label="Idioma"><option value="es" selected>Español</option></select></div>
+            <div class="setting-row"><div><strong>Idioma</strong><p>Toda la app cambia al idioma que elijas: pantallas, mensajes, respuestas y voz de Aqua, correos, avisos e informes. La primera vez en un idioma puede tardar unos segundos mientras se traduce.</p></div>
+              <select class="input lang-select" data-language aria-label="Idioma" translate="no"><option value="${esc(i18n.lang)}" selected>${esc(i18n.lang)}</option></select></div>
           </section>
 
+          <section class="card reveal" id="s-voice">
+            <div class="card-head"><div class="card-title">${icon("volume")}Voz de Aqua</div></div>
+            <div class="setting-row"><div><strong>Aqua habla</strong><p>Al abrir a Aqua te saluda en voz alta y lee sus respuestas mientras las escribe. Si lo apagas, solo escribe.</p></div>
+              <label class="switch"><input type="checkbox" data-voice ${draft.voiceEnabled !== false ? "checked" : ""} aria-label="Aqua habla"><span></span></label></div>
+            <div class="setting-row" data-voice-row><div><strong>Voz</strong><p data-voice-note>Se elige la voz más natural de este dispositivo para el idioma de la app.</p></div>
+              <select class="input" style="width:auto;max-width:260px" data-voice-name aria-label="Voz" translate="no"></select></div>
+            <div class="setting-row" data-voice-row><div><strong>Velocidad</strong><p><span data-voice-rate-text translate="no"></span></p></div>
+              <div class="row" style="gap:8px;flex-wrap:nowrap"><input type="range" min="0.7" max="1.4" step="0.05" data-voice-rate aria-label="Velocidad de la voz">
+              <button type="button" class="btn btn-sm" data-voice-test>${icon("play")}Probar</button></div></div>
+          </section>
           <section class="card reveal" id="s-measurement">
             <div class="card-head"><div class="card-title">${icon("bell")}Notificaciones y medición</div></div>
+            ${helpBox("notices", "¿Cómo me llegan los avisos?", [
+              ["bell", "Dentro de la app", "La campana de arriba muestra las alertas cuando una medición sale del rango. Siempre está."],
+              ["send", "En tu celular o computador, aunque la app esté cerrada", "Activa «Avisos en este celular o computador» en cada dispositivo donde los quieras; el navegador te pedirá permiso. Con «Probar» compruebas que lleguen. En iPhone, primero agrega la app a la pantalla de inicio."],
+              ["mail", "Por correo", "Con «Alertas por correo» te escribo cuando el agua sale del rango (como mucho un correo por hora). Los recordatorios también pueden llegar por correo si lo marcas al crearlos."],
+            ])}
             <div class="setting-row"><div><strong>Notificaciones de alertas</strong><p>Avisos cuando una medición sale del rango (en la app y en los dispositivos donde actives los avisos).</p></div>
               <label class="switch"><input type="checkbox" data-notifications ${draft.notificationsEnabled ? "checked" : ""} aria-label="Notificaciones de alertas"><span></span></label></div>
             <div class="setting-row"><div><strong>Alertas por correo</strong><p>Te escribo a tu correo cuando una medición sale del rango (como mucho uno por hora).</p></div>
@@ -107,7 +126,7 @@ export const settingsView = {
               ${current ? `<dt>Sesión actual</dt><dd>Desde ${fmt.dateTime(current.startedAt)} · vence ${fmt.dateTime(current.expiresAt)}${current.rememberMe ? " (recordada)" : ""}</dd>` : ""}
               <dt>Análisis histórico</dt><dd>Hasta ${ai.maxAnalysisDays} días</dd>
               <dt>Consultas IA hoy</dt><dd>${ai.configured ? quotaText(ai.usedToday, ai.dailyQuota) : "IA no configurada en el servidor"}</dd></dl>
-            ${me.premiumUntil ? `<p class="muted" style="margin-top:10px">Premium activo hasta el ${new Intl.DateTimeFormat("es-CO", { dateStyle: "long" }).format(new Date(me.premiumUntil))}.</p>` : ""}
+            ${me.premiumUntil ? `<p class="muted" style="margin-top:10px">Premium activo hasta el ${new Intl.DateTimeFormat(LOCALE_CO, { dateStyle: "long" }).format(new Date(me.premiumUntil))}.</p>` : ""}
             <div class="banner banner-info" style="margin-top:14px">${icon("star")}<p>Premium amplía el análisis histórico a 365 días, la predicción a 7 días y la cuota diaria de IA a 200 consultas.</p>
               <a class="btn btn-primary btn-pill" href="#/billing" style="margin-left:auto;white-space:nowrap">${icon("card")}${me.plan === "PREMIUM" ? "Ver plan y pagos" : "Mejorar a Premium"}</a></div>
           </section>
@@ -173,6 +192,63 @@ export const settingsView = {
         toast(error.message, "error");
       }
     }));
+    bindHelp(root);
+    // Language: it changes at once (the page reloads in the new language) and is kept in the account.
+    const langSelect = root.querySelector("[data-language]");
+    i18n.languages().then((list) => {
+      langSelect.innerHTML = list.map((l) => `<option value="${esc(l.code)}" ${l.code === i18n.lang ? "selected" : ""}>${esc(l.name)}${l.code === "es" ? "" : ` · ${esc(l.englishName || "")}`}</option>`).join("");
+    });
+    langSelect.addEventListener("change", async () => {
+      const lang = langSelect.value;
+      langSelect.disabled = true;
+      if (!session.user?.demo) {
+        try {
+          await api.put("/users/me/settings", { ...draft, language: lang });
+        } catch (error) {
+          toast(error.message, "error");
+        }
+      }
+      i18n.change(lang);
+    });
+    // Aqua's voice: on/off is kept in the account; the chosen voice and speed only in this device (voices differ).
+    const voiceBox = root.querySelector("[data-voice]");
+    const voiceName = root.querySelector("[data-voice-name]");
+    const voiceRate = root.querySelector("[data-voice-rate]");
+    const rateText = root.querySelector("[data-voice-rate-text]");
+    const showRate = () => { rateText.textContent = `${Number(voice.rate).toFixed(2).replace(/0$/, "")}×`; };
+    voiceRate.value = String(voice.rate);
+    showRate();
+    if (!voice.supported()) {
+      root.querySelectorAll("[data-voice-row]").forEach((r) => { r.hidden = true; });
+      voiceBox.disabled = true;
+      voiceBox.closest(".setting-row").querySelector("p").textContent = "Este navegador no puede hablar. Prueba con Chrome, Edge o Safari.";
+    } else {
+      voice.voices().then(async (list) => {
+        const current = await voice.chosen();
+        if (!list.length) {
+          voiceName.hidden = true;
+          root.querySelector("[data-voice-note]").textContent = "Este dispositivo no tiene una voz para el idioma de la app. Puedes instalarla en la configuración de voz o de idiomas del sistema.";
+          return;
+        }
+        voiceName.innerHTML = list.map((v, i) => `<option value="${esc(v.name)}" ${current && v.name === current.name ? "selected" : ""}>${esc(v.name)}${i === 0 ? " ★" : ""}</option>`).join("");
+      });
+    }
+    voiceBox.addEventListener("change", async () => {
+      voice.setEnabled(voiceBox.checked);
+      draft.voiceEnabled = voiceBox.checked;
+      try {
+        const saved = await api.put("/users/me/settings", { ...draft, language: i18n.lang });
+        Object.assign(draft, saved);
+        toast(voiceBox.checked ? "Aqua hablará." : "Aqua ya no hablará; solo escribirá.", "ok", 2500);
+      } catch (error) { toast(error.message, "error"); }
+    });
+    voiceName.addEventListener("change", () => { voice.choose(voiceName.value); i18n.tAsync("Hola, así suena mi voz.").then((t) => voice.speak(t, { force: true })); });
+    voiceRate.addEventListener("input", () => { voice.rate = Number(voiceRate.value); showRate(); });
+    root.querySelector("[data-voice-test]").addEventListener("click", async () => {
+      const [hello, ask] = await Promise.all([i18n.tAsync("Hola"), i18n.tAsync("¿En qué te puedo ayudar?")]);
+      const first = (session.user?.fullName || "").split(" ")[0];
+      voice.speak(`${hello}${first ? `, ${first}` : ""}. ${ask}`, { force: true });
+    });
     root.querySelector("[data-notifications]").addEventListener("change", (e) => { draft.notificationsEnabled = e.target.checked; });
     root.querySelector("[data-email-alerts]").addEventListener("change", (e) => { draft.emailAlerts = e.target.checked; });
     // Notifications on this device (Web Push): turned on and off right away, without "Guardar cambios".
@@ -296,7 +372,7 @@ export const settingsView = {
 
     root.querySelector("[data-save]").addEventListener("click", (e) => withBusy(e.currentTarget, async () => {
       try {
-        const saved = await api.put("/users/me/settings", { ...draft, language: root.querySelector("[data-language]").value });
+        const saved = await api.put("/users/me/settings", { ...draft, language: i18n.lang });
         Object.assign(draft, saved);
         bus.emit("settings:changed", saved);
         toast("Cambios guardados.", "ok");

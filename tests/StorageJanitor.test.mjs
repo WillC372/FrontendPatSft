@@ -30,3 +30,9 @@ test("keeps only the 10 most recent tour marks", () => {
 test("does nothing when storage cannot be read", () => {
   assert.deepEqual(cleanStorage({ get length() { throw new Error("blocked"); } }), []);
 });
+
+test("keeps the language, its translations, the voice and the help boxes; drops other languages' translations", () => {
+  const s = memory({ "aquasense.lang": "fr", "aquasense.i18n.fr": "{}", "aquasense.i18n.de": "{}", "aquasense.voice.name": "x",
+    "aquasense.voice.rate": "1", "aquasense.help.places": "closed", "aquasense.lang.pending": "1" });
+  assert.deepEqual(cleanStorage(s), ["aquasense.i18n.de"]);
+});

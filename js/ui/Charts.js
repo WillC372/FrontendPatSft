@@ -1,4 +1,5 @@
 import { esc, fmt } from "../core/Format.js";
+import { LOCALE } from "../core/Locale.js";
 
 const W = 720;
 const H = 280;
@@ -54,7 +55,7 @@ export function lineChart(host, { points = [], band, forecast = [], anomalies = 
   const sameDay = tMax - tMin < 86400000 * 1.5;
   // Measurements a few minutes apart need seconds; and a label equal to the previous one is not repeated.
   const withSeconds = tMax - tMin < 10 * 60000;
-  const tick = (d) => (withSeconds ? d.toLocaleTimeString("es", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+  const tick = (d) => (withSeconds ? d.toLocaleTimeString(LOCALE, { hour: "2-digit", minute: "2-digit", second: "2-digit" })
     : sameDay ? fmt.time(d) : fmt.day(d));
   const tickLabels = xTicks.map(tick).map((text, i, all) => (i > 0 && text === all[i - 1] ? "" : text));
 

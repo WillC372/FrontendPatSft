@@ -1,3 +1,4 @@
+import { LOCALE } from "./Locale.js";
 // Dose calculator: how much product to add to a volume of water to go from the current value to the desired one.
 // pH changes use the carbonate system of the water (it depends on the total alkalinity), the others are mass balances.
 // Results are estimates: the app always asks to add a part first, wait with the water circulating and measure again.
@@ -165,7 +166,7 @@ export function dose({ goal, productKey, volumeL, current, target, totalAlkalini
 
 /** "1,25 kg", "350 g", "2,4 L", "35 mL". */
 export function amountText(amount, unit) {
-  const n = (v, d) => v.toLocaleString("es", { maximumFractionDigits: d });
+  const n = (v, d) => v.toLocaleString(LOCALE, { maximumFractionDigits: d });
   if (unit === "g") return amount >= 1000 ? `${n(amount / 1000, 2)} kg` : `${n(amount, amount < 10 ? 1 : 0)} g`;
   if (unit === "mL") return amount >= 1000 ? `${n(amount / 1000, 2)} L` : `${n(amount, amount < 10 ? 1 : 0)} mL`;
   return `${n(amount, 2)} ${unit}`;

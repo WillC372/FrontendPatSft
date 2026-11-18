@@ -4,13 +4,14 @@ import { session } from "../core/Session.js";
 import { icon } from "../ui/Icons.js";
 import { countUp, emptyState, loading, modal, toast } from "../ui/Components.js";
 import { sessionList } from "./Sessions.js";
+import { LOCALE, LOCALE_CO } from "../core/Locale.js";
 
 const PAGE_SIZE = 12;
 const SOURCES = { REAL: "Medidor", MANUAL: "Manual", PHOTO: "Foto IA", SIMULATED: "Simulador" };
 const PAY_STATUS = { APPROVED: "badge-ok", PENDING: "badge-warn", DECLINED: "badge-crit", ERROR: "badge-crit", EXPIRED: "" };
-const longDate = (iso) => new Intl.DateTimeFormat("es-CO", { dateStyle: "long" }).format(new Date(iso));
-const money = (value, currency) => `${currency} ${Number(value || 0).toLocaleString("es-CO", { maximumFractionDigits: 0 })}`;
-const int = (v) => Number(v || 0).toLocaleString("es");
+const longDate = (iso) => new Intl.DateTimeFormat(LOCALE_CO, { dateStyle: "long" }).format(new Date(iso));
+const money = (value, currency) => `${currency} ${Number(value || 0).toLocaleString(LOCALE_CO, { maximumFractionDigits: 0 })}`;
+const int = (v) => Number(v || 0).toLocaleString(LOCALE);
 const many = (n, one, other) => `${int(n)} ${Number(n) === 1 ? one : other}`;
 
 function initials(name) {

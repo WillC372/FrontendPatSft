@@ -14,6 +14,7 @@ import { libraryPane } from "./Library.js";
 import { assistantPane } from "./AssistantPane.js";
 import { usagePane } from "./UsagePane.js";
 import { deepPane } from "./DeepPane.js";
+import { LOCALE } from "../core/Locale.js";
 
 // The functions are chosen from Aqua's panel (the robot): this screen shows the chosen one.
 const PANES = AI_FUNCTIONS;
@@ -31,7 +32,7 @@ const EFFECT_ICON = { INFO: "info", CAUTION: "alert", CRITICAL: "error" };
 function hydrogenLabel(factor) {
   if (Math.abs(factor - 1) < 0.005) return "Igual";
   const n = factor >= 1 ? factor : 1 / factor;
-  const text = n >= 100 ? Math.round(n).toLocaleString("es") : n.toLocaleString("es", { maximumFractionDigits: 1 });
+  const text = n >= 100 ? Math.round(n).toLocaleString(LOCALE) : n.toLocaleString(LOCALE, { maximumFractionDigits: 1 });
   return factor >= 1 ? `${text} veces más` : `${text} veces menos`;
 }
 

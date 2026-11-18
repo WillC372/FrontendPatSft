@@ -4,6 +4,7 @@ import { icon, logo } from "../ui/Icons.js";
 import { passwordChecklist, showFieldErrors, toast, withBusy } from "../ui/Components.js";
 import { animateWater } from "../ui/Water.js";
 import { esc } from "../core/Format.js";
+import { i18n } from "../core/I18n.js";
 
 function layout(card) {
   return `
@@ -18,8 +19,22 @@ function layout(card) {
           </div>
         </div>
       </section>
-      <main class="auth-panel"><div class="card glow auth-card">${card}</div></main>
+      <main class="auth-panel">
+        <label class="auth-lang">${icon("globe")}<span class="sr-only">Idioma</span>
+          <select class="input" data-auth-lang translate="no" aria-label="Idioma"><option value="${esc(i18n.lang)}">${esc(i18n.lang)}</option></select></label>
+        <div class="card glow auth-card">${card}</div></main>
     </div>`;
+}
+
+/** The language selector of the sign-in screens: the choice is kept and moved to the account after signing in. */
+export function bindAuthLanguage(root) {
+  const select = root.querySelector("[data-auth-lang]");
+  if (!select || select.dataset.bound) return;
+  select.dataset.bound = "1";
+  i18n.languages().then((list) => {
+    select.innerHTML = list.map((l) => `<option value="${esc(l.code)}" ${l.code === i18n.lang ? "selected" : ""}>${esc(l.name)}</option>`).join("");
+  });
+  select.addEventListener("change", () => i18n.change(select.value, { beforeSignIn: true }));
 }
 
 function inputField({ name, label, type = "text", iconName, autocomplete, placeholder, toggle = false }) {
@@ -73,7 +88,7 @@ export const loginView = {
     return mount(root, `
       <h1>Iniciar sesión</h1><p class="card-sub">Accede a tu cuenta para continuar</p>
       <form class="auth-form" novalidate>
-        ${inputField({ name: "email", label: "Correo electrónico", type: "email", iconName: "user", autocomplete: "email", placeholder: "tu@correo.com" })}
+        ${inputField({ name: "email", label: "Correo electrónico", type: "email", iconName: "user", autocomplete: "email", placeholder: "Tu correo electrónico" })}
         ${inputField({ name: "password", label: "Contraseña", type: "password", iconName: "lock", autocomplete: "current-password", placeholder: "Tu contraseña", toggle: true })}
         <div class="auth-links">
           <label class="check"><input type="checkbox" name="rememberMe">Recordarme</label>
@@ -132,7 +147,7 @@ export const registerView = {
       <h1>Crear cuenta</h1><p class="card-sub">Empieza a monitorear la calidad de tu agua</p>
       <form class="auth-form" novalidate>
         ${inputField({ name: "fullName", label: "Nombre completo", iconName: "user", autocomplete: "name", placeholder: "Tu nombre" })}
-        ${inputField({ name: "email", label: "Correo electrónico", type: "email", iconName: "mail", autocomplete: "email", placeholder: "tu@correo.com" })}
+        ${inputField({ name: "email", label: "Correo electrónico", type: "email", iconName: "mail", autocomplete: "email", placeholder: "Tu correo electrónico" })}
         ${inputField({ name: "password", label: "Contraseña", type: "password", iconName: "lock", autocomplete: "new-password", placeholder: "Mínimo 8 caracteres, letras y números", toggle: true })}
         ${inputField({ name: "confirm", label: "Confirmar contraseña", type: "password", iconName: "lock", autocomplete: "new-password", placeholder: "Repite la contraseña", toggle: true })}
         <button class="btn btn-primary btn-block btn-pill" type="submit">Crear cuenta ${icon("arrowRight")}</button>
@@ -158,7 +173,7 @@ export const forgotView = {
     return mount(root, `
       <h1>Recuperar contraseña</h1><p class="card-sub">Te enviaremos un enlace para restablecerla</p>
       <form class="auth-form" novalidate>
-        ${inputField({ name: "email", label: "Correo electrónico", type: "email", iconName: "mail", autocomplete: "email", placeholder: "tu@correo.com" })}
+        ${inputField({ name: "email", label: "Correo electrónico", type: "email", iconName: "mail", autocomplete: "email", placeholder: "Tu correo electrónico" })}
         <button class="btn btn-primary btn-block btn-pill" type="submit">Enviar enlace ${icon("send")}</button>
         <div data-result></div>
       </form>

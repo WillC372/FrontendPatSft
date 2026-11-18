@@ -6,6 +6,7 @@ import { confirmDialog, emptyState, loading, modal, sourceBadge, toast } from ".
 import { barChart, lineChart } from "../ui/Charts.js";
 import { manualEntry } from "./MeasureFlow.js";
 import { photoReading } from "./PhotoFlow.js";
+import { LOCALE } from "../core/Locale.js";
 
 const PAGE_SIZE = 15;
 
@@ -117,7 +118,7 @@ export const historyView = {
             <td>${sourceBadge(m.source)}</td>
             <td>${esc(m.profileName)}</td>
             <td title="${esc(m.validationNotes || "")}">${esc(m.validationLabel)}</td>
-            ${withParams ? ["freeChlorine", "totalAlkalinity", "calciumHardness", "cyanuricAcid"].map((k) => `<td class="num">${m.params?.[k] != null ? Number(m.params[k]).toLocaleString("es", { maximumFractionDigits: 1 }) : "—"}</td>`).join("") : ""}
+            ${withParams ? ["freeChlorine", "totalAlkalinity", "calciumHardness", "cyanuricAcid"].map((k) => `<td class="num">${m.params?.[k] != null ? Number(m.params[k]).toLocaleString(LOCALE, { maximumFractionDigits: 1 }) : "—"}</td>`).join("") : ""}
             <td><button class="btn btn-ghost btn-sm" data-detail="${m.id}" aria-label="Ver detalle">${icon("info")}</button>
                 <button class="btn btn-ghost btn-sm" data-delete="${m.id}" aria-label="Eliminar">${icon("trash")}</button></td>
           </tr>`).join("")}</tbody></table></div>`;
@@ -246,7 +247,7 @@ export const historyView = {
         if (state.days === "custom") {
           const start = state.from ? new Date(`${state.from}T00:00:00`) : null;
           days = start ? Math.max(1, Math.ceil((Date.now() - start.getTime()) / 86400000)) : 7;
-          toast(start ? `El informe PDF cubre desde el ${start.toLocaleDateString("es")} hasta hoy (${days} días).`
+          toast(start ? `El informe PDF cubre desde el ${start.toLocaleDateString(LOCALE)} hasta hoy (${days} días).`
             : "Sin fechas elegidas, el informe PDF cubre los últimos 7 días.", "info", 6000);
         }
         await api.download("/reports/pdf", { days }, "aqua-assistant-informe.pdf");

@@ -12,9 +12,14 @@ import { watchSessionExpiry } from "./core/SessionTimer.js";
 import { refreshRelativeTimes } from "./core/Format.js";
 import { lazyView } from "./core/LazyView.js";
 import { cleanStorage } from "./core/StorageJanitor.js";
+import { i18n } from "./core/I18n.js";
+import { voice } from "./core/Voice.js";
+import { bindAuthLanguage } from "./views/Auth.js";
 
 // What this browser kept from old versions or from accounts that no longer use it is removed when the app opens.
 cleanStorage();
+// The interface in the language chosen in this browser (Spanish needs nothing).
+i18n.start();
 
 // Screens of the signed-in application, loaded on first use.
 const dashboardView = lazyView({ name: "dashboard", title: "Inicio" }, () => import("./views/Dashboard.js"), "dashboardView");
@@ -50,6 +55,12 @@ async function loadSettings() {
   try {
     ctx.settings = await api.get("/users/me/settings");
     theme.apply(ctx.settings.theme);
+    voice.setEnabled(ctx.settings.voiceEnabled !== false);
+    // Shared demo accounts keep the language of each browser (saving it would change it for everyone).
+    if (!session.user?.demo) i18n.syncWithAccount(ctx.settings.language, (lang) => {
+      ctx.settings.language = lang;
+      api.put("/users/me/settings", { ...ctx.settings, language: lang }).catch(() => {});
+    });
   } catch { /* the view will show its own error */ }
 }
 
@@ -64,6 +75,7 @@ async function show(view, route) {
     liveStream.stop();
     root.innerHTML = "";
     const done = await view.render(root, { ...ctx, route, stale });
+    bindAuthLanguage(root);
     if (stale()) done?.(); else cleanup = done;
     return;
   }

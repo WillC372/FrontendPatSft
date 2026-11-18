@@ -67,3 +67,33 @@ fieldset.checks label { display: flex; gap: 8px; align-items: flex-start; font-s
 /* ---------- calibrations ---------- */
 .table-wrap table.calibrations td.dev-bad { color: var(--warn); font-weight: 700; }
 .table-wrap table.calibrations td.dev-ok { color: var(--ok); font-weight: 700; }
+
+/* ---------- "¿Para qué sirve?" boxes ---------- */
+.help-box { border: 1px solid color-mix(in srgb, var(--primary-2) 40%, var(--border)); background: color-mix(in srgb, var(--primary-2) 7%, var(--surface)); border-radius: 18px; padding: 4px 16px; margin: 12px 0 16px; }
+.help-box > summary { list-style: none; display: flex; align-items: center; gap: 8px; padding: 10px 0; cursor: pointer; font-weight: 700; color: var(--text); }
+.help-box > summary::-webkit-details-marker { display: none; }
+.help-box > summary svg { width: 18px; height: 18px; color: var(--primary-2); flex: none; }
+.help-box > summary span { flex: 1; }
+.help-box .help-chev { transform: rotate(90deg); transition: transform .2s; color: var(--muted); }
+.help-box[open] .help-chev { transform: rotate(-90deg); }
+.help-box ul { list-style: none; margin: 0; padding: 0 0 6px; display: grid; gap: 12px; }
+.help-box li { display: flex; gap: 12px; align-items: flex-start; }
+.help-box li > svg { width: 20px; height: 20px; flex: none; margin-top: 2px; color: var(--primary-2); }
+.help-box li strong { display: block; color: var(--text); }
+.help-box li p { margin: 2px 0 0; color: var(--text-soft); font-size: 14px; }
+.help-box [data-help-ok] { margin: 4px 0 12px; }
+.place-menu .menu-hint { font-size: 12.5px; color: var(--muted); padding: 0 10px 8px; margin: 0; line-height: 1.4; }
+.push-hint { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; padding: 8px 10px; border-radius: 12px; background: color-mix(in srgb, var(--warn, #f59e0b) 12%, transparent); }
+.push-hint svg { width: 16px; height: 16px; flex: none; margin-top: 2px; }
+.param-hint { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* ---------- languages ---------- */
+.i18n-busy { position: fixed; left: 50%; top: 10px; transform: translateX(-50%); z-index: 90; padding: 6px 14px 6px 30px; border-radius: 999px; font-size: 13px; font-weight: 600; background: var(--surface-solid); border: 1px solid var(--border-strong); box-shadow: var(--shadow); color: var(--text-soft); }
+.i18n-busy::before { content: ""; position: absolute; left: 11px; top: 50%; width: 12px; height: 12px; margin-top: -6px; border-radius: 50%; border: 2px solid var(--primary-2); border-right-color: transparent; animation: spin .8s linear infinite; }
+.i18n-busy[hidden] { display: none; }
+.lang-select { max-width: 260px; }
+.auth-panel { position: relative; }
+.auth-lang { position: absolute; top: 14px; right: 16px; display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+.auth-lang svg { width: 18px; height: 18px; }
+.auth-lang select { width: auto; max-width: 170px; height: 36px; padding: 0 10px; font-size: 14px; }
+[dir="rtl"] .auth-lang { right: auto; left: 16px; }

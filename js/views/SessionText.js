@@ -1,7 +1,8 @@
+import { LOCALE } from "../core/Locale.js";
 // Readable texts of a session of the history, without DOM.
 
-const day = new Intl.DateTimeFormat("es", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
-const hour = new Intl.DateTimeFormat("es", { hour: "2-digit", minute: "2-digit" });
+const day = new Intl.DateTimeFormat(LOCALE, { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+const hour = new Intl.DateTimeFormat(LOCALE, { hour: "2-digit", minute: "2-digit" });
 
 /** "menos de 1 min", "45 min", "2 h", "1 h 5 min". */
 export function duration(minutes) {

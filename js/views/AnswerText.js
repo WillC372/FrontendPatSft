@@ -1,3 +1,4 @@
+import { LOCALE } from "../core/Locale.js";
 // Text of the assistant's answers, without DOM: used while the answer is being written and when it is copied.
 
 const REFERENCE = /\[([a-z0-9]+(?:-[a-z0-9]+)+)\]/g;
@@ -27,7 +28,7 @@ export function copyText(text, citations = []) {
  * numbered sources. {@code conversation}: { title, messages: [{ role, content, model, citations }] }.
  */
 export function conversationText(conversation, exportedAt = new Date()) {
-  const lines = [`Aqua Assistant AI · ${conversation.title || "Conversación"}`, `Exportada el ${exportedAt.toLocaleString("es")}`, ""];
+  const lines = [`Aqua Assistant AI · ${conversation.title || "Conversación"}`, `Exportada el ${exportedAt.toLocaleString(LOCALE)}`, ""];
   for (const m of conversation.messages || []) {
     if (m.role === "USER") {
       lines.push(`Tú: ${String(m.content).trim()}`, "");

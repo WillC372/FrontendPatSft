@@ -3,11 +3,12 @@ import { session } from "../core/Session.js";
 import { esc, fmt } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { emptyState, loading, toast, withBusy } from "../ui/Components.js";
+import { LOCALE_CO } from "../core/Locale.js";
 
 const STATUS = { PENDING: ["warn", "Pendiente"], APPROVED: ["ok", "Aprobado"], DECLINED: ["crit", "Rechazado"], ERROR: ["crit", "Error"], EXPIRED: ["", "Vencido"] };
 const RESULT = { APPROVED: ["ok", "check"], DECLINED: ["crit", "error"], ERROR: ["crit", "error"], EXPIRED: ["warn", "alert"], PENDING: ["info", "refresh"] };
-const cop = (value) => `COP ${Number(value).toLocaleString("es-CO", { maximumFractionDigits: 0 })}`;
-const longDate = (iso) => new Intl.DateTimeFormat("es-CO", { dateStyle: "long" }).format(new Date(iso));
+const cop = (value) => `COP ${Number(value).toLocaleString(LOCALE_CO, { maximumFractionDigits: 0 })}`;
+const longDate = (iso) => new Intl.DateTimeFormat(LOCALE_CO, { dateStyle: "long" }).format(new Date(iso));
 
 /** Reads the reference PayU sends the user back with (in the hash or, just in case, in the URL). */
 function returnedReference(route) {

@@ -3,9 +3,10 @@ import { esc } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { confirmDialog, emptyState, loading, toast } from "../ui/Components.js";
 import { duration, IDLE_MS, period } from "./SessionText.js";
+import { LOCALE } from "../core/Locale.js";
 
 const PAGE_SIZE = 10;
-const stamp = new Intl.DateTimeFormat("es", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+const stamp = new Intl.DateTimeFormat(LOCALE, { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 const BADGE = { OPEN: "badge-ok", ENDED: "badge-info", EXPIRED: "badge-warn" };
 
 function card(s) {

@@ -3,6 +3,7 @@ import { esc, fmt } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { emptyState, loading } from "../ui/Components.js";
 import { lineChart, lossChart } from "../ui/Charts.js";
+import { LOCALE } from "../core/Locale.js";
 
 const ALERT_CLASS = { OK: "banner-info", INFO: "banner-info", CAUTION: "banner-warn", CRITICAL: "banner-crit" };
 const ALERT_ICON = { OK: "check", INFO: "info", CAUTION: "alert", CRITICAL: "error" };
@@ -102,7 +103,7 @@ function render(body, r) {
         <small class="muted">Detención temprana: se guardan los pesos de la época con menor error de validación.</small>
       </section>
     </div>
-    <section class="card reveal" style="margin-top:16px"><div class="card-head"><div class="card-title">${icon("brain")}Arquitectura</div><span class="badge">${a.parameters.toLocaleString("es")} parámetros</span></div>
+    <section class="card reveal" style="margin-top:16px"><div class="card-head"><div class="card-title">${icon("brain")}Arquitectura</div><span class="badge">${a.parameters.toLocaleString(LOCALE)} parámetros</span></div>
       ${networkDiagram(a)}
       <div class="stats" style="margin-top:12px">
         <div class="stat"><span>Entrada</span><strong>${a.windowHours} h × ${a.inputs}</strong></div>

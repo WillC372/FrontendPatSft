@@ -4,9 +4,10 @@ import { session } from "../core/Session.js";
 import { icon } from "../ui/Icons.js";
 import { countUp, emptyState, loading } from "../ui/Components.js";
 import { usageChart } from "../ui/Charts.js";
+import { LOCALE } from "../core/Locale.js";
 
 const usd = (v, digits = 4) => `US$ ${Number(v || 0).toFixed(digits)}`;
-const int = (v) => Number(v || 0).toLocaleString("es");
+const int = (v) => Number(v || 0).toLocaleString(LOCALE);
 
 /** AI usage and costs: calls, failures, tokens, estimated cost and real charge, per model, feature and day. */
 export async function usagePane(host) {
