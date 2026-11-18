@@ -40,7 +40,12 @@ const norm = (text) => text.replace(/\s+/g, " ").trim();
 /** "Cada 7 días" -> { key: "Cada {0} días", nums: ["7"] } */
 function keyOf(text) {
   const nums = [];
-  const key = norm(text).replace(NUMBER, (n) => `{${nums.push(n) - 1}}`);
+  const marks = [];
+  // The markers of a sentence (<0>, </0>, <1/>) keep their digits: they are set aside while numbers are replaced.
+  const key = norm(text)
+    .replace(/<\/?\d{1,2}\/?>/g, (m) => `\u0001${String.fromCharCode(65 + marks.push(m) - 1)}\u0002`)
+    .replace(NUMBER, (n) => `{${nums.push(n) - 1}}`)
+    .replace(/\u0001(.)\u0002/g, (m, c) => marks[c.charCodeAt(0) - 65]);
   return { key, nums };
 }
 
