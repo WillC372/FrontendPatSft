@@ -35,6 +35,21 @@ const HINTS = {
 
 const TOUR_KEY = (id) => `aquasense.tour.v1.${id}`;
 const TIPS_KEY = "aquasense.aqua.tips";
+/** Which sign-in Aqua already greeted with "Hola" (a piece of that session's token, kept for this tab). */
+const GREETED_KEY = "aquasense.aqua.greeted";
+
+// After the first greeting of a sign-in, Aqua opens with one of these (never the same one twice in a row).
+export const OPENERS = [
+  "¿En qué te puedo ayudar?", "¿Qué necesitas hoy?", "¿Qué quieres saber de tu agua?", "¿En qué te ayudo ahora?",
+  "Aquí estoy, ¿qué hacemos?", "¿Qué revisamos hoy?", "Cuéntame, ¿qué necesitas?", "¿Tienes alguna duda sobre tu agua?",
+  "¿Qué te gustaría consultar?", "¿Por dónde empezamos?", "¿Te ayudo con algo de tu agua?", "¿Qué quieres analizar?",
+  "Dime, ¿en qué te ayudo?", "¿Revisamos cómo va tu pH?", "¿Necesitas un diagnóstico o una predicción?",
+  "¿Qué pregunta tienes para mí?", "Listo para ayudarte, ¿qué necesitas?", "¿Hay algo de tu agua que te preocupe?",
+  "¿Quieres que miremos tus mediciones?", "¿En qué te puedo echar una mano?", "¿Qué hacemos con tu agua hoy?",
+  "¿Te ayudo a entender una medición?", "¿Preparamos un informe o resolvemos una duda?", "¿Qué te trae por aquí?",
+  "Aquí me tienes, ¿qué consultamos?", "¿Necesitas ayuda con una dosis o un tratamiento?",
+];
+let lastOpener = -1;
 const read = (store, key) => { try { return store.getItem(key); } catch { return null; } };
 const write = (store, key, value) => { try { store.setItem(key, value); } catch { /* storage unavailable */ } };
 
@@ -43,9 +58,10 @@ export const TOUR_STEPS = [
   { target: '[data-tab="dashboard"]', title: "Inicio", text: "Tu última medición y si tu agua está bien para el uso que elegiste." },
   { target: '[data-tab="history"]', title: "Historial", text: "Todas tus mediciones con gráficas, filtros y descarga." },
   { target: '[data-tab="measure"]', title: "Medir", text: "El botón más importante: registra el pH con tu medidor, con una foto o escribiendo el valor." },
+  { target: '[data-tab="care"]', title: "Cuidado", text: "Calculadora de dosis, registro de lo que le echas al agua y recordatorios que te llegan al celular o al correo." },
   { target: '[data-tab="billing"]', title: "Plan", text: "Tu plan actual y lo que incluye Premium: más días de análisis, predicciones más largas y más consultas de IA." },
   { target: '[data-tab="admin"]', title: "Admin", text: "Solo para administradores: cuentas, planes, actividad y el consumo de la IA." },
-  { target: "[data-place-chip]", title: "Tus lugares", text: "El agua que estás viendo. Tócalo para cambiar de piscina, acuario o tanque, para el «Cuidado de este lugar» (calculadora de dosis, tratamientos y recordatorios) y para crear, editar o compartir lugares y sus perfiles de uso." },
+  { target: "[data-place-chip]", title: "Tus lugares", text: "El agua que estás viendo. Tócalo para cambiar de piscina, acuario o tanque, y para crear, editar o compartir lugares y sus perfiles de uso." },
   { target: "[data-bell]", title: "Alertas", text: "Si una medición sale del rango, te aviso aquí." },
   { target: "[data-account]", title: "Tu cuenta", text: "Toca tu inicial o tu nombre para «Mi cuenta», «Configuración» (tema, idioma, voz de Aqua, avisos, tu medidor y tu actividad) y «Cerrar sesión»." },
   { target: "[data-aqua]", title: "Y aquí estoy yo", text: "Tócame para chatear conmigo, pedir un diagnóstico, predecir tu pH o armar un informe. En la «Biblioteca normativa» están las normas y los datos oficiales de pH, y en «Análisis avanzado», los modelos entrenados con tus datos." },
@@ -75,7 +91,7 @@ export class AquaBot {
           <button type="button" class="icon-btn btn btn-ghost" data-aqua-close aria-label="Cerrar a Aqua">${icon("close")}</button>
         </div>
         <div class="aqua-body" data-aqua-home>
-          <div class="aqua-bubble">Hola${first ? `, <span translate="no">${first}</span>` : ""}. ¿En qué te puedo ayudar?</div>
+          <div class="aqua-bubble" data-aqua-greeting>Hola${first ? `, <span translate="no">${first}</span>` : ""}. ¿En qué te puedo ayudar?</div>
           <button type="button" class="aqua-chat-btn" data-aqua-chat-open>${icon("message")}<span><strong>Chatear conmigo</strong><small>Respondo sobre tu agua, piscinas, acuarios, riego y calibración</small></span>${icon("chevronRight")}</button>
           ${GROUPS().map(([label, keys]) => `<h3 class="aqua-group">${label}</h3><div class="aqua-grid">
             ${keys.map((k) => { const [key, title, ic, text] = BY_KEY[k]; return `<a class="aqua-fn" href="#/intelligence/${key}" data-aqua-fn="${key}">${icon(ic)}<span><strong>${title}</strong><small>${text}</small></span></a>`; }).join("")}
@@ -105,12 +121,32 @@ export class AquaBot {
     if (mode === "chat") this.#showChat(); else { this.#showHome(); this.greet(); }
   }
 
-  /** "Hola, Ana. ¿En qué te puedo ayudar?" out loud, in the app's language (unless the voice is off). */
+  /**
+   * The first time Aqua is opened after signing in: "Hola, Ana. ¿En qué te puedo ayudar?". The next times, a short
+   * opener chosen at random ("¿Qué necesitas hoy?"...). Written in the bubble and said out loud (unless the voice is
+   * off), in the app's language.
+   */
   async greet() {
-    if (!voice.enabled) return;
+    const bubble = this.node.querySelector("[data-aqua-greeting]");
     const first = session.user?.fullName?.split(" ")[0] || "";
-    const [hello, ask] = await Promise.all([i18n.tAsync("Hola"), i18n.tAsync("¿En qué te puedo ayudar?")]);
-    if (this.isOpen) voice.speak(`${hello}${first ? `, ${first}` : ""}. ${ask}`);
+    const stamp = (session.token || "").slice(-16);
+    let firstTime = true;
+    try { firstTime = sessionStorage.getItem(GREETED_KEY) !== stamp; sessionStorage.setItem(GREETED_KEY, stamp); } catch { /* private mode */ }
+    let spoken;
+    if (firstTime) {
+      bubble.innerHTML = `Hola${first ? `, <span translate="no">${esc(first)}</span>` : ""}. ¿En qué te puedo ayudar?`;
+      if (!voice.enabled) return;
+      const [hello, ask] = await Promise.all([i18n.tAsync("Hola"), i18n.tAsync("¿En qué te puedo ayudar?")]);
+      spoken = `${hello}${first ? `, ${first}` : ""}. ${ask}`;
+    } else {
+      let i = Math.floor(Math.random() * OPENERS.length);
+      if (i === lastOpener) i = (i + 1) % OPENERS.length;
+      lastOpener = i;
+      bubble.textContent = OPENERS[i];
+      if (!voice.enabled) return;
+      spoken = await i18n.tAsync(OPENERS[i]);
+    }
+    if (this.isOpen) voice.speak(spoken);
   }
 
   close({ focusBot = true } = {}) {
@@ -192,7 +228,11 @@ export class AquaBot {
     this.hideSay();
     window.scrollTo({ top: 0 });
     // Only the buttons this person has (Admin appears only for administrators), in the order of the bar.
-    await startTour(TOUR_STEPS.filter((step) => !step.target || document.querySelector(step.target)));
+    // The administrator opens the care of the water from the place menu (it is not in the bar).
+    const steps = TOUR_STEPS.map((step) => step.target === "[data-place-chip]" && session.user?.role === "ADMIN"
+      ? { ...step, text: "El agua que estás viendo. Tócalo para cambiar de piscina, acuario o tanque, para el «Cuidado de este lugar» (calculadora de dosis, tratamientos y recordatorios) y para crear, editar o compartir lugares y sus perfiles de uso." }
+      : step);
+    await startTour(steps.filter((step) => !step.target || document.querySelector(step.target)));
     this.onTourEnd();
     if (session.user?.id) write(localStorage, TOUR_KEY(session.user.id), String(Date.now()));
   }

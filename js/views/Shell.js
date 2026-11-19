@@ -10,12 +10,16 @@ import { openAccountDialog } from "./AccountDialog.js";
 import { confirmDialog, toast } from "../ui/Components.js";
 import { AquaBot } from "./AquaBot.js";
 
-// Bottom bar (every screen size): Inicio, Historial, Medir (the main action, in the middle) and Plan. Lugares and the
-// care of the water open from the place menu (top), Configuración from the account menu; Perfiles lives inside
+// Bottom bar (every screen size): Inicio, Historial, Medir (the main action, in the middle), Cuidado and Plan, or for
+// the administrator Plan and Admin (care then opens from the place menu). Lugares opens from the place menu (top),
+// Configuración from the account menu; Perfiles lives inside
 // Lugares, the meter and the activity inside Configuración, the official data inside Aqua's library (ui/SubNav.js).
 // [route, label, icon, full name for screen readers when the label is shortened]
 const LEFT = [["dashboard", "Inicio", "home"], ["history", "Historial", "history"]];
 const RIGHT = [["billing", "Plan", "card", "Plan y pagos"]];
+// A person's bar has "Cuidado" next to "Plan"; the administrator's has "Admin" there and opens the care of the water
+// from the place menu.
+const CARE = ["care", "Cuidado", "flask", "Cuidado del agua: dosis, tratamientos y recordatorios"];
 const ADMIN = ["admin", "Admin", "users", "Administración"];
 
 // A label too long for a phone has a short one ("Ajustes"); the full name stays for screen readers.
@@ -66,6 +70,7 @@ export class Shell {
           <div class="tabbar-scroll" data-tab-scroll>
             ${LEFT.map(tab).join("")}
             <button type="button" class="tab-measure" data-tab="measure" data-measure-tab aria-haspopup="dialog"><span class="tab-measure-ring">${icon("drop")}</span><span>Medir</span></button>
+            ${user?.role === "ADMIN" ? "" : tab(CARE)}
             ${RIGHT.map(tab).join("")}
             ${user?.role === "ADMIN" ? tab(ADMIN) : ""}
           </div>
@@ -239,7 +244,7 @@ export class Shell {
     menu.innerHTML = `<p class="menu-title">¿Qué agua quieres ver?</p><p class="menu-hint">Cada lugar guarda sus propias mediciones. Elige uno y toda la app cambia a ese lugar.</p>${(this.places || []).map((p) => `<button type="button" class="user-menu-item ${p.active ? "current" : ""}" role="menuitemradio" aria-checked="${p.active}" data-place="${p.id}">
         ${icon(p.active ? "check" : "pin")}<span>${own(p.name)}<small class="muted">${esc(p.kindLabel)}${p.role !== "OWNER" ? ` · ${esc(p.roleLabel)}` : ""}</small></span></button>`).join("")}
       <div class="menu-sep" role="separator"></div>
-      <a class="user-menu-item" role="menuitem" href="#/care" data-manage>${icon("flask")}Cuidado de este lugar</a>
+      ${session.user?.role === "ADMIN" ? `<a class="user-menu-item" role="menuitem" href="#/care" data-manage>${icon("flask")}Cuidado de este lugar</a>` : ""}
       <a class="user-menu-item" role="menuitem" href="#/places" data-manage>${icon("pin")}Crear, editar o compartir lugares</a>`;
   }
 
