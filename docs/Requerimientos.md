@@ -768,7 +768,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Como** desarrollador del proyecto, **quiero** un código organizado, documentado y con pruebas automáticas, **para** cambiarlo sin romper lo que funciona.
 
-**Descripción.** Backend Spring Boot en capas (controlador, servicio, repositorio) organizado por módulo, con catálogo de patrones de diseño (docs/DesignPatterns.md) y migraciones Flyway. Pruebas automáticas: backend con JUnit (H2), frontend con node:test, y el firmware del medidor con pruebas en el computador; GitHub Actions las ejecuta.
+**Descripción.** Cuatro repositorios: el frontend (HTML, CSS y JavaScript con módulos, sin frameworks), el backend y el servicio de IA en Spring Boot por capas (controlador, servicio, repositorio) organizados por módulo, y la base de datos (DBPatSft), cuyas migraciones Flyway GitHub Actions prueba en una base vacía y aplica a Neon. Catálogo de patrones de diseño (docs/DesignPatterns.md del backend). Pruebas automáticas: backend (111) y servicio de IA (119) con JUnit y H2, frontend (56) con node:test y el firmware del medidor con pruebas en el computador; GitHub Actions las ejecuta en cada cambio.
 
 **Criterios de aceptación**
 
