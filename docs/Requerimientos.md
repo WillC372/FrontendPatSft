@@ -50,7 +50,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 | [RNF-01](#rnf-01) | Seguridad | Como usuario, quiero que mi contraseña y mi sesión estén protegidas, para que nadie más vea ni cambie mis datos. | Hecho | [MockUp27](mockups/MockUp27.png) |
 | [RNF-02](#rnf-02) | Rendimiento | Como usuario, quiero que la app y el asistente respondan rápido, para no quedarme esperando. | Hecho | [MockUp28](mockups/MockUp28.png) |
 | [RNF-03](#rnf-03) | Disponibilidad | Como usuario, quiero que la app esté disponible cuando la abra, para no esperar a que el servidor arranque. | Hecho | [MockUp29](mockups/MockUp29.png) |
-| [RNF-04](#rnf-04) | Usabilidad, accesibilidad y diseño adaptable | Como usuario de computador o celular, quiero una interfaz clara que funcione en cualquier pantalla, para usarla cómodamente donde esté. | Hecho | [MockUp30](mockups/MockUp30.png), [MockUp37](mockups/MockUp37.png) |
+| [RNF-04](#rnf-04) | Usabilidad, accesibilidad y diseño adaptable | Como usuario de computador o celular, quiero una interfaz clara que funcione en cualquier pantalla, para usarla cómodamente donde esté. | Hecho | [MockUp30](mockups/MockUp30.png), [MockUp37](mockups/MockUp37.png), [MockUp46](mockups/MockUp46.png), [MockUp47](mockups/MockUp47.png) |
 | [RNF-05](#rnf-05) | Privacidad de los datos | Como usuario, quiero que mis datos personales no salgan del sistema, para confiar en la app. | Hecho | [MockUp31](mockups/MockUp31.png) |
 | [RNF-06](#rnf-06) | Mantenibilidad y calidad del código | Como desarrollador del proyecto, quiero un código organizado, documentado y con pruebas automáticas, para cambiarlo sin romper lo que funciona. | Hecho | — |
 | [RNF-07](#rnf-07) | Compatibilidad e instalación | Como usuario, quiero usar la app en mi navegador o instalarla como aplicación, para tenerla a mano. | Hecho | [MockUp32](mockups/MockUp32.png) |
@@ -387,7 +387,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 - [x] El tema claro es el predeterminado para cuentas nuevas y para quien no ha iniciado sesión.
 - [x] El cambio de tema se aplica al instante y se conserva al volver a entrar.
 
-**MockUp21** · Configuración con Medidor y Actividad arriba
+**MockUp21** · Configuración con sus secciones: Ajustes, Medidor y Actividad
 
 ![MockUp21](mockups/MockUp21.png)
 
@@ -711,9 +711,17 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 ![MockUp30](mockups/MockUp30.png)
 
-**MockUp37** · Menú del usuario con «Cerrar sesión» y la barra de pestañas
+**MockUp37** · Menú de la cuenta (Mi cuenta, Configuración y Cerrar sesión) y la barra de pestañas
 
 ![MockUp37](mockups/MockUp37.png)
+
+**MockUp46** · Inicio en tema oscuro (negros y grises con brillos cian)
+
+![MockUp46](mockups/MockUp46.png)
+
+**MockUp47** · Inicio de sesión en tema oscuro, con el botón claro/oscuro arriba
+
+![MockUp47](mockups/MockUp47.png)
 
 ### RNF-05
 
