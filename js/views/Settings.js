@@ -3,6 +3,7 @@ import { pushClient } from "../core/PushClient.js";
 import { bus } from "../core/EventBus.js";
 import { session } from "../core/Session.js";
 import { theme } from "../core/Theme.js";
+import { motionChoice, setMotionChoice, systemReducesMotion } from "../core/Motion.js";
 import { esc, fmt, own, quotaText } from "../core/Format.js";
 import { icon, logo } from "../ui/Icons.js";
 import { bindHelp, helpBox } from "../ui/Help.js";
@@ -80,6 +81,13 @@ export const settingsView = {
                 `<button role="radio" data-theme-option="${v}" aria-checked="${draft.theme === v}" class="${draft.theme === v ? "active" : ""}">${icon(ic)}${l}</button>`).join("")}
             </div>
             <p class="muted" style="margin-top:10px;font-size:13px">"Automático" sigue la preferencia de tu sistema operativo. La elección se guarda en tu cuenta.</p>
+            <div class="setting-row"><div><strong>Animaciones</strong><p>${systemReducesMotion()
+              ? "Tu equipo pide reducir el movimiento (en Windows, «Efectos de animación» apagado), así que con «Según el sistema» las animaciones casi no se ven. Con «Siempre» se ven en este dispositivo."
+              : "Tu equipo no pide reducir el movimiento: las animaciones se ven. «Según el sistema» las quitaría si un día lo activas."}</p></div>
+              <div class="segmented" role="radiogroup" aria-label="Animaciones">
+                ${[["system", "Según el sistema"], ["always", "Siempre"]].map(([v, l]) =>
+                  `<button type="button" role="radio" data-motion-option="${v}" aria-checked="${motionChoice() === v}" class="${motionChoice() === v ? "active" : ""}">${l}</button>`).join("")}
+              </div></div>
             <div class="setting-row"><div><strong>Idioma</strong><p>Toda la app cambia al idioma que elijas: pantallas, mensajes, respuestas y voz de Aqua, correos, avisos e informes. La primera vez en un idioma puede tardar unos segundos mientras se traduce.</p></div>
               <select class="input lang-select" data-language aria-label="Idioma" translate="no"><option value="${esc(i18n.lang)}" selected>${esc(i18n.lang)}</option></select></div>
           </section>
@@ -170,6 +178,11 @@ export const settingsView = {
     root.querySelectorAll("[data-goto]").forEach((b) => b.addEventListener("click", () => {
       root.querySelectorAll("[data-goto]").forEach((x) => x.classList.toggle("active", x === b));
       document.getElementById(`s-${b.dataset.goto}`).scrollIntoView({ behavior: "smooth", block: "start" });
+    }));
+    root.querySelectorAll("[data-motion-option]").forEach((b) => b.addEventListener("click", () => {
+      setMotionChoice(b.dataset.motionOption);
+      root.querySelectorAll("[data-motion-option]").forEach((x) => { x.classList.toggle("active", x === b); x.setAttribute("aria-checked", String(x === b)); });
+      toast(b.dataset.motionOption === "always" ? "Animaciones activadas en este dispositivo." : "Las animaciones siguen la preferencia de tu equipo.", "ok", 2500);
     }));
     root.querySelectorAll("[data-theme-option]").forEach((b) => b.addEventListener("click", async () => {
       draft.theme = b.dataset.themeOption;

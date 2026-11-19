@@ -43,5 +43,5 @@ button { cursor: pointer; }
 ::-webkit-scrollbar-thumb { background: var(--track); border-radius: 10px; }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  :root:not(.motion-always) *, :root:not(.motion-always) *::before, :root:not(.motion-always) *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
 }

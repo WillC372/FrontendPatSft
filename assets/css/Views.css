@@ -305,7 +305,7 @@
 @media (max-width: 640px) { .lib-search { grid-template-columns: minmax(0, 1fr); } }
 @keyframes cite-bar { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 @keyframes cite-flash { 0% { box-shadow: 0 0 0 0 rgba(var(--accent-rgb), .7); border-color: var(--primary-2); } 100% { box-shadow: 0 0 0 14px rgba(var(--accent-rgb), 0); } }
-@media (prefers-reduced-motion: reduce) { .citation, .citation::before, .lib-source { animation: none; } }
+@media (prefers-reduced-motion: reduce) { :root:not(.motion-always) .citation, :root:not(.motion-always) .citation::before, :root:not(.motion-always) .lib-source { animation: none; } }
 .bubble .chat-sources { white-space: normal; }
 
 /* ---------- Assistant memory, AI scenarios and costs ---------- */
@@ -351,7 +351,7 @@
 .usage-day rect { transform-origin: bottom; transform-box: fill-box; animation: bar-grow .6s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i, 0) * 15ms); }
 .usage-day:hover rect { filter: brightness(1.25); }
 @keyframes bar-grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
-@media (prefers-reduced-motion: reduce) { .usage-day rect, .conv-item, .scenario-explanation .finding, .usage-stats .stat { animation: none; } }
+@media (prefers-reduced-motion: reduce) { :root:not(.motion-always) .usage-day rect, :root:not(.motion-always) .conv-item, :root:not(.motion-always) .scenario-explanation .finding, :root:not(.motion-always) .usage-stats .stat { animation: none; } }
 
 /* ---------- Layer 7: LSTM neural network ---------- */
 .lstm-diagram { width: 100%; height: auto; margin-top: 4px; }
@@ -377,7 +377,7 @@
 .loss-line.train { stroke: var(--primary-2); }
 .loss-line.val { stroke: var(--warn); }
 .series-dot.dot-INTERP { fill: var(--surface-solid); stroke: var(--muted); }
-@media (prefers-reduced-motion: reduce) { .lstm-diagram line, .lstm-cell, .lstm-cell rect, .score-row { animation: none; } }
+@media (prefers-reduced-motion: reduce) { :root:not(.motion-always) .lstm-diagram line, :root:not(.motion-always) .lstm-cell, :root:not(.motion-always) .lstm-cell rect, :root:not(.motion-always) .score-row { animation: none; } }
 
 /* ---------- Plan and payments (PayU) ---------- */
 .billing { display: grid; gap: 16px; }
@@ -413,7 +413,7 @@
 .pay-result.ok .pay-icon { color: var(--ok); animation: pulse-dot 1.6s ease-out 2; }
 .pay-result.crit .pay-icon { color: var(--crit); }
 .pay-result.warn .pay-icon, .pay-result.info .pay-icon { color: var(--warn); }
-@media (prefers-reduced-motion: reduce) { .buy-card::after, .pay-result, .pay-result.ok .pay-icon { animation: none; } }
+@media (prefers-reduced-motion: reduce) { :root:not(.motion-always) .buy-card::after, :root:not(.motion-always) .pay-result, :root:not(.motion-always) .pay-result.ok .pay-icon { animation: none; } }
 
 /* ---------- Administration ---------- */
 .admin-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 18px 0; }

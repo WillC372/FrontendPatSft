@@ -1,6 +1,7 @@
 import { icon } from "./Icons.js";
 import { esc } from "../core/Format.js";
 import { checkPassword } from "../core/PasswordRules.js";
+import { reducedMotion } from "../core/Motion.js";
 
 const TOAST_ICONS = { ok: "check", error: "error", warn: "alert", info: "info" };
 
@@ -160,7 +161,7 @@ export function showFieldErrors(form, fields = {}) {
 export function enableRipples(root = document) {
   root.addEventListener("pointerdown", (event) => {
     const button = event.target.closest(".btn-primary, .nav-link, .tab, .segmented button");
-    if (!button || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!button || reducedMotion()) return;
     const rect = button.getBoundingClientRect();
     const size = Math.max(rect.width, rect.height);
     const wave = document.createElement("span");
@@ -175,7 +176,7 @@ export function enableRipples(root = document) {
 export function countUp(node, to, { decimals = 2, duration = 900, from } = {}) {
   const start = from ?? (Number(node.dataset.value) || 0);
   node.dataset.value = to;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  if (reducedMotion()) {
     node.textContent = to.toFixed(decimals);
     return;
   }

@@ -1,8 +1,9 @@
 import { countUp } from "./Components.js";
+import { reducedMotion } from "../core/Motion.js";
 
 const ARC = "M 49.29 190.71 A 100 100 0 1 1 190.71 190.71";
 const LENGTH = 2 * Math.PI * 100 * 0.75;
-const reduced = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const reduced = () => reducedMotion();
 
 // Circular pH gauge (0-14) with an animated gradient arc and a counting number.
 export function createGauge(host) {

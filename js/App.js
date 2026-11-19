@@ -12,12 +12,14 @@ import { watchSessionExpiry } from "./core/SessionTimer.js";
 import { refreshRelativeTimes } from "./core/Format.js";
 import { lazyView } from "./core/LazyView.js";
 import { cleanStorage } from "./core/StorageJanitor.js";
+import { applyMotion } from "./core/Motion.js";
 import { i18n } from "./core/I18n.js";
 import { voice } from "./core/Voice.js";
 import { bindAuthLanguage } from "./views/Auth.js";
 
 // What this browser kept from old versions or from accounts that no longer use it is removed when the app opens.
 cleanStorage();
+applyMotion();
 // The interface in the language chosen in this browser (Spanish needs nothing).
 i18n.start();
 

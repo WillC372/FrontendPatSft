@@ -1,7 +1,12 @@
-// Water animation on canvas: layers of waves and rising bubbles. Honors "reduce motion".
+import { reducedMotion } from "../core/Motion.js";
+
+// Water animation on canvas: layers of waves and rising bubbles. With "reduce motion" the water still moves, but
+// slowly and with low waves (it is the background of the screen, not a flash or a jump).
 export function animateWater(canvas, { layers = 3, bubbles = 26, height = 0.55, intensity = 1 } = {}) {
   const ctx = canvas.getContext("2d");
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const calm = reducedMotion();
+  const speed = calm ? 0.35 : 1;
+  intensity *= calm ? 0.55 : 1;
   let width = 0;
   let h = 0;
   let frame;
@@ -43,7 +48,7 @@ export function animateWater(canvas, { layers = 3, bubbles = 26, height = 0.55, 
       ctx.stroke();
     }
     dots.forEach((d) => {
-      d.y -= d.s * 0.004;
+      d.y -= d.s * 0.004 * speed;
       if (d.y < 0) { d.y = 1; d.x = Math.random(); }
       const x = d.x * width + Math.sin(t * 2 + d.x * 10) * 6;
       const y = h * (1 - height) + d.y * h * height;
@@ -52,8 +57,8 @@ export function animateWater(canvas, { layers = 3, bubbles = 26, height = 0.55, 
       ctx.fillStyle = "rgba(180, 240, 255, 0.45)";
       ctx.fill();
     });
-    t += 0.016;
-    if (!reduced) frame = requestAnimationFrame(draw);
+    t += 0.016 * speed;
+    frame = requestAnimationFrame(draw);
   };
   draw();
 

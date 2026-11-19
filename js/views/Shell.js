@@ -9,6 +9,7 @@ import { avatarMarkup, avatarUrl, forgetAvatar } from "../core/Avatar.js";
 import { openAccountDialog } from "./AccountDialog.js";
 import { confirmDialog, toast } from "../ui/Components.js";
 import { AquaBot } from "./AquaBot.js";
+import { reducedMotion } from "../core/Motion.js";
 
 // Bottom bar (every screen size): Inicio, Historial, Medir (the main action, in the middle), Cuidado and Plan, or for
 // the administrator Plan and Admin (care then opens from the place menu). Lugares opens from the place menu (top),
@@ -307,7 +308,7 @@ export class Shell {
     const scroller = this.root.querySelector("[data-tab-scroll]");
     if (!current || !scroller) return;
     const left = current.offsetLeft - (scroller.clientWidth - current.offsetWidth) / 2;
-    scroller.scrollTo({ left: Math.max(0, left), behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    scroller.scrollTo({ left: Math.max(0, left), behavior: reducedMotion() ? "auto" : "smooth" });
   }
 
   /** The user's menu (initial or name, top right): the account and the only place to sign out. */

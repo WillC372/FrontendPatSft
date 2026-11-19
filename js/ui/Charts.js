@@ -1,5 +1,6 @@
 import { esc, fmt } from "../core/Format.js";
 import { LOCALE } from "../core/Locale.js";
+import { reducedMotion } from "../core/Motion.js";
 
 const W = 720;
 const H = 280;
@@ -95,7 +96,7 @@ export function lineChart(host, { points = [], band, forecast = [], anomalies = 
     <div class="chart-tooltip" hidden></div>`;
 
   const line = host.querySelector(".series-line");
-  if (line && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  if (line && !reducedMotion()) {
     const length = line.getTotalLength();
     line.style.strokeDasharray = `${length}`;
     line.style.strokeDashoffset = `${length}`;
