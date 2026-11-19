@@ -64,7 +64,7 @@ export async function mlPane(host) {
         ${d.anomalies.length ? `<div data-ml-chart style="margin-bottom:12px"></div>` + d.anomalies.map((a) => {
           const max = Math.max(...a.factors.map((f) => f.weight), 1);
           return `<div class="finding CAUTION">${icon("alert")}<div style="flex:1;min-width:0"><strong>pH ${fmt.ph(a.ph)} · puntaje ${a.score.toFixed(2)}</strong>
-            <small class="muted"> ${fmt.dateTime(a.measuredAt)} · ${a.source === "PHOTO" ? "foto" : a.source === "SIMULATED" ? "simulado" : a.source === "REAL" ? "medidor" : "manual"}</small>
+            <small class="muted"> ${fmt.dateTime(a.measuredAt)} · ${a.source === "PHOTO" ? "foto" : a.source === "OFFICIAL" ? "dato oficial USGS" : a.source === "SIMULATED" ? "simulado" : a.source === "REAL" ? "medidor" : "manual"}</small>
             <div style="margin-top:6px">${a.factors.map((f) => `<div class="factor"><span><strong>${esc(f.label)}:</strong> ${esc(f.value)} <span class="muted">(${esc(f.typical)})</span></span><span class="meter"><i style="width:${Math.min(100, (f.weight / max) * 100)}%"></i></span></div>`).join("")}</div></div></div>`;
         }).join("") : `<div class="banner banner-ok">${icon("check")}<p>Ninguna medición del periodo se sale de tu comportamiento habitual.</p></div>`}
       </section>`;

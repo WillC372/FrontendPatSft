@@ -132,6 +132,7 @@ export function sourceBadge(source) {
   if (source === "SIMULATED") return `<span class="badge badge-sim">${icon("flask")}SIMULADO</span>`;
   if (source === "PHOTO") return `<span class="badge badge-info">${icon("camera")}Foto IA</span>`;
   if (source === "MANUAL") return `<span class="badge badge-info">${icon("edit")}Manual</span>`;
+  if (source === "OFFICIAL") return `<span class="badge badge-info">${icon("globe")}Dato oficial USGS</span>`;
   return `<span class="badge badge-ok">${icon("chip")}Medidor</span>`;
 }
 

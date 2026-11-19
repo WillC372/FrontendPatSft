@@ -7,7 +7,7 @@ import { sessionList } from "./Sessions.js";
 import { LOCALE, LOCALE_CO } from "../core/Locale.js";
 
 const PAGE_SIZE = 12;
-const SOURCES = { REAL: "Medidor", MANUAL: "Manual", PHOTO: "Foto IA", SIMULATED: "Simulador" };
+const SOURCES = { REAL: "Medidor", MANUAL: "Manual", PHOTO: "Foto IA", OFFICIAL: "Oficial USGS", SIMULATED: "Simulador" };
 const PAY_STATUS = { APPROVED: "badge-ok", PENDING: "badge-warn", DECLINED: "badge-crit", ERROR: "badge-crit", EXPIRED: "" };
 const longDate = (iso) => new Intl.DateTimeFormat(LOCALE_CO, { dateStyle: "long" }).format(new Date(iso));
 const money = (value, currency) => `${currency} ${Number(value || 0).toLocaleString(LOCALE_CO, { maximumFractionDigits: 0 })}`;

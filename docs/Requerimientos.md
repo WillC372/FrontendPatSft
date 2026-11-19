@@ -436,7 +436,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Como** usuario, **quiero** comparar mi pH con mediciones oficiales de estaciones de agua, **para** tener una referencia real.
 
-**Descripción.** Importación periódica (cada 3 horas) de datos de pH del Servicio Geológico de EE. UU. (USGS), guardados aparte de las mediciones del usuario, con estaciones y series.
+**Descripción.** Importación periódica (cada 3 horas) de datos de pH del Servicio Geológico de EE. UU. (USGS), guardados aparte de las mediciones del usuario, con estaciones y series. Desde Lugares → «Datos del USGS» se pueden cargar en un lugar las lecturas reales de una estación (una por hora, hasta 30 días), marcadas siempre como «Dato oficial USGS»: así los análisis y la IA trabajan con días de datos reales antes de tener mediciones propias. Se quitan con un botón.
 
 **Criterios de aceptación**
 

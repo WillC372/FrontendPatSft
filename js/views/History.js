@@ -51,7 +51,7 @@ export const historyView = {
           </div>
           <div class="row">
             <select class="input" data-source aria-label="Origen" style="width:auto">
-              <option value="">Todos los orígenes</option><option value="REAL">Medidor físico</option><option value="MANUAL">Manual</option><option value="PHOTO">Foto con IA</option><option value="SIMULATED">Simulador</option>
+              <option value="">Todos los orígenes</option><option value="REAL">Medidor físico</option><option value="MANUAL">Manual</option><option value="PHOTO">Foto con IA</option><option value="OFFICIAL">Dato oficial USGS</option><option value="SIMULATED">Simulador</option>
             </select>
             <select class="input" data-status aria-label="Estado" style="width:auto">
               <option value="">Todos los estados</option><option value="OPTIMAL">Óptimo</option><option value="CAUTION">Precaución</option><option value="CRITICAL">Crítico</option>

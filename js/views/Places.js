@@ -176,6 +176,7 @@ export const placesView = {
               ${p.active ? "" : `<button class="btn btn-sm btn-primary" data-use="${p.id}">${icon("check")}Usar</button>`}
               ${p.canEdit ? `<button class="btn btn-sm" data-edit="${p.id}">${icon("edit")}Editar</button>` : ""}
               ${p.role === "OWNER" && !demo ? `<button class="btn btn-sm" data-share="${p.id}">${icon("share")}Compartir</button>` : ""}
+              ${p.canEdit && !demo ? `<button class="btn btn-sm" data-official="${p.id}">${icon("globe")}Datos del USGS</button>` : ""}
               ${p.role !== "OWNER" ? `<button class="btn btn-sm btn-ghost" data-leave="${p.id}">${icon("logout")}Salir</button>` : ""}
               ${p.role === "OWNER" && places.filter((x) => x.role === "OWNER").length > 1 ? `<button class="btn btn-sm btn-danger" data-delete="${p.id}" aria-label="Borrar el lugar">${icon("trash")}</button>` : ""}
             </div>
@@ -195,6 +196,7 @@ export const placesView = {
       })));
       root.querySelectorAll("[data-edit]").forEach((b) => b.addEventListener("click", () => placeForm(find(b.dataset.edit))));
       root.querySelectorAll("[data-share]").forEach((b) => b.addEventListener("click", () => shareDialog(find(b.dataset.share), draw)));
+      root.querySelectorAll("[data-official]").forEach((b) => b.addEventListener("click", () => officialDialog(find(b.dataset.official), draw)));
       root.querySelectorAll("[data-leave]").forEach((b) => b.addEventListener("click", async () => {
         const p = find(b.dataset.leave);
         if (!(await confirmDialog("Salir del lugar", `Dejarás de ver "${p.name}". Para volver necesitarás un código nuevo.`, "Salir"))) return;
@@ -222,3 +224,45 @@ export const placesView = {
     return null;
   },
 };
+
+/**
+ * Loads into a place the real readings of a USGS station (a river measured every 15 minutes), one per hour, labeled
+ * «Dato oficial USGS». They let the analyses work with days of real data before having your own; they are not your
+ * measurements and the app always shows them as official.
+ */
+async function officialDialog(place, done) {
+  let stations = [];
+  try { stations = await api.get("/intelligence/deep/stations"); } catch (error) { toast(error.message, "error"); return; }
+  if (!stations.length) { toast("Todavía no hay estaciones del USGS con datos suficientes. El servidor los importa cada pocas horas.", "warn"); return; }
+  await modal({
+    title: "Datos oficiales del USGS",
+    body: `<div class="stack">
+        <p>Carga en <strong>${own(place.name)}</strong> las mediciones reales de pH de un río medido por el Servicio Geológico de EE. UU. (una por hora). Sirven para ver los análisis y la IA con días de datos reales mientras juntas los tuyos.</p>
+        <div class="banner banner-info">${icon("info")}<p>No son tus mediciones: en el historial y en los análisis aparecen como <strong>«Dato oficial USGS»</strong>. Puedes quitarlas cuando quieras.</p></div>
+        <div class="field"><label for="of-station">Estación</label>
+          <select class="input" id="of-station" translate="no">${stations.map((s) => `<option value="${esc(s.id)}">${esc(s.name || s.id)}${s.state ? ` (${esc(s.state)})` : ""}</option>`).join("")}</select></div>
+        <div class="field"><label for="of-days">Días</label>
+          <select class="input" id="of-days"><option value="8">8 días</option><option value="15">15 días</option><option value="30" selected>Todos los disponibles (hasta 30)</option></select></div>
+      </div>`,
+    actions: [
+      { label: "Quitar los datos oficiales", className: "btn-ghost", handler: async () => {
+        try {
+          const r = await api.delete(`/places/${place.id}/official-data`);
+          toast(r.removed ? `Se quitaron ${r.removed} datos oficiales.` : "Este lugar no tenía datos oficiales.", "ok");
+          bus.emit("measurement:saved");
+          done?.();
+          return true;
+        } catch (error) { toast(error.message, "error"); return false; }
+      } },
+      { label: "Cargar", className: "btn-primary", handler: async (node) => {
+        try {
+          const r = await api.post(`/places/${place.id}/official-data`, { stationId: node.querySelector("#of-station").value, days: Number(node.querySelector("#of-days").value) });
+          toast(r.added ? `Se cargaron ${r.added} datos oficiales de ${r.stationName || r.stationId}.` : "Esos datos ya estaban cargados.", "ok", 6000);
+          bus.emit("measurement:saved");
+          done?.();
+          return true;
+        } catch (error) { toast(error.message, "error"); return false; }
+      } },
+    ],
+  });
+}
