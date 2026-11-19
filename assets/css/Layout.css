@@ -4,11 +4,11 @@
 
 .topbar {
   position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 14px;
-  padding: 10px max(20px, calc((100vw - 1240px) / 2)); background: color-mix(in srgb, var(--bg) 72%, transparent); backdrop-filter: blur(12px);
+  padding: 10px max(20px, calc((100vw - var(--page-max)) / 2)); background: color-mix(in srgb, var(--bg) 72%, transparent); backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
 }
 .topbar-brand { display: flex; align-items: center; gap: 8px; color: var(--text); text-decoration: none; font-family: var(--font-display); font-weight: 700; font-size: 18px; white-space: nowrap; }
-.topbar-brand svg { width: 30px; height: 30px; filter: drop-shadow(0 0 10px rgba(34, 199, 240, 0.45)); }
+.topbar-brand svg { width: 30px; height: 30px; filter: drop-shadow(0 0 10px rgba(var(--accent-rgb), 0.45)); }
 .topbar-brand b { color: var(--primary-2); }
 .topbar-h1 { font-size: 16px; font-weight: 600; color: var(--text-soft); padding-left: 14px; border-left: 1px solid var(--border); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .topbar-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
@@ -22,11 +22,11 @@
 .device-chip.on { border-color: color-mix(in srgb, var(--ok) 45%, transparent); color: var(--ok); }
 .device-chip:hover { border-color: var(--border-strong); }
 
-.page { width: 100%; max-width: 1240px; margin: 0 auto; padding: 24px 20px 130px; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.page { width: 100%; max-width: var(--page-max); margin: 0 auto; padding: 24px 20px 130px; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
 
 /* The bar holds every screen. Its scroller has room above the items so the raised "Medir" circle is not clipped;
    the visible bar is drawn by ::before under the items. On narrow screens it scrolls sideways. */
-.tabbar { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 30; width: min(1040px, calc(100vw - 24px)); }
+.tabbar { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 30; width: min(1120px, calc(100vw - 24px)); }
 .tabbar::before {
   content: ""; position: absolute; left: 0; right: 0; bottom: 0; top: 32px; border-radius: 24px;
   background: var(--sidebar); border: 1px solid var(--border); box-shadow: var(--shadow); backdrop-filter: blur(14px);
@@ -46,11 +46,11 @@
 @media (max-width: 760px) { .tab-link .tab-short { display: inline; } }
 .tab-link:hover { color: var(--text); }
 .tab-link.active { color: var(--primary); background: var(--surface-2); }
-.tab-link.active svg { filter: drop-shadow(0 0 6px rgba(34, 199, 240, .45)); }
+.tab-link.active svg { filter: drop-shadow(0 0 6px rgba(var(--accent-rgb), .45)); }
 .tab-measure { flex: 1 0 auto; min-width: 74px; scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; gap: 3px; border: 0; background: none; padding: 0 2px 6px; color: var(--text); font-size: 12px; font-weight: 800; }
 .tab-measure-ring {
-  display: grid; place-items: center; width: 60px; height: 60px; margin-top: -30px; border-radius: 50%; color: #fff;
-  background: var(--gradient-primary); box-shadow: 0 10px 24px rgba(15, 114, 224, .38), 0 0 0 6px var(--bg); transition: transform .2s;
+  display: grid; place-items: center; width: 60px; height: 60px; margin-top: -30px; border-radius: 50%; color: var(--on-primary);
+  background: var(--gradient-primary); box-shadow: 0 10px 24px rgba(var(--accent-2-rgb), .38), 0 0 0 6px var(--bg); transition: transform .2s;
 }
 .tab-measure-ring svg { width: 28px; height: 28px; }
 .tab-measure:hover .tab-measure-ring { transform: translateY(-2px) scale(1.04); }

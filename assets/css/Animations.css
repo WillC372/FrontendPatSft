@@ -10,7 +10,7 @@
 @keyframes pulse-dot { 0% { box-shadow: 0 0 0 0 rgba(47, 210, 122, .6); } 70% { box-shadow: 0 0 0 10px rgba(47, 210, 122, 0); } 100% { box-shadow: 0 0 0 0 rgba(47, 210, 122, 0); } }
 @keyframes pulse-ring { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2.2); opacity: 0; } }
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-@keyframes brain-glow { 0%, 100% { filter: drop-shadow(0 0 10px rgba(34,199,240,.5)); transform: translateY(0); } 50% { filter: drop-shadow(0 0 24px rgba(34,199,240,.95)); transform: translateY(-4px); } }
+@keyframes brain-glow { 0%, 100% { filter: drop-shadow(0 0 10px rgba(var(--accent-rgb),.5)); transform: translateY(0); } 50% { filter: drop-shadow(0 0 24px rgba(var(--accent-rgb),.95)); transform: translateY(-4px); } }
 @keyframes pedestal { 0%, 100% { opacity: .6; transform: scaleX(1); } 50% { opacity: 1; transform: scaleX(1.12); } }
 @keyframes radar { 0% { transform: scale(.55); opacity: .9; } 100% { transform: scale(1.25); opacity: 0; } }
 @keyframes rise { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateY(-60px); opacity: 0; } }

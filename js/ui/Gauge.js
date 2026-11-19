@@ -17,7 +17,7 @@ export function createGauge(host) {
       <svg viewBox="0 0 240 240">
         <defs>
           <linearGradient id="gaugeGradient" gradientUnits="userSpaceOnUse" x1="20" y1="0" x2="220" y2="0">
-            <stop offset="0" stop-color="#1e6dff"/><stop offset=".55" stop-color="#22c7f0"/><stop offset="1" stop-color="#2fd27a"/>
+            <stop offset="0" style="stop-color: var(--gauge-1)"/><stop offset=".55" style="stop-color: var(--gauge-2)"/><stop offset="1" style="stop-color: var(--gauge-3)"/>
           </linearGradient>
         </defs>
         <g class="gauge-ticks">${ticks}</g>

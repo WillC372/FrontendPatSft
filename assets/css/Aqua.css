@@ -111,8 +111,8 @@
   background: var(--surface-2); color: var(--text); text-decoration: none; text-align: left; font: inherit; cursor: pointer; transition: border-color .2s, transform .2s;
 }
 .aqua-chat-btn:hover, .aqua-fn:hover, .sheet-option:hover { border-color: var(--border-strong); transform: translateY(-1px); }
-.aqua-chat-btn { background: var(--gradient-primary); color: #fff; border-color: transparent; }
-.aqua-chat-btn small { color: rgba(255, 255, 255, .88); }
+.aqua-chat-btn { background: var(--gradient-primary); color: var(--on-primary); border-color: transparent; }
+.aqua-chat-btn small { color: color-mix(in srgb, var(--on-primary) 85%, transparent); }
 .aqua-chat-btn svg, .aqua-fn svg { width: 22px; height: 22px; flex: none; }
 .aqua-chat-btn svg:last-child { margin-left: auto; width: 18px; }
 .aqua-fn svg { color: var(--primary-2); }
@@ -170,7 +170,7 @@
 
 /* ---------- sheets of "Medir" and "Más" ---------- */
 .sheet-options { display: grid; gap: 10px; }
-.sheet-ic { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--gradient-primary); color: #fff; }
+.sheet-ic { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--gradient-primary); color: var(--on-primary); }
 .sheet-ic svg { width: 22px; height: 22px; }
 .sheet-option > svg:last-child { margin-left: auto; width: 18px; height: 18px; color: var(--muted); flex: none; }
 .sheet-option small { color: var(--muted); }
@@ -181,12 +181,12 @@
 /* What the tour points at stays still inside its frame (Aqua stops hopping while it is presented). */
 .tour-target, .tour-target * { animation: none !important; }
 .tour-spot {
-  position: fixed; border-radius: 18px; box-shadow: 0 0 0 9999px rgba(4, 18, 38, .62); border: 2px solid var(--primary-2);
+  position: fixed; border-radius: 18px; box-shadow: 0 0 0 9999px rgba(var(--overlay-rgb), .62); border: 2px solid var(--primary-2);
   transition: left .35s ease, top .35s ease, width .35s ease, height .35s ease; pointer-events: none;
 }
 .tour-spot:not([hidden]) { animation: tour-glow 1.6s ease-in-out infinite; }
-.tour-spot[hidden] + .tour-card { box-shadow: 0 0 0 9999px rgba(4, 18, 38, .62), var(--shadow); }
-@keyframes tour-glow { 0%, 100% { outline: 0 solid transparent; } 50% { outline: 6px solid rgba(34, 199, 240, .35); } }
+.tour-spot[hidden] + .tour-card { box-shadow: 0 0 0 9999px rgba(var(--overlay-rgb), .62), var(--shadow); }
+@keyframes tour-glow { 0%, 100% { outline: 0 solid transparent; } 50% { outline: 6px solid rgba(var(--accent-rgb), .35); } }
 .tour-card {
   position: fixed; display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 20px;
   background: var(--surface-solid); border: 1px solid var(--border-strong); box-shadow: var(--shadow); transition: left .35s ease, top .35s ease;

@@ -35,7 +35,7 @@
 .share-code strong { font-size: 30px; letter-spacing: .12em; color: var(--text); }
 .segmented { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; padding: 3px; gap: 3px; background: var(--surface-2); }
 .segmented label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; cursor: pointer; font-weight: 700; font-size: 14px; }
-.segmented label:has(input:checked) { background: var(--gradient-primary); color: #fff; }
+.segmented label:has(input:checked) { background: var(--gradient-primary); color: var(--on-primary); }
 .segmented input { accent-color: #fff; }
 .list.members li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
 
@@ -104,7 +104,7 @@ fieldset.checks label { display: flex; gap: 8px; align-items: flex-start; font-s
 .subnav a { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 10px; color: var(--text-soft); font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
 .subnav a svg { width: 16px; height: 16px; }
 .subnav a:hover { color: var(--text); background: var(--surface); }
-.subnav a.active { background: var(--gradient-primary); color: #fff; box-shadow: var(--glow); }
+.subnav a.active { background: var(--gradient-primary); color: var(--on-primary); box-shadow: var(--glow); }
 .subnav a:focus-visible { outline: 3px solid var(--focus, var(--primary)); outline-offset: 2px; }
 .sheet-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; font-size: 14px; font-weight: 600; }
 .sheet-link svg { width: 16px; height: 16px; }

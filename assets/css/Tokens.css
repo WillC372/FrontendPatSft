@@ -2,22 +2,24 @@
    The light theme is the default: index.html and ThemeBoot.js set data-theme="light" unless the user chose dark. */
 :root,
 :root[data-theme="dark"] {
-  --bg: #040b1c;
-  --bg-2: #071530;
-  --bg-glow-1: rgba(30, 139, 255, 0.22);
-  --bg-glow-2: rgba(25, 211, 197, 0.12);
-  --surface: rgba(10, 27, 60, 0.72);
-  --surface-2: rgba(14, 38, 82, 0.66);
-  --surface-solid: #0a1b3c;
-  --sidebar: rgba(5, 15, 36, 0.92);
-  --border: rgba(64, 156, 255, 0.24);
-  --border-strong: rgba(64, 176, 255, 0.55);
-  --text: #eaf4ff;
-  --text-soft: #c2d6f2;
-  --muted: #8aa4c8;
-  --primary: #1e8bff;
-  --primary-2: #22c7f0;
-  --turquoise: #19d3c5;
+  /* Dark theme in black, white and grays. Color is kept only where it means something: the pH state (ok, caution,
+     critical), the pH scale, simulated data, and Aqua and the logo. */
+  --bg: #0a0a0a;
+  --bg-2: #121212;
+  --bg-glow-1: rgba(255, 255, 255, 0.05);
+  --bg-glow-2: rgba(255, 255, 255, 0.03);
+  --surface: rgba(28, 28, 28, 0.82);
+  --surface-2: rgba(40, 40, 40, 0.74);
+  --surface-solid: #1c1c1c;
+  --sidebar: rgba(14, 14, 14, 0.94);
+  --border: rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.34);
+  --text: #f5f5f5;
+  --text-soft: #d4d4d4;
+  --muted: #a3a3a3;
+  --primary: #f0f0f0;
+  --primary-2: #cfcfcf;
+  --turquoise: #b5b5b5;
   --ok: #2fd27a;
   --ok-bg: rgba(47, 210, 122, 0.14);
   --warn: #ffb547;
@@ -26,20 +28,30 @@
   --crit-bg: rgba(255, 93, 108, 0.14);
   --sim: #c39bff;
   --sim-bg: rgba(195, 155, 255, 0.14);
-  --glow: 0 0 24px rgba(34, 199, 240, 0.28);
-  --glow-strong: 0 0 36px rgba(34, 199, 240, 0.45);
-  --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
-  --track: rgba(120, 160, 220, 0.16);
-  --grid: rgba(120, 170, 255, 0.10);
-  --input-bg: rgba(6, 20, 46, 0.7);
-  --gradient-primary: linear-gradient(90deg, #1e6dff 0%, #1e8bff 40%, #22c7f0 100%);
-  --gradient-gauge: linear-gradient(90deg, #1e6dff, #22c7f0, #2fd27a);
+  --glow: 0 0 18px rgba(255, 255, 255, 0.10);
+  --glow-strong: 0 0 28px rgba(255, 255, 255, 0.16);
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.6);
+  --track: rgba(255, 255, 255, 0.12);
+  --grid: rgba(255, 255, 255, 0.07);
+  --input-bg: rgba(18, 18, 18, 0.9);
+  --gradient-primary: linear-gradient(90deg, #d6d6d6 0%, #ececec 50%, #ffffff 100%);
+  --gradient-gauge: linear-gradient(90deg, #8a8a8a, #cfcfcf, #ffffff);
+  --gauge-1: #7a7a7a;
+  --gauge-2: #c4c4c4;
+  --gauge-3: #ffffff;
+  /* Text on --gradient-primary, and the channels of glows and overlays (rgba(var(--accent-rgb), .5)). */
+  --on-primary: #111111;
+  --accent-rgb: 210, 210, 210;
+  --accent-2-rgb: 255, 255, 255;
+  --overlay-rgb: 0, 0, 0;
   --font-display: "Exo 2", "Segoe UI", system-ui, sans-serif;
   --font-body: "Manrope", "Segoe UI", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --radius: 16px;
   --radius-sm: 10px;
   --sidebar-w: 248px;
+  /* Widest the content gets on a large screen (it fills more of a PC monitor without stretching lines too far). */
+  --page-max: 1440px;
   color-scheme: dark;
 }
 
@@ -75,5 +87,13 @@
   --grid: rgba(20, 80, 160, 0.08);
   --input-bg: #f3f8fe;
   --gradient-primary: linear-gradient(90deg, #0f5fd0 0%, #0f72e0 40%, #0aa9cf 100%);
+  --gradient-gauge: linear-gradient(90deg, #1e6dff, #22c7f0, #2fd27a);
+  --gauge-1: #1e6dff;
+  --gauge-2: #22c7f0;
+  --gauge-3: #2fd27a;
+  --on-primary: #ffffff;
+  --accent-rgb: 34, 199, 240;
+  --accent-2-rgb: 30, 139, 255;
+  --overlay-rgb: 4, 18, 38;
   color-scheme: light;
 }

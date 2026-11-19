@@ -38,7 +38,7 @@ button { cursor: pointer; }
 .card, .profile-card, .modal, .bubble, .alert-item, .dropdown, .toast, .aqua-panel, .tour-card { overflow-wrap: anywhere; }
 .card table, .modal table { overflow-wrap: normal; }
 
-::selection { background: rgba(34, 199, 240, 0.35); }
+::selection { background: rgba(var(--accent-rgb), 0.35); }
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb { background: var(--track); border-radius: 10px; }
 

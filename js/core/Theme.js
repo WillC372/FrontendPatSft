@@ -12,6 +12,8 @@ export const theme = {
     try { localStorage.setItem(KEY, preference); } catch { /* ignore */ }
     const dark = preference === "DARK" || (preference === "AUTO" && media.matches);
     document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+    // The browser's own bar (on phones) takes the same background.
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#0a0a0a" : "#eaf3fc");
     bus.emit("theme:changed", preference);
   },
 };

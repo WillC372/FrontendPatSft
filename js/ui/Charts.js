@@ -74,7 +74,7 @@ export function lineChart(host, { points = [], band, forecast = [], anomalies = 
     <svg viewBox="0 0 ${w} ${H}" role="img" aria-label="Gráfica de ${esc(label)}">
       <defs>
         <linearGradient id="area${id}" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#22c7f0" stop-opacity=".35"/><stop offset="1" stop-color="#22c7f0" stop-opacity="0"/>
+          <stop offset="0" style="stop-color: var(--primary-2)" stop-opacity=".35"/><stop offset="1" style="stop-color: var(--primary-2)" stop-opacity="0"/>
         </linearGradient>
         <clipPath id="clip${id}"><rect x="${PAD.l}" y="${PAD.t - 6}" width="${w - PAD.l - PAD.r}" height="${H - PAD.t - PAD.b + 12}"/></clipPath>
       </defs>
