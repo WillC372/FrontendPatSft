@@ -76,7 +76,7 @@ HTML5, CSS3 (variables, grid y animaciones) y JavaScript moderno con módulos ES
 ```
 Frontend/
 ├── index.html              Punto de entrada
-├── Config.js               URL del backend (apiBaseUrl)
+├── Config.js               URL del backend (apiBaseUrl) y del servicio de IA (aiBaseUrl)
 ├── Server.mjs              Servidor estático de desarrollo (Node, sin dependencias)
 ├── vercel.json             Rutas y cabeceras de seguridad del sitio publicado
 ├── assets/
@@ -133,12 +133,14 @@ python3 -m http.server 5500
 
 ## Configuración de conexión con el backend
 
-El frontend se comunica con el backend solo por su API REST (`/api/v1`, con el token JWT en la cabecera). `Config.js` elige la dirección según dónde corre la página:
+El frontend habla con dos servicios por su API REST (`/api/v1`, con el mismo token JWT en la cabecera): el **backend** ([BackendPatSft](https://github.com/WillC372/BackendPatSft): cuentas, mediciones, lugares, cuidado, alertas, pagos, datos oficiales) y el **servicio de IA** ([AiPatSft](https://github.com/WillC372/AiPatSft): Aqua, análisis, informes, lectura de fotos y traducciones). `js/core/Api.js` envía al servicio de IA las rutas `/intelligence`, `/vision`, `/knowledge`, `/reports`, `/i18n` y `/admin/ai-usage`, y todo lo demás al backend. `Config.js` elige las direcciones según dónde corre la página:
 
-- En `localhost`: `http://localhost:8080/api/v1`.
-- Publicado (Vercel): `https://aquasense-backend-willc372.onrender.com/api/v1`.
+- Local (`localhost`): backend en `http://localhost:8080/api/v1` y servicio de IA en `http://localhost:8081/api/v1`.
+- Publicado (Vercel): `https://aquasense-backend-willc372.onrender.com/api/v1` y `https://aquasense-ai-willc372.onrender.com/api/v1`.
 
-El origen del frontend debe estar en la variable `CORS_ORIGINS` del backend: `http://localhost:5500` en desarrollo y `https://frontendpatsft.vercel.app` en producción.
+El servicio de IA duerme cuando nadie lo usa (el plan gratuito de Render no alcanza para tener los dos despiertos todo el mes): la app lo despierta apenas se abre (`wakeAiService` en `js/core/ServerWake.js`), así que suele estar listo cuando se toca a Aqua. La base de datos y su esquema están en [DatabasePatSft](https://github.com/WillC372/DatabasePatSft).
+
+El origen del frontend debe estar en la variable `CORS_ORIGINS` del backend y del servicio de IA: `http://localhost:5500` en desarrollo y `https://frontendpatsft.vercel.app` en producción.
 
 ## Despliegue
 

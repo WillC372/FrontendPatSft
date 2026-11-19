@@ -27,14 +27,23 @@ function aiWork(method, path) {
   return () => { if (!done) { done = true; bus.emit("ai:busy", --aiBusy); } };
 }
 
+// What the AI service answers (AiPatSft); everything else is the backend's. Both accept the same session.
+const AI_PATHS = /^\/(intelligence|vision|knowledge|reports|i18n)(\/|$)|^\/admin\/ai-usage(\/|$)/;
+export const isAiPath = (path) => AI_PATHS.test(path);
+
 // Single REST client of the application: adds the token, normalizes errors and notifies when the session expires.
 class ApiClient {
-  constructor(baseUrl) {
+  constructor(baseUrl, aiBaseUrl) {
     this.baseUrl = baseUrl.replace(/\/$/, "");
+    this.aiBaseUrl = (aiBaseUrl || baseUrl).replace(/\/$/, "");
+  }
+
+  baseFor(path) {
+    return isAiPath(path) ? this.aiBaseUrl : this.baseUrl;
   }
 
   url(path, query) {
-    const url = new URL(this.baseUrl + path);
+    const url = new URL(this.baseFor(path) + path);
     Object.entries(query || {}).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== "") url.searchParams.set(key, value);
     });
@@ -91,7 +100,7 @@ class ApiClient {
       // The server was waking up or restarting (an update, or the free plan's sleep). Wait for it and, for reads,
       // repeat the request once; changes are not repeated automatically to avoid saving something twice.
       bus.emit("api:slow");
-      const up = await waitForServer(() => {});
+      const up = await waitForServer(() => {}, this.baseFor(path));
       if (up && method === "GET" && !retried) return this.#request(method, path, { body, query, raw, retried: true });
       throw new ApiError(0, up
         ? "Se perdió la conexión con el servidor por un momento. Vuelve a intentarlo."
@@ -135,7 +144,7 @@ class ApiClient {
       // As with other changes, the upload is not repeated by itself (it would use another AI query): the server is
       // awakened and the user is asked to send it again.
       bus.emit("api:slow");
-      const up = await waitForServer(() => {});
+      const up = await waitForServer(() => {}, this.baseFor(path));
       throw new ApiError(0, up
         ? "Se perdió la conexión con el servidor mientras se enviaba la foto. Vuelve a enviarla."
         : "No se pudo conectar con el servidor. Revisa tu conexión a internet e inténtalo de nuevo.");
@@ -210,4 +219,5 @@ class ApiClient {
   }
 }
 
-export const api = new ApiClient(window.AQUASENSE_CONFIG?.apiBaseUrl || "http://localhost:8080/api/v1");
+export const api = new ApiClient(window.AQUASENSE_CONFIG?.apiBaseUrl || "http://localhost:8080/api/v1",
+  window.AQUASENSE_CONFIG?.aiBaseUrl || "http://localhost:8081/api/v1");
