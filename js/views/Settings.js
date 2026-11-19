@@ -244,9 +244,12 @@ export const settingsView = {
     } else {
       voice.voices().then(async (list) => {
         const current = await voice.chosen();
+        // The voices can take a moment to load: the person may already be on another screen.
+        if (!voiceName.isConnected) return;
         if (!list.length) {
           voiceName.hidden = true;
-          root.querySelector("[data-voice-note]").textContent = "Este dispositivo no tiene una voz para el idioma de la app. Puedes instalarla en la configuración de voz o de idiomas del sistema.";
+          const note = root.querySelector("[data-voice-note]");
+          if (note) note.textContent = "Este dispositivo no tiene una voz para el idioma de la app. Puedes instalarla en la configuración de voz o de idiomas del sistema.";
           return;
         }
         voiceName.innerHTML = list.map((v, i) => `<option value="${esc(v.name)}" ${current && v.name === current.name ? "selected" : ""}>${esc(v.name)}${i === 0 ? " ★" : ""}</option>`).join("");

@@ -22,7 +22,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 | [RF-07](#rf-07) | Conectar y calibrar un medidor de pH | Como usuario con un medidor, quiero conectarlo al computador por USB o Bluetooth y calibrarlo desde la app, para que las mediciones lleguen solas y sean exactas. | Parcial | [MockUp8](mockups/MockUp8.png) |
 | [RF-08](#rf-08) | Perfiles de agua con rangos | Como usuario, quiero elegir el tipo de agua (piscina, acuario, potable, hidroponía…) o crear un perfil propio, para que el estado de cada medición use los rangos correctos. | Hecho | [MockUp9](mockups/MockUp9.png) |
 | [RF-09](#rf-09) | Alertas y detección de anomalías | Como usuario, quiero recibir alertas cuando una medición se sale de rango o es inusual, para actuar antes de que el problema crezca. | Hecho | [MockUp10](mockups/MockUp10.png), [MockUp11](mockups/MockUp11.png) |
-| [RF-10](#rf-10) | Tendencias y predicción del pH | Como usuario, quiero ver hacia dónde va el pH en las próximas horas o días, para anticipar correcciones. | Parcial | [MockUp12](mockups/MockUp12.png), [MockUp13](mockups/MockUp13.png) |
+| [RF-10](#rf-10) | Tendencias y predicción del pH | Como usuario, quiero ver hacia dónde va el pH en las próximas horas o días, para anticipar correcciones. | Hecho | [MockUp12](mockups/MockUp12.png), [MockUp13](mockups/MockUp13.png) |
 | [RF-11](#rf-11) | Diagnóstico y recomendaciones con IA y fuentes | Como usuario, quiero un diagnóstico de mi agua con recomendaciones respaldadas por normas, para saber qué hacer y en qué se basa. | Hecho | [MockUp14](mockups/MockUp14.png), [MockUp15](mockups/MockUp15.png) |
 | [RF-12](#rf-12) | Simulador de escenarios | Como usuario, quiero probar qué pasaría con el pH si cambio una condición, para decidir una corrección antes de aplicarla. | Hecho | [MockUp16](mockups/MockUp16.png) |
 | [RF-13](#rf-13) | Informes inteligentes y PDF | Como usuario, quiero pedir un informe del estado de mi agua en un periodo y descargarlo en PDF, para compartirlo o guardarlo. | Hecho | [MockUp17](mockups/MockUp17.png) |
@@ -50,7 +50,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 |---|---|---|---|---|
 | [RNF-01](#rnf-01) | Seguridad | Como usuario, quiero que mi contraseña y mi sesión estén protegidas, para que nadie más vea ni cambie mis datos. | Hecho | [MockUp27](mockups/MockUp27.png) |
 | [RNF-02](#rnf-02) | Rendimiento | Como usuario, quiero que la app y el asistente respondan rápido, para no quedarme esperando. | Hecho | [MockUp28](mockups/MockUp28.png) |
-| [RNF-03](#rnf-03) | Disponibilidad | Como usuario, quiero que la app esté disponible cuando la abra, para no esperar a que el servidor arranque. | Hecho | [MockUp29](mockups/MockUp29.png) |
+| [RNF-03](#rnf-03) | Disponibilidad | Como usuario, quiero que la app esté disponible cuando la abra y me avise si el servidor está arrancando, para saber que debo esperar un momento y no ver un error. | Hecho | [MockUp29](mockups/MockUp29.png) |
 | [RNF-04](#rnf-04) | Usabilidad, accesibilidad y diseño adaptable | Como usuario de computador o celular, quiero una interfaz clara que funcione en cualquier pantalla, para usarla cómodamente donde esté. | Hecho | [MockUp30](mockups/MockUp30.png), [MockUp37](mockups/MockUp37.png), [MockUp46](mockups/MockUp46.png), [MockUp47](mockups/MockUp47.png) |
 | [RNF-05](#rnf-05) | Privacidad de los datos | Como usuario, quiero que mis datos personales no salgan del sistema, para confiar en la app. | Hecho | [MockUp31](mockups/MockUp31.png) |
 | [RNF-06](#rnf-06) | Mantenibilidad y calidad del código | Como desarrollador del proyecto, quiero un código organizado, documentado y con pruebas automáticas, para cambiarlo sin romper lo que funciona. | Hecho | — |
@@ -237,17 +237,18 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 ### RF-10
 
-**Tendencias y predicción del pH** · Funcional · Estado: Parcial
+**Tendencias y predicción del pH** · Funcional · Estado: Hecho
 
 **Como** usuario, **quiero** ver hacia dónde va el pH en las próximas horas o días, **para** anticipar correcciones.
 
-**Descripción.** Regresión con intervalo de confianza del 95 % y red neuronal LSTM a 12 horas, que se compara con métodos simples y solo se usa si los supera. Con pocos datos, la app lo dice en lugar de inventar una predicción.
+**Descripción.** Regresión con intervalo de confianza del 95 % y red neuronal LSTM a 12 horas, que se compara con métodos simples y solo se usa si los supera. Con pocos datos, la app lo dice en lugar de inventar una predicción. Para ver la red funcionando sin esperar unos 8 días de mediciones propias, se puede entrenar con la serie real de un río del USGS (cada 15 minutos, hasta 30 días, que el servidor ya importa); la pantalla avisa que son datos oficiales y no las mediciones de la persona.
 
 **Criterios de aceptación**
 
 - [x] La predicción muestra el intervalo de incertidumbre.
 - [x] Sin datos suficientes (unos 8 días de mediciones frecuentes para la LSTM) se muestra el aviso.
 - [x] El horizonte depende del plan (Gratuito o Premium).
+- [x] La LSTM se entrena y se evalúa con datos reales de un río del USGS, marcados como datos oficiales y no como mediciones propias.
 
 **MockUp12** · Predicción de tendencias
 
@@ -381,12 +382,13 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Como** usuario, **quiero** elegir el tema (claro, oscuro o automático) y las notificaciones, **para** usar la app a mi gusto.
 
-**Descripción.** Preferencias guardadas en el servidor. El tema claro es el predeterminado. La app está en español.
+**Descripción.** Preferencias guardadas en el servidor. El tema claro es el predeterminado. En Apariencia, tres interruptores por dispositivo: animación del agua (olas), animación de la gota (Aqua y la gota del acceso) y otras animaciones (empiezan según la opción del sistema «reducir movimiento»). La app está en el idioma que elija la persona.
 
 **Criterios de aceptación**
 
 - [x] El tema claro es el predeterminado para cuentas nuevas y para quien no ha iniciado sesión.
 - [x] El cambio de tema se aplica al instante y se conserva al volver a entrar.
+- [x] Cada animación (agua, gota y las demás) se enciende o apaga por separado en el dispositivo.
 
 **MockUp21** · Configuración con sus secciones: Ajustes, Medidor y Actividad
 
@@ -644,7 +646,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Como** dueño de una piscina, un acuario u otra agua con un medidor dentro, **quiero** que la app me avise de inmediato con sonido y que Aqua me diga si el cambio es peligroso cuando el pH se altera, **para** sacar a las personas del agua o proteger a los peces a tiempo.
 
-**Descripción.** Con el medidor en el agua («Medir cada 10 s», que sigue aunque se cambie de pantalla), cada medición se compara con las de la última hora. Si el pH cambia 0,5 o más (por ejemplo, algo cayó al agua), o si entra en nivel crítico, se crea la alerta «Alteración del pH en el agua». Dice si es peligroso según los rangos del perfil (nivel crítico = peligroso) y qué hacer según el tipo de agua: en una piscina, que nadie se bañe y salgan del agua; en un acuario, que los peces corren peligro; en agua potable, no tomarla; en riego, no regar. Funciona con cualquier perfil. En la app suena una alarma (al volumen del equipo), aparece una ventana que no se cierra sola y Aqua lo dice en voz alta; la alarma se repite cada pocos segundos hasta pulsar «Entendido». En el celular o computador llega un aviso urgente que queda en pantalla y vibra, aunque la app esté cerrada (si se activaron los avisos). La misma alerta no se repite en ese lugar durante 30 minutos, salvo que se vuelva peligrosa. En Configuración se puede apagar el sonido en cada dispositivo y probar la alarma. Si la app está abierta en otro equipo, revisa las alertas cada 15 segundos. Con el medidor conectado al mismo equipo, el aviso es inmediato.
+**Descripción.** Con el medidor en el agua («Medir cada 10 s», que sigue aunque se cambie de pantalla), cada medición se compara con las de la última hora. Si el pH cambia 0,5 o más (por ejemplo, algo cayó al agua), o si entra en nivel crítico, se crea la alerta «Alteración del pH en el agua». Dice si es peligroso según los rangos del perfil (nivel crítico = peligroso) y qué hacer según el tipo de agua: en una piscina, que nadie se bañe y salgan del agua; en un acuario, que los peces corren peligro; en agua potable, no tomarla; en riego, no regar. Funciona con cualquier perfil. En la app suena una alarma (al volumen del equipo), aparece una ventana que no se cierra sola y Aqua lo dice en voz alta; la alarma se repite cada pocos segundos hasta pulsar «Entendido». En el celular o computador llega un aviso urgente que queda en pantalla y vibra, aunque la app esté cerrada (si se activaron los avisos). La misma alerta no se repite en ese lugar durante 30 minutos, salvo que se vuelva peligrosa. Debajo, «Aqua explica» amplía el aviso con IA: un resumen, las causas probables para ese tipo de agua, qué hacer ahora y cuándo vuelve a ser segura, con las mediciones de la última hora, el veredicto de peligro del sistema y las normas que aplican; Aqua lo lee después del aviso. Si la IA no está disponible, la explicación sale de las reglas del perfil. En Configuración se puede apagar el sonido en cada dispositivo y probar la alarma. Si la app está abierta en otro equipo, revisa las alertas cada 15 segundos. Con el medidor conectado al mismo equipo, el aviso es inmediato.
 
 **Criterios de aceptación**
 
@@ -652,6 +654,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 - [x] El mensaje dice si es peligroso según el perfil y qué hacer según el tipo de agua.
 - [x] En la app suena la alarma, aparece la ventana y Aqua lee el mensaje; «Entendido» la detiene y marca la alerta como leída.
 - [x] El aviso del celular o computador es urgente y queda en pantalla hasta tocarlo.
+- [x] «Aqua explica» muestra y lee el resumen, las causas probables, los pasos y cuándo vuelve a ser segura (con IA o, sin ella, con las reglas del perfil).
 - [x] Los navegadores solo dejan sonar una página después de tocarla una vez; si no, la ventana lo indica.
 
 **MockUp48** · Alarma en una piscina: el pH bajó de 7,50 a 5,20
@@ -699,16 +702,15 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Disponibilidad** · No funcional · Estado: Hecho
 
-**Como** usuario, **quiero** que la app esté disponible cuando la abra, **para** no esperar a que el servidor arranque.
+**Como** usuario, **quiero** que la app esté disponible cuando la abra y me avise si el servidor está arrancando, **para** saber que debo esperar un momento y no ver un error.
 
-**Descripción.** Frontend en Vercel, API en Render y base PostgreSQL en Neon. El propio servidor se consulta cada 10 minutos en /actuator/health/liveness (dirección que no toca la base de datos) para que el plan gratuito no lo apague; además puede usarse un monitor externo. Si el servidor estaba apagado, la app muestra «Activando el servidor…» mientras arranca.
+**Descripción.** Frontend en Vercel, backend y servicio de IA en Render y base PostgreSQL en Neon. Para que las 750 horas gratis al mes de Render alcancen a los dos servicios, el backend se duerme cuando nadie lo usa: la primera visita después tarda alrededor de un minuto y la app muestra «Activando el servidor…» mientras arranca. Un flujo de GitHub lo despierta cada 3 horas para enviar los recordatorios e importar los datos del USGS. Para una presentación, KEEP_AWAKE=true en Render lo mantiene despierto.
 
 **Criterios de aceptación**
 
 - [x] /actuator/health/liveness responde 200 sin iniciar sesión.
-- [x] Tras 20 minutos sin uso, la API responde en menos de 2 segundos.
 - [x] Si el servidor tarda, la app avisa en lugar de mostrar un error.
-- [x] En la prueba del 17 de noviembre, tras 22 minutos sin uso la API respondió en 0,46 s.
+- [x] Dormido, el backend despierta con la primera visita y la app sigue sola cuando responde.
 
 **MockUp29** · Aviso mientras el servidor arranca
 
