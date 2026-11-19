@@ -69,7 +69,7 @@ export const settingsView = {
     session.updateUser(me);
     const draft = { ...settings };
 
-    root.innerHTML = `${subNav("settings", SETTINGS_NAV)}
+    root.innerHTML = `${subNav("settings", SETTINGS_NAV, "Configuración")}
       <div class="settings-layout">
         <nav class="card ia-menu" aria-label="Secciones">${SECTIONS.map(([id, label, ic]) => `<button data-goto="${id}">${icon(ic)}${label}</button>`).join("")}</nav>
         <div class="stack">

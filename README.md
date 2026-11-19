@@ -61,7 +61,7 @@ Presentar la información y recoger las acciones del usuario. **Toda la lógica 
 - **Asistente**: "Descargar" guarda la conversación como texto, con las fuentes de cada respuesta.
 - **Sesión y conexión**: avisa 5 minutos antes de que venza la sesión y, al vencer, vuelve al inicio de sesión sin esperar a que falle una petición. Sin internet, una franja lo indica hasta que vuelve la conexión.
 - **Errores inesperados**: si algo falla sin que la pantalla lo maneje, aparece un aviso en lugar de no pasar nada.
-- **Accesibilidad**: enlace "Saltar al contenido" como primera parada del teclado; revisada con axe-core en 16 pantallas, en tema claro y oscuro, en computador y en teléfono, sin hallazgos (11 nov 2026). Incluye:
+- **Accesibilidad**: enlace "Saltar al contenido" como primera parada del teclado; revisada con axe-core en 35 pantallas y vistas, en tema claro y oscuro, en computador y en teléfono, sin hallazgos (19 nov 2026). Incluye:
   - región principal y encabezado en cada pantalla, también en el teléfono, donde el título de la barra superior queda oculto a la vista pero se lee;
   - niveles de encabezado en orden y foco atrapado dentro de los diálogos (Escape cierra solo el de arriba);
   - selectores de periodo anunciados como grupos de botones con su opción marcada;
@@ -99,7 +99,7 @@ Frontend/
 ├── .github/workflows/      Revisión automática en cada push
 └── docs/
     ├── Requerimientos.md    Requerimientos funcionales y no funcionales (historias de usuario)
-    ├── mockups/             MockUp1 ... MockUp32 (capturas de la app publicada, tema claro)
+    ├── mockups/             MockUp1 ... MockUp47 (capturas de la app publicada; 46 y 47 en tema oscuro)
     └── issues/              Un archivo por Issue y los scripts que los crean en GitHub
 ```
 
@@ -194,7 +194,7 @@ Se registran los errores de consola y las peticiones fallidas. La accesibilidad 
 
 ## Requerimientos y MockUps
 
-Los requerimientos funcionales (RF-01 a RF-22) y no funcionales (RNF-01 a RNF-07) están en [`docs/Requerimientos.md`](docs/Requerimientos.md), cada uno como historia de usuario (**Como**… **quiero**… **para**…), con descripción, criterios de aceptación y su MockUp. Los mismos textos están en [`docs/issues/`](docs/issues/) para crear los Issues del repositorio (instrucciones abajo).
+Los requerimientos funcionales (RF-01 a RF-29) y no funcionales (RNF-01 a RNF-07) están en [`docs/Requerimientos.md`](docs/Requerimientos.md), cada uno como historia de usuario (**Como**… **quiero**… **para**…), con descripción, criterios de aceptación y su MockUp. Los mismos textos están en [`docs/issues/`](docs/issues/) para crear los Issues del repositorio (instrucciones abajo).
 
 | | |
 |---|---|

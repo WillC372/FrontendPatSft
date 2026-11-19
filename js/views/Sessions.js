@@ -83,7 +83,7 @@ export const sessionsView = {
   name: "sessions",
   title: "Historial de sesiones",
   async render(root) {
-    root.innerHTML = `${subNav("sessions", SETTINGS_NAV)}
+    root.innerHTML = `${subNav("sessions", SETTINGS_NAV, "Configuración")}
       <div class="row-between reveal">
         <div><h1>Actividad y sesiones</h1>
           <p class="muted">Cada vez que inicias sesión empieza una sesión nueva. Aquí queda lo que hiciste en cada una, desde que entraste hasta que la cerraste.</p></div>

@@ -151,7 +151,7 @@ export const placesView = {
         return;
       }
       const demo = session.user?.demo;
-      root.innerHTML = `${subNav("places", PLACES_NAV)}
+      root.innerHTML = `${subNav("places", PLACES_NAV, "Lugares")}
         <div class="row-between reveal"><div><h1>Lugares</h1><p class="muted">Cada sitio con agua que mides, por separado.</p></div>
           <button class="btn btn-primary btn-pill" data-new>${icon("plus")}Nuevo lugar</button></div>
         ${helpBox("places", "¿Para qué sirven los lugares?", [

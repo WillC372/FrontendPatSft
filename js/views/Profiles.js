@@ -69,7 +69,7 @@ export const profilesView = {
         root.innerHTML = emptyState("error", "No se pudieron cargar los perfiles", error.message);
         return;
       }
-      root.innerHTML = `${subNav("profiles", PLACES_NAV)}
+      root.innerHTML = `${subNav("profiles", PLACES_NAV, "Lugares")}
         <div class="row-between reveal"><div><h1>Perfiles de uso</h1><p class="muted">Cada contexto usa rangos distintos. El perfil activo se aplica a nuevas mediciones y análisis.</p></div></div>
         <div class="profile-grid">
           ${profiles.map((p) => `
