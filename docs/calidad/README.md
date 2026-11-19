@@ -37,7 +37,7 @@ Para autorizar basta con decirlo en la conversación («autorizo H-012») o camb
 
 ## Protección del software
 
-- **Nada en `main`**: `.claude/hooks/proteger-main.mjs` (en los cuatro repositorios) bloquea commits y pushes a `main`, push forzado, borrar ramas y `reset --hard`. Las correcciones llegan como pull request.
+- **Nada en `main`**: `.claude/hooks/proteger-main.mjs` (FrontendPatSft y DBPatSft) y su copia en Java `.claude/hooks/ProtegerMain.java` (BackendPatSft y AIPatSft, para que sigan siendo solo Java) bloquea commits y pushes a `main`, push forzado, borrar ramas y `reset --hard`. Las correcciones llegan como pull request.
 - **Sin despliegues sin autorización**: Render y la base (Neon) solo se actualizan desde `main`; las ramas solo generan vistas previas en Vercel y pruebas en GitHub Actions (las migraciones de un pull request se prueban en una base vacía, no en Neon). El merge, que publica, es tuyo.
 - Sin cambios en credenciales, secretos ni configuración de Render, Vercel, Neon o GitHub.
 - Base de datos: solo migraciones nuevas y aditivas; nada destructivo sin aprobación.

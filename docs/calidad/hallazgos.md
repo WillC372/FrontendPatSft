@@ -6,7 +6,7 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 
 ## Resumen
 
-> Primera auditoría (19 nov 2026), modo `auditar`, en solo lectura, completa con los ocho especialistas: base de datos, arquitectura e integración, seguridad, backend, frontend y experiencia de usuario, IA, rendimiento y pruebas. Los hallazgos repetidos entre especialistas se unieron en uno. 50 hallazgos: 1 crítico, 12 altos, 24 medios y 13 bajos. Línea base de pruebas (mismo código de `main`): frontend 56, backend 112 y servicio de IA 123, todas aprobadas; migraciones verificadas en GitHub Actions.
+> Primera auditoría (19 nov 2026), modo `auditar`, en solo lectura, completa con los ocho especialistas: base de datos, arquitectura e integración, seguridad, backend, frontend y experiencia de usuario, IA, rendimiento y pruebas. Los hallazgos repetidos entre especialistas se unieron en uno. 50 hallazgos: 1 crítico, 12 altos, 24 medios y 13 bajos (H-051 lo pidió después el dueño). Línea base de pruebas (mismo código de `main`): frontend 56, backend 112 y servicio de IA 123, todas aprobadas; migraciones verificadas en GitHub Actions.
 >
 > Corregidos en ramas con pull request (sin merge, lo hace el dueño): H-001, H-002, H-003 y H-019. H-024 se corrigió en la rama del equipo.
 
@@ -62,6 +62,7 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 | H-048 | Si falla «Marcar como leídas» en las alertas, el error queda sin manejar | FrontendPatSft | error | Baja | no | Nuevo |
 | H-049 | Cualquier visita a la pantalla de inicio de sesión despierta el servicio de IA | FrontendPatSft · AIPatSft | rendimiento | Baja | no | Nuevo |
 | H-050 | Costo de IA no registrado: traducciones y ejecuciones fallidas del agente | AIPatSft | IA / costos | Baja | no | Nuevo |
+| H-051 | El backend y el servicio de IA tenían código que no es Java (firmware, generador KiCad y scripts) | BackendPatSft · AIPatSft · FrontendPatSft | requisito del dueño | Media | no | En revisión (FrontendPatSft#40, BackendPatSft#5, AIPatSft#4) |
 
 ## Detalle
 
@@ -555,3 +556,9 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
   - Registrar el uso de TRANSLATION con un usuario técnico o con `userId` nulo permitido.
   - Contar `askAgain`.
   - Devolver los tokens acumulados en `AgentFailedException` y guardarlos en `recordFailure`.
+
+### H-051 · El backend y el servicio de IA tenían código que no es Java (firmware, generador KiCad y scripts)
+- Repositorio: BackendPatSft · AIPatSft · FrontendPatSft · Tipo: requisito del dueño · Severidad: **Media** · Estructural: no (traslado de una carpeta y scripts reescritos, sin cambiar la aplicación) · Esfuerzo: M · Riesgo de regresión: bajo · Estado: En revisión (FrontendPatSft#40, BackendPatSft#5, AIPatSft#4) · Pedido por: el dueño
+- Evidencia: GitHub mostraba en BackendPatSft Python 79 KB, C++ 24 KB, HTML 10 KB, JavaScript 3 KB y Shell, todo de `hardware/` (firmware del ESP32 y generador KiCad) y de `scripts/sync-migrations.sh`. En AIPatSft había `scripts/extract-ui-texts.mjs`, `scripts/VerifyKnowledgeQuotes.py` y `scripts/sync-migrations.sh`.
+- Cambio: `hardware/` pasa a FrontendPatSft con su prueba de GitHub Actions; los cinco scripts se reescriben en Java con el mismo resultado (2300 textos y 0 diferencias; 20 de 20 citas; 27 migraciones). El control de `main` de esos dos repositorios queda en Java (`ProtegerMain.java`), probado con los mismos casos que el de JavaScript. El `Dockerfile` se queda porque Render lo necesita; `.gitattributes` lo excluye de las estadísticas de lenguaje.
+- Orden de merge: FrontendPatSft#40 antes que BackendPatSft#5.
