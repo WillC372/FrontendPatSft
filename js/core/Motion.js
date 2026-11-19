@@ -1,29 +1,46 @@
-// Animations follow the system's "reduce motion" unless the person chose "Animaciones: siempre" on this device.
-// The choice is per device (it is about this screen), so it also applies before signing in.
-const KEY = "aquasense.motion";
+// Three animation switches, chosen per device in Configuración → Apariencia (they are about this screen, so they also
+// apply before signing in):
+//   water: the waves of the sign-in screen and of the pH indicator (on unless switched off),
+//   drop:  Aqua (hops, turns, gestures, blinking) and the drop of the logo (on unless switched off),
+//   other: transitions of screens and panels, charts that draw themselves, numbers that count (by default it follows
+//          the system's "reduce motion"; in Windows, "Efectos de animación").
+const KEYS = { water: "aquasense.motion.water", drop: "aquasense.motion.drop", other: "aquasense.motion" };
 const media = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
 
-export function motionChoice() {
-  try { return localStorage.getItem(KEY) === "always" ? "always" : "system"; } catch { return "system"; }
-}
+const read = (kind) => { try { return localStorage.getItem(KEYS[kind]); } catch { return null; } };
 
-/** The operating system asks for less motion (in Windows: "Efectos de animación" off). */
+/** The operating system asks for less motion. */
 export function systemReducesMotion() {
   return Boolean(media?.matches);
 }
 
-/** True when the app should keep still: the system asks for it and the person did not choose "siempre". */
+export function waterMotion() { return read("water") !== "off"; }
+export function dropMotion() { return read("drop") !== "off"; }
+export function otherMotion() {
+  const v = read("other");
+  if (v === "always") return true;
+  if (v === "off") return false;
+  return !systemReducesMotion();
+}
+
+/** The rest of the app should keep still (transitions, charts, counters). */
 export function reducedMotion() {
-  return systemReducesMotion() && motionChoice() !== "always";
+  return !otherMotion();
 }
 
 export function applyMotion() {
-  document.documentElement.classList.toggle("motion-always", motionChoice() === "always");
+  const root = document.documentElement;
+  const other = read("other");
+  root.classList.toggle("motion-always", other === "always");
+  root.classList.toggle("motion-off", other === "off");
+  root.classList.toggle("drop-off", !dropMotion());
 }
 
-export function setMotionChoice(choice) {
+/** Turns one kind on or off on this device. */
+export function setMotion(kind, on) {
   try {
-    if (choice === "always") localStorage.setItem(KEY, "always"); else localStorage.removeItem(KEY);
+    if (kind === "other") localStorage.setItem(KEYS.other, on ? "always" : "off");
+    else if (on) localStorage.removeItem(KEYS[kind]); else localStorage.setItem(KEYS[kind], "off");
   } catch { /* private mode: it lasts this visit */ }
   applyMotion();
 }

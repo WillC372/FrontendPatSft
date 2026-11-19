@@ -9,7 +9,7 @@ import { voice } from "../core/Voice.js";
 import { i18n } from "../core/I18n.js";
 import { AI_FUNCTIONS } from "./AiFunctions.js";
 import { startTour, tourRunning } from "./Tour.js";
-import { reducedMotion } from "../core/Motion.js";
+import { dropMotion } from "../core/Motion.js";
 
 const GROUPS = () => [
   ["Analizar mi agua", ["diagnosis", "anomalies", "forecast"]],
@@ -315,7 +315,7 @@ export class AquaBot {
         await api.put("/users/me/settings", { ...settings, voiceEnabled: voice.enabled });
       } catch { /* it stays changed in this visit */ }
     });
-    if (reducedMotion()) return;
+    if (!dropMotion()) return;
     let frame = 0;
     const look = (event) => {
       if (frame) return;

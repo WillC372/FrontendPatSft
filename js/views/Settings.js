@@ -3,7 +3,7 @@ import { pushClient } from "../core/PushClient.js";
 import { bus } from "../core/EventBus.js";
 import { session } from "../core/Session.js";
 import { theme } from "../core/Theme.js";
-import { motionChoice, setMotionChoice, systemReducesMotion } from "../core/Motion.js";
+import { dropMotion, otherMotion, setMotion, systemReducesMotion, waterMotion } from "../core/Motion.js";
 import { alarmSoundOn, setAlarmSound } from "../core/AlarmSound.js";
 import { esc, fmt, own, quotaText } from "../core/Format.js";
 import { icon, logo } from "../ui/Icons.js";
@@ -82,13 +82,14 @@ export const settingsView = {
                 `<button role="radio" data-theme-option="${v}" aria-checked="${draft.theme === v}" class="${draft.theme === v ? "active" : ""}">${icon(ic)}${l}</button>`).join("")}
             </div>
             <p class="muted" style="margin-top:10px;font-size:13px">"Automático" sigue la preferencia de tu sistema operativo. La elección se guarda en tu cuenta.</p>
-            <div class="setting-row wide-control"><div><strong>Animaciones</strong><p>${systemReducesMotion()
-              ? "Tu equipo pide reducir el movimiento (en Windows, «Efectos de animación» apagado), así que con «Según el sistema» las animaciones casi no se ven. Con «Siempre» se ven en este dispositivo."
-              : "Tu equipo no pide reducir el movimiento: las animaciones se ven. «Según el sistema» las quitaría si un día lo activas."}</p></div>
-              <div class="segmented" role="radiogroup" aria-label="Animaciones">
-                ${[["system", "Según el sistema"], ["always", "Siempre"]].map(([v, l]) =>
-                  `<button type="button" role="radio" data-motion-option="${v}" aria-checked="${motionChoice() === v}" class="${motionChoice() === v ? "active" : ""}">${l}</button>`).join("")}
-              </div></div>
+            <div class="setting-row"><div><strong>Animación del agua</strong><p>Las olas y burbujas del inicio de sesión y del indicador de pH.</p></div>
+              <label class="switch"><input type="checkbox" data-motion="water" ${waterMotion() ? "checked" : ""} aria-label="Animación del agua"><span></span></label></div>
+            <div class="setting-row"><div><strong>Animación de la gota</strong><p>Aqua salta, gira, parpadea y hace gestos, y la gota del inicio de sesión flota.</p></div>
+              <label class="switch"><input type="checkbox" data-motion="drop" ${dropMotion() ? "checked" : ""} aria-label="Animación de la gota"><span></span></label></div>
+            <div class="setting-row"><div><strong>Otras animaciones</strong><p>Transiciones de pantallas y paneles, gráficas que se dibujan y números que cuentan. ${systemReducesMotion()
+              ? "Tu equipo pide reducir el movimiento (en Windows, «Efectos de animación» apagado), por eso empiezan apagadas."
+              : "Empiezan encendidas porque tu equipo no pide reducir el movimiento."} Se guardan en este dispositivo.</p></div>
+              <label class="switch"><input type="checkbox" data-motion="other" ${otherMotion() ? "checked" : ""} aria-label="Otras animaciones"><span></span></label></div>
             <div class="setting-row"><div><strong>Idioma</strong><p>Toda la app cambia al idioma que elijas: pantallas, mensajes, respuestas y voz de Aqua, correos, avisos e informes. La primera vez en un idioma puede tardar unos segundos mientras se traduce.</p></div>
               <select class="input lang-select" data-language aria-label="Idioma" translate="no"><option value="${esc(i18n.lang)}" selected>${esc(i18n.lang)}</option></select></div>
           </section>
@@ -192,10 +193,10 @@ export const settingsView = {
       if (!alarmSoundOn()) { toast("Enciende primero la alarma con sonido.", "warn"); return; }
       withBusy(e.currentTarget, async () => (await import("./PhAlarm.js")).phAlarm.test());
     });
-    root.querySelectorAll("[data-motion-option]").forEach((b) => b.addEventListener("click", () => {
-      setMotionChoice(b.dataset.motionOption);
-      root.querySelectorAll("[data-motion-option]").forEach((x) => { x.classList.toggle("active", x === b); x.setAttribute("aria-checked", String(x === b)); });
-      toast(b.dataset.motionOption === "always" ? "Animaciones activadas en este dispositivo." : "Las animaciones siguen la preferencia de tu equipo.", "ok", 2500);
+    root.querySelectorAll("[data-motion]").forEach((input) => input.addEventListener("change", () => {
+      setMotion(input.dataset.motion, input.checked);
+      const name = { water: "La animación del agua", drop: "La animación de la gota", other: "Las otras animaciones" }[input.dataset.motion];
+      toast(`${name} quedó ${input.checked ? "encendida" : "apagada"} en este dispositivo.`, "ok", 2500);
     }));
     root.querySelectorAll("[data-theme-option]").forEach((b) => b.addEventListener("click", async () => {
       draft.theme = b.dataset.themeOption;

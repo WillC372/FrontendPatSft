@@ -42,6 +42,14 @@ button { cursor: pointer; }
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb { background: var(--track); border-radius: 10px; }
 
+/* Animations (js/core/Motion.js): the drop (Aqua and the logo) has its own switch; everything else follows the
+   system's "reduce motion" unless "Otras animaciones" is chosen in Configuración. The water is drawn by Water.js. */
 @media (prefers-reduced-motion: reduce) {
-  :root:not(.motion-always) *, :root:not(.motion-always) *::before, :root:not(.motion-always) *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  :root:not(.motion-always) *:not(.aqua, .aqua-face, .brand-logo, .tour-bot, .alarm-face, :is(.aqua, .aqua-face, .brand-logo, .tour-bot, .alarm-face) *),
+  :root:not(.motion-always) *:not(.aqua, .aqua-face, .brand-logo, .tour-bot, .alarm-face, :is(.aqua, .aqua-face, .brand-logo, .tour-bot, .alarm-face) *)::before,
+  :root:not(.motion-always) *:not(.aqua, .aqua-face, .brand-logo, .tour-bot, .alarm-face, :is(.aqua, .aqua-face, .brand-logo, .tour-bot, .alarm-face) *)::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
 }
+:root.motion-off *:not(.aqua, .aqua-face, .brand-logo, .tour-bot, .alarm-face, :is(.aqua, .aqua-face, .brand-logo, .tour-bot, .alarm-face) *),
+:root.motion-off *:not(.aqua, .aqua-face, .brand-logo, .tour-bot, .alarm-face, :is(.aqua, .aqua-face, .brand-logo, .tour-bot, .alarm-face) *)::before,
+:root.motion-off *:not(.aqua, .aqua-face, .brand-logo, .tour-bot, .alarm-face, :is(.aqua, .aqua-face, .brand-logo, .tour-bot, .alarm-face) *)::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+:root.drop-off :is(.aqua, .aqua-face, .brand-logo, .tour-bot, .alarm-face), :root.drop-off :is(.aqua, .aqua-face, .brand-logo, .tour-bot, .alarm-face) *, :root.drop-off :is(.aqua, .aqua-face, .brand-logo, .tour-bot, .alarm-face) *::before, :root.drop-off :is(.aqua, .aqua-face, .brand-logo, .tour-bot, .alarm-face) *::after { animation: none !important; }
