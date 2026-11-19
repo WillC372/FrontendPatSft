@@ -5,18 +5,17 @@ import { liveStream } from "../core/LiveStream.js";
 import { browserMeter } from "../core/BrowserMeter.js";
 import { esc, fmt, own, relativeTime } from "../core/Format.js";
 import { icon, logo } from "../ui/Icons.js";
-import { PARENT_TAB } from "../ui/SubNav.js";
 import { avatarMarkup, avatarUrl, forgetAvatar } from "../core/Avatar.js";
 import { openAccountDialog } from "./AccountDialog.js";
 import { confirmDialog, toast } from "../ui/Components.js";
 import { AquaBot } from "./AquaBot.js";
 
-// Bottom bar (every screen size); "Medir", the main action, sits in the middle. Perfiles lives inside Lugares, the
-// meter and the activity inside Configuración, and the official data inside Aqua's library (see ui/SubNav.js).
+// Bottom bar (every screen size): Inicio, Historial, Medir (the main action, in the middle) and Plan. Lugares and the
+// care of the water open from the place menu (top), Configuración from the account menu; Perfiles lives inside
+// Lugares, the meter and the activity inside Configuración, the official data inside Aqua's library (ui/SubNav.js).
 // [route, label, icon, full name for screen readers when the label is shortened]
-const LEFT = [["dashboard", "Inicio", "home"], ["history", "Historial", "history"], ["places", "Lugares", "pin"],
-  ["care", "Cuidado", "flask", "Cuidado del agua: dosis, tratamientos y recordatorios"]];
-const RIGHT = [["billing", "Plan", "card", "Plan y pagos"], ["settings", "Configuración", "settings", null, "Ajustes"]];
+const LEFT = [["dashboard", "Inicio", "home"], ["history", "Historial", "history"]];
+const RIGHT = [["billing", "Plan", "card", "Plan y pagos"]];
 const ADMIN = ["admin", "Admin", "users", "Administración"];
 
 // A label too long for a phone has a short one ("Ajustes"); the full name stays for screen readers.
@@ -54,6 +53,7 @@ export class Shell {
                   <div class="user-menu-head"><span data-avatar-big>${avatarMarkup(user, null, "avatar-lg")}</span><div><strong translate="no">${esc(user?.fullName || "")}</strong><small class="muted" translate="no">${esc(user?.email || "")}</small>
                     <small class="muted">${user?.role === "ADMIN" ? "Administrador" : "Usuario"} · ${user?.role === "ADMIN" ? "sin límites" : user?.plan === "PREMIUM" ? "Premium" : "Plan gratuito"}</small></div></div>
                   <button type="button" class="user-menu-item" role="menuitem" data-my-account>${icon("user")}Mi cuenta</button>
+                  <a class="user-menu-item" role="menuitem" href="#/settings" data-close-menu>${icon("settings")}Configuración</a>
                   <button type="button" class="user-menu-item danger" role="menuitem" data-logout>${icon("logout")}Cerrar sesión</button>
                 </div>
               </div>
@@ -83,7 +83,7 @@ export class Shell {
 
   activate(name, title) {
     this.root.querySelectorAll("[data-route]").forEach((link) => {
-      const active = link.dataset.route === (PARENT_TAB[name] || name);
+      const active = link.dataset.route === name;
       link.classList.toggle("active", active);
       if (active) link.setAttribute("aria-current", "page"); else link.removeAttribute("aria-current");
     });
@@ -231,7 +231,10 @@ export class Shell {
   #renderPlaceMenu() {
     const menu = this.root.querySelector("[data-place-menu]");
     menu.innerHTML = `<p class="menu-title">¿Qué agua quieres ver?</p><p class="menu-hint">Cada lugar guarda sus propias mediciones. Elige uno y toda la app cambia a ese lugar.</p>${(this.places || []).map((p) => `<button type="button" class="user-menu-item ${p.active ? "current" : ""}" role="menuitemradio" aria-checked="${p.active}" data-place="${p.id}">
-        ${icon(p.active ? "check" : "pin")}<span>${own(p.name)}<small class="muted">${esc(p.kindLabel)}${p.role !== "OWNER" ? ` · ${esc(p.roleLabel)}` : ""}</small></span></button>`).join("")}`;
+        ${icon(p.active ? "check" : "pin")}<span>${own(p.name)}<small class="muted">${esc(p.kindLabel)}${p.role !== "OWNER" ? ` · ${esc(p.roleLabel)}` : ""}</small></span></button>`).join("")}
+      <div class="menu-sep" role="separator"></div>
+      <a class="user-menu-item" role="menuitem" href="#/care" data-manage>${icon("flask")}Cuidado de este lugar</a>
+      <a class="user-menu-item" role="menuitem" href="#/places" data-manage>${icon("pin")}Crear, editar o compartir lugares</a>`;
   }
 
   #bindPlaceMenu() {
@@ -326,6 +329,7 @@ export class Shell {
     document.addEventListener("click", outside);
     this.#offs.push(() => document.removeEventListener("click", outside));
     menu.querySelector("[data-my-account]").addEventListener("click", () => { close(); openAccountDialog(); });
+    menu.querySelector("[data-close-menu]").addEventListener("click", () => close());
     menu.querySelector("[data-logout]").addEventListener("click", () => { close(); this.logout(); });
   }
 

@@ -93,10 +93,12 @@ fieldset.checks label { display: flex; gap: 8px; align-items: flex-start; font-s
 .i18n-busy[hidden] { display: none; }
 .lang-select { max-width: 260px; }
 .auth-panel { position: relative; }
-.auth-lang { position: absolute; top: 14px; right: 16px; display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+.auth-tools { position: absolute; top: 14px; right: 16px; display: inline-flex; align-items: center; gap: 10px; z-index: 2; }
+.auth-tools .btn svg { width: 16px; height: 16px; }
+.auth-lang { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
 .auth-lang svg { width: 18px; height: 18px; }
 .auth-lang select { width: auto; max-width: 170px; height: 36px; padding: 0 10px; font-size: 14px; }
-[dir="rtl"] .auth-lang { right: auto; left: 16px; }
+[dir="rtl"] .auth-tools { right: auto; left: 16px; }
 
 /* Screens grouped under one tab of the bar (Lugares | Perfiles, Ajustes | Medidor | Actividad...). */
 .subnav { display: flex; gap: 6px; padding: 4px; margin-bottom: 18px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; max-width: 100%; width: fit-content; }
@@ -112,3 +114,15 @@ fieldset.checks label { display: flex; gap: 8px; align-items: flex-start; font-s
 
 /* A pill that only shows information (for example the profile of the place on Home). */
 .pill-static { cursor: default; pointer-events: none; }
+
+/* Line between the places and the links of the place menu. */
+.menu-sep { height: 1px; margin: 6px 4px; background: var(--border); }
+
+/* The calculator's button: centered and of normal size under the fields. */
+.calc-actions { display: flex; justify-content: center; margin-top: 6px; }
+.calc-actions .btn { width: auto; min-width: 140px; justify-content: center; }
+/* On a phone the theme and language controls go on their own row above the sign-in card. */
+@media (max-width: 760px) {
+  .auth-panel { place-items: start center; }
+  .auth-tools { position: static; justify-self: end; margin-bottom: 14px; }
+}

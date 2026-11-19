@@ -42,14 +42,12 @@ export const TOUR_STEPS = [
   { target: null, title: "¡Hola! Soy Aqua", text: "Te ayudo a cuidar el pH de tu agua. En un minuto te muestro dónde está cada cosa." },
   { target: '[data-tab="dashboard"]', title: "Inicio", text: "Tu última medición y si tu agua está bien para el uso que elegiste." },
   { target: '[data-tab="history"]', title: "Historial", text: "Todas tus mediciones con gráficas, filtros y descarga." },
-  { target: '[data-tab="places"]', title: "Lugares", text: "Si tienes piscina y acuario, cada uno lleva su propio historial. Arriba ves en cuál estás y lo cambias con un toque. Aquí también están los «Perfiles de uso»: piscina, acuario, agua potable o riego cambian el rango ideal de pH." },
-  { target: '[data-tab="care"]', title: "Cuidado", text: "Calculadora de dosis, registro de lo que le echas al agua y recordatorios que te llegan al celular o al correo." },
-  { target: '[data-tab="measure"]', title: "Medir", text: "El botón más importante: registra el pH con tu medidor, con una foto o escribiendo el valor. Desde aquí también conectas y calibras tu medidor." },
+  { target: '[data-tab="measure"]', title: "Medir", text: "El botón más importante: registra el pH con tu medidor, con una foto o escribiendo el valor." },
   { target: '[data-tab="billing"]', title: "Plan", text: "Tu plan actual y lo que incluye Premium: más días de análisis, predicciones más largas y más consultas de IA." },
-  { target: '[data-tab="settings"]', title: "Configuración", text: "Tema claro u oscuro, idioma, voz de Aqua, avisos al celular o por correo y tu cuenta. Arriba están también «Medidor» y «Actividad y sesiones», donde ves qué hiciste en cada sesión y cierras las abiertas en otros equipos." },
   { target: '[data-tab="admin"]', title: "Admin", text: "Solo para administradores: cuentas, planes, actividad y el consumo de la IA." },
+  { target: "[data-place-chip]", title: "Tus lugares", text: "El agua que estás viendo. Tócalo para cambiar de piscina, acuario o tanque, para el «Cuidado de este lugar» (calculadora de dosis, tratamientos y recordatorios) y para crear, editar o compartir lugares y sus perfiles de uso." },
   { target: "[data-bell]", title: "Alertas", text: "Si una medición sale del rango, te aviso aquí." },
-  { target: "[data-account]", title: "Tu cuenta", text: "Toca tu inicial o tu nombre para ver tu cuenta y para «Cerrar sesión»." },
+  { target: "[data-account]", title: "Tu cuenta", text: "Toca tu inicial o tu nombre para «Mi cuenta», «Configuración» (tema, idioma, voz de Aqua, avisos, tu medidor y tu actividad) y «Cerrar sesión»." },
   { target: "[data-aqua]", title: "Y aquí estoy yo", text: "Tócame para chatear conmigo, pedir un diagnóstico, predecir tu pH o armar un informe. En la «Biblioteca normativa» están las normas y los datos oficiales de pH, y en «Análisis avanzado», los modelos entrenados con tus datos." },
 ];
 

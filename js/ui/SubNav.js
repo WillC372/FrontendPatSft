@@ -6,9 +6,6 @@ export const PLACES_NAV = [["places", "Mis lugares", "pin"], ["profiles", "Perfi
 export const SETTINGS_NAV = [["settings", "Ajustes", "settings"], ["devices", "Medidor", "bluetooth"], ["sessions", "Actividad", "clock"]];
 export const LIBRARY_NAV = [["intelligence/library", "Normas", "book"], ["official", "Datos oficiales", "globe"]];
 
-/** Which tab of the bar is lit on a screen that lives inside another one. */
-export const PARENT_TAB = { profiles: "places", devices: "settings", sessions: "settings" };
-
 export function subNav(current, items, label = "Secciones") {
   return `<nav class="subnav reveal" aria-label="${label}">${items.map(([route, text, ic]) => {
     const on = route === current;

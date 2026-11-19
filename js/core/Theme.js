@@ -1,6 +1,8 @@
 import { bus } from "./EventBus.js";
 
 const KEY = "aquasense.theme";
+/** Set when the theme was chosen on the sign-in screen: after signing in it goes to the account. */
+export const THEME_PENDING = "aquasense.theme.pending";
 const media = window.matchMedia("(prefers-color-scheme: dark)");
 
 export const theme = {

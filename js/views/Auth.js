@@ -4,6 +4,7 @@ import { icon, logo } from "../ui/Icons.js";
 import { passwordChecklist, showFieldErrors, toast, withBusy } from "../ui/Components.js";
 import { animateWater } from "../ui/Water.js";
 import { esc } from "../core/Format.js";
+import { theme, THEME_PENDING } from "../core/Theme.js";
 import { i18n } from "../core/I18n.js";
 
 function layout(card) {
@@ -20,14 +21,18 @@ function layout(card) {
         </div>
       </section>
       <main class="auth-panel">
-        <label class="auth-lang">${icon("globe")}<span class="sr-only">Idioma</span>
-          <select class="input" data-auth-lang translate="no" aria-label="Idioma"><option value="${esc(i18n.lang)}">${esc(i18n.lang)}</option></select></label>
+        <div class="auth-tools">
+          <button type="button" class="btn btn-sm btn-pill" data-auth-theme></button>
+          <label class="auth-lang">${icon("globe")}<span class="sr-only">Idioma</span>
+            <select class="input" data-auth-lang translate="no" aria-label="Idioma"><option value="${esc(i18n.lang)}">${esc(i18n.lang)}</option></select></label>
+        </div>
         <div class="card glow auth-card">${card}</div></main>
     </div>`;
 }
 
 /** The language selector of the sign-in screens: the choice is kept and moved to the account after signing in. */
 export function bindAuthLanguage(root) {
+  bindAuthTheme(root);
   const select = root.querySelector("[data-auth-lang]");
   if (!select || select.dataset.bound) return;
   select.dataset.bound = "1";
@@ -35,6 +40,27 @@ export function bindAuthLanguage(root) {
     select.innerHTML = list.map((l) => `<option value="${esc(l.code)}" ${l.code === i18n.lang ? "selected" : ""}>${esc(l.name)}</option>`).join("");
   });
   select.addEventListener("change", () => i18n.change(select.value, { beforeSignIn: true }));
+}
+
+/**
+ * Light or dark before signing in. The choice is kept in this browser and, after signing in, saved to the account
+ * (App.loadSettings), so the account's theme does not undo it.
+ */
+function bindAuthTheme(root) {
+  const button = root.querySelector("[data-auth-theme]");
+  if (!button || button.dataset.bound) return;
+  button.dataset.bound = "1";
+  const draw = () => {
+    const dark = document.documentElement.dataset.theme === "dark";
+    button.innerHTML = `${icon(dark ? "sun" : "moon")}${dark ? "Claro" : "Oscuro"}`;
+    button.setAttribute("aria-label", dark ? "Cambiar a modo claro" : "Cambiar a modo oscuro");
+  };
+  draw();
+  button.addEventListener("click", () => {
+    theme.apply(document.documentElement.dataset.theme === "dark" ? "LIGHT" : "DARK");
+    try { localStorage.setItem(THEME_PENDING, "1"); } catch { /* private mode */ }
+    draw();
+  });
 }
 
 function inputField({ name, label, type = "text", iconName, autocomplete, placeholder, toggle = false }) {

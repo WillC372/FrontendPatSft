@@ -149,7 +149,7 @@ function calculatorCard(place, latest) {
         <div class="field"><label for="calc-current" data-current-label>Valor actual</label><input class="input" id="calc-current" name="current" type="number" step="any"></div>
         <div class="field"><label for="calc-target">Valor deseado</label><input class="input" id="calc-target" name="target" type="number" step="any"></div>
       </div>
-      <button class="btn btn-primary btn-pill" type="submit">${icon("calc")}Calcular</button>
+      <div class="calc-actions"><button class="btn btn-primary btn-pill btn-sm" type="submit">${icon("calc")}Calcular</button></div>
     </form>
     <div data-calc-result aria-live="polite"></div>
   </section>`;

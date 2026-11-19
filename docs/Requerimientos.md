@@ -699,7 +699,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Como** usuario de computador o celular, **quiero** una interfaz clara que funcione en cualquier pantalla, **para** usarla cómodamente donde esté.
 
-**Descripción.** Navegación con una barra inferior de 7 pestañas con su ícono (Inicio, Historial, Lugares, Cuidado, Medir, Plan, Configuración y Admin para administradores), igual en celular y computador; en el celular cabe sin deslizar. Las pantallas de apoyo están dentro de otra, con una fila de enlaces arriba: Perfiles de uso en Lugares; Medidor y Actividad y sesiones en Configuración; Datos oficiales en la Biblioteca normativa de Aqua. Las funciones de Aqua se agrupan en «Analizar mi agua» (diagnóstico y recomendaciones, anomalías, predicción), «Más herramientas» (informes, biblioteca, foto) y «Análisis avanzado» (LSTM, Isolation Forest, simulador); «Consumo y costos» es solo para administradores. La sesión se cierra solo desde el menú del usuario (la inicial o el nombre, arriba a la derecha). Tema claro predeterminado y oscuro opcional, navegación por teclado y lector de pantalla. Revisión con axe-core: 0 hallazgos en 18 pantallas, el recorrido, el panel de Aqua y las hojas «Medir» y «Más», en tema claro y oscuro, en computador y teléfono.
+**Descripción.** Navegación con una barra inferior de 4 pestañas con su ícono (Inicio, Historial, Medir, Plan y Admin para administradores), igual en celular y computador. Arriba, el botón del lugar cambia de lugar y lleva a «Cuidado de este lugar» y a «Crear, editar o compartir lugares» (con los Perfiles de uso); el menú de la cuenta tiene «Mi cuenta», «Configuración» (con Medidor y Actividad y sesiones) y «Cerrar sesión». Los Datos oficiales están en la Biblioteca normativa de Aqua. Las funciones de Aqua se agrupan en «Analizar mi agua» (diagnóstico y recomendaciones, anomalías, predicción), «Más herramientas» (informes, biblioteca) y «Análisis avanzado» (LSTM, Isolation Forest, simulador); «Consumo y costos» es solo para administradores. El tema claro u oscuro se elige también antes de iniciar sesión. La sesión se cierra solo desde el menú del usuario (la inicial o el nombre, arriba a la derecha). Tema claro predeterminado y oscuro opcional, navegación por teclado y lector de pantalla. Revisión con axe-core: 0 hallazgos en 18 pantallas, el recorrido, el panel de Aqua y las hojas «Medir» y «Más», en tema claro y oscuro, en computador y teléfono.
 
 **Criterios de aceptación**
 
@@ -711,7 +711,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 ![MockUp30](mockups/MockUp30.png)
 
-**MockUp37** · Menú del usuario con «Cerrar sesión» y la barra de 7 pestañas
+**MockUp37** · Menú del usuario con «Cerrar sesión» y la barra de pestañas
 
 ![MockUp37](mockups/MockUp37.png)
 
@@ -806,7 +806,7 @@ _Requerimiento sin pantalla propia: se comprueba con las pruebas automáticas y 
 | [MockUp34](mockups/MockUp34.png) | Panel de Aqua con el chat y las funciones agrupadas | RF-22 |
 | [MockUp35](mockups/MockUp35.png) | Chat con Aqua dentro de su panel (celular) | RF-14 |
 | [MockUp36](mockups/MockUp36.png) | Medir: las tres formas de registrar el pH | RF-04 |
-| [MockUp37](mockups/MockUp37.png) | Menú del usuario con «Cerrar sesión» y la barra de 7 pestañas | RNF-04 |
+| [MockUp37](mockups/MockUp37.png) | Menú del usuario con «Cerrar sesión» y la barra de pestañas | RNF-04 |
 | [MockUp38](mockups/MockUp38.png) | Lugares con el cuadro «¿Para qué sirven?» | RF-23 |
 | [MockUp39](mockups/MockUp39.png) | Compartir un lugar con un código | RF-26 |
 | [MockUp40](mockups/MockUp40.png) | Calculadora de dosis con resultado | RF-24 |

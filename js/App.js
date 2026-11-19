@@ -2,7 +2,7 @@ import { Router } from "./core/Router.js";
 import { session } from "./core/Session.js";
 import { bus } from "./core/EventBus.js";
 import { api, ApiError } from "./core/Api.js";
-import { theme } from "./core/Theme.js";
+import { theme, THEME_PENDING } from "./core/Theme.js";
 import { liveStream } from "./core/LiveStream.js";
 import { emptyState, enableCapsLockHints, enableRipples, enableScrollableTables, enableToggleGroups, toast } from "./ui/Components.js";
 import { Shell } from "./views/Shell.js";
@@ -54,7 +54,18 @@ let renderId = 0;
 async function loadSettings() {
   try {
     ctx.settings = await api.get("/users/me/settings");
-    theme.apply(ctx.settings.theme);
+    // A theme chosen on the sign-in screen wins over the account's and is saved there (except in the shared demos).
+    let pending = false;
+    try { pending = localStorage.getItem(THEME_PENDING) === "1"; localStorage.removeItem(THEME_PENDING); } catch { /* ignore */ }
+    if (pending && theme.preference !== ctx.settings.theme) {
+      if (!session.user?.demo) {
+        ctx.settings.theme = theme.preference;
+        api.put("/users/me/settings", { ...ctx.settings }).catch(() => {});
+      }
+      theme.apply(theme.preference);
+    } else {
+      theme.apply(ctx.settings.theme);
+    }
     voice.setEnabled(ctx.settings.voiceEnabled !== false);
     // Shared demo accounts keep the language of each browser (saving it would change it for everyone).
     if (!session.user?.demo) i18n.syncWithAccount(ctx.settings.language, (lang) => {
