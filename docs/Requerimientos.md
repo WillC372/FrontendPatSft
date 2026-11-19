@@ -190,7 +190,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 - [x] La calibración envía el punto y el valor del buffer y muestra la respuesta del medidor.
 - [ ] Pendiente: probarlo con un medidor físico (hasta ahora con puerto simulado).
 
-**MockUp8** · Conexión del medidor
+**MockUp8** · Medidor, dentro de Configuración
 
 ![MockUp8](mockups/MockUp8.png)
 
@@ -208,7 +208,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 - [x] El formulario rechaza rangos incoherentes (mínimo mayor que máximo, fuera de 0–14).
 - [x] Los perfiles predefinidos muestran la fuente de sus rangos.
 
-**MockUp9** · Perfiles de agua
+**MockUp9** · Perfiles de uso, dentro de Lugares
 
 ![MockUp9](mockups/MockUp9.png)
 
@@ -270,11 +270,11 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 - [x] No aparecen citas que no estén en la biblioteca normativa.
 - [x] Si la IA no responde, el diagnóstico por reglas se marca como tal.
 
-**MockUp14** · Diagnóstico IA con fuentes
+**MockUp14** · Diagnóstico y recomendaciones con fuentes
 
 ![MockUp14](mockups/MockUp14.png)
 
-**MockUp15** · Biblioteca normativa
+**MockUp15** · Biblioteca normativa (Normas y Datos oficiales)
 
 ![MockUp15](mockups/MockUp15.png)
 
@@ -387,7 +387,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 - [x] El tema claro es el predeterminado para cuentas nuevas y para quien no ha iniciado sesión.
 - [x] El cambio de tema se aplica al instante y se conserva al volver a entrar.
 
-**MockUp21** · Configuración (tema claro activo)
+**MockUp21** · Configuración con Medidor y Actividad arriba
 
 ![MockUp21](mockups/MockUp21.png)
 
@@ -423,7 +423,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 - [x] «Cerrar mis otras sesiones» invalida los demás tokens al instante.
 - [x] El detalle de una sesión muestra sus acciones en orden.
 
-**MockUp23** · Historial de sesiones
+**MockUp23** · Actividad y sesiones, dentro de Configuración
 
 ![MockUp23](mockups/MockUp23.png)
 
@@ -441,7 +441,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 - [x] Se muestra la fecha de la última importación terminada.
 - [x] Si el USGS no responde, se conservan los datos anteriores y se reintenta.
 
-**MockUp24** · Datos oficiales del USGS
+**MockUp24** · Datos oficiales del USGS, dentro de la Biblioteca
 
 ![MockUp24](mockups/MockUp24.png)
 
@@ -488,7 +488,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 ![MockUp33](mockups/MockUp33.png)
 
-**MockUp34** · Panel de Aqua con el chat y las funciones de IA
+**MockUp34** · Panel de Aqua con el chat y las funciones agrupadas
 
 ![MockUp34](mockups/MockUp34.png)
 
@@ -699,7 +699,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Como** usuario de computador o celular, **quiero** una interfaz clara que funcione en cualquier pantalla, **para** usarla cómodamente donde esté.
 
-**Descripción.** Navegación con una barra inferior que tiene todas las pantallas con su ícono (Inicio, Historial, Lugares, Cuidado, Medir, Perfiles, Medidor, Datos oficiales, Sesiones, Plan, Configuración y Admin para administradores), igual en celular y computador; en el celular se desliza hacia los lados. La sesión se cierra solo desde el menú del usuario (la inicial o el nombre, arriba a la derecha). Tema claro predeterminado y oscuro opcional, navegación por teclado y lector de pantalla. Revisión con axe-core: 0 hallazgos en 18 pantallas, el recorrido, el panel de Aqua y las hojas «Medir» y «Más», en tema claro y oscuro, en computador y teléfono.
+**Descripción.** Navegación con una barra inferior de 7 pestañas con su ícono (Inicio, Historial, Lugares, Cuidado, Medir, Plan, Configuración y Admin para administradores), igual en celular y computador; en el celular cabe sin deslizar. Las pantallas de apoyo están dentro de otra, con una fila de enlaces arriba: Perfiles de uso en Lugares; Medidor y Actividad y sesiones en Configuración; Datos oficiales en la Biblioteca normativa de Aqua. Las funciones de Aqua se agrupan en «Analizar mi agua» (diagnóstico y recomendaciones, anomalías, predicción), «Más herramientas» (informes, biblioteca, foto) y «Análisis avanzado» (LSTM, Isolation Forest, simulador); «Consumo y costos» es solo para administradores. La sesión se cierra solo desde el menú del usuario (la inicial o el nombre, arriba a la derecha). Tema claro predeterminado y oscuro opcional, navegación por teclado y lector de pantalla. Revisión con axe-core: 0 hallazgos en 18 pantallas, el recorrido, el panel de Aqua y las hojas «Medir» y «Más», en tema claro y oscuro, en computador y teléfono.
 
 **Criterios de aceptación**
 
@@ -711,7 +711,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 ![MockUp30](mockups/MockUp30.png)
 
-**MockUp37** · Menú del usuario con «Cerrar sesión» y la barra con todas las pantallas
+**MockUp37** · Menú del usuario con «Cerrar sesión» y la barra de 7 pestañas
 
 ![MockUp37](mockups/MockUp37.png)
 
@@ -777,23 +777,23 @@ _Requerimiento sin pantalla propia: se comprueba con las pruebas automáticas y 
 | [MockUp5](mockups/MockUp5.png) | Inicio (panel principal) con la barra inferior y Aqua | RF-04 |
 | [MockUp6](mockups/MockUp6.png) | Registro manual de una medición | RF-05 |
 | [MockUp7](mockups/MockUp7.png) | Historial con gráfica (30 días) | RF-06 |
-| [MockUp8](mockups/MockUp8.png) | Conexión del medidor | RF-07 |
-| [MockUp9](mockups/MockUp9.png) | Perfiles de agua | RF-08 |
+| [MockUp8](mockups/MockUp8.png) | Medidor, dentro de Configuración | RF-07 |
+| [MockUp9](mockups/MockUp9.png) | Perfiles de uso, dentro de Lugares | RF-08 |
 | [MockUp10](mockups/MockUp10.png) | Detección de anomalías | RF-09 |
 | [MockUp11](mockups/MockUp11.png) | Aprendizaje automático (Isolation Forest) | RF-09 |
 | [MockUp12](mockups/MockUp12.png) | Predicción de tendencias | RF-10 |
 | [MockUp13](mockups/MockUp13.png) | Red neuronal LSTM (sin datos suficientes) | RF-10 |
-| [MockUp14](mockups/MockUp14.png) | Diagnóstico IA con fuentes | RF-11 |
-| [MockUp15](mockups/MockUp15.png) | Biblioteca normativa | RF-11 |
+| [MockUp14](mockups/MockUp14.png) | Diagnóstico y recomendaciones con fuentes | RF-11 |
+| [MockUp15](mockups/MockUp15.png) | Biblioteca normativa (Normas y Datos oficiales) | RF-11 |
 | [MockUp16](mockups/MockUp16.png) | Simulador de escenarios | RF-12 |
 | [MockUp17](mockups/MockUp17.png) | Agente de informes | RF-13 |
 | [MockUp18](mockups/MockUp18.png) | Asistente IA (respuesta completa) | RF-14 |
 | [MockUp19](mockups/MockUp19.png) | Lectura de pH por foto | RF-15 |
 | [MockUp20](mockups/MockUp20.png) | Plan y pagos (PayU en modo de pruebas) | RF-16 |
-| [MockUp21](mockups/MockUp21.png) | Configuración (tema claro activo) | RF-17 |
+| [MockUp21](mockups/MockUp21.png) | Configuración con Medidor y Actividad arriba | RF-17 |
 | [MockUp22](mockups/MockUp22.png) | Foto de perfil | RF-18 |
-| [MockUp23](mockups/MockUp23.png) | Historial de sesiones | RF-19 |
-| [MockUp24](mockups/MockUp24.png) | Datos oficiales del USGS | RF-20 |
+| [MockUp23](mockups/MockUp23.png) | Actividad y sesiones, dentro de Configuración | RF-19 |
+| [MockUp24](mockups/MockUp24.png) | Datos oficiales del USGS, dentro de la Biblioteca | RF-20 |
 | [MockUp25](mockups/MockUp25.png) | Administración (cuentas reales difuminadas) | RF-21 |
 | [MockUp26](mockups/MockUp26.png) | Consumo y costos de IA | RF-21 |
 | [MockUp27](mockups/MockUp27.png) | Bloqueo tras 5 intentos fallidos | RNF-01 |
@@ -803,10 +803,10 @@ _Requerimiento sin pantalla propia: se comprueba con las pruebas automáticas y 
 | [MockUp31](mockups/MockUp31.png) | Datos enmascarados para el administrador de demostración | RNF-05 |
 | [MockUp32](mockups/MockUp32.png) | Inicio de sesión en un celular | RNF-07 |
 | [MockUp33](mockups/MockUp33.png) | Recorrido guiado: Aqua señala el botón Medir | RF-22 |
-| [MockUp34](mockups/MockUp34.png) | Panel de Aqua con el chat y las funciones de IA | RF-22 |
+| [MockUp34](mockups/MockUp34.png) | Panel de Aqua con el chat y las funciones agrupadas | RF-22 |
 | [MockUp35](mockups/MockUp35.png) | Chat con Aqua dentro de su panel (celular) | RF-14 |
 | [MockUp36](mockups/MockUp36.png) | Medir: las tres formas de registrar el pH | RF-04 |
-| [MockUp37](mockups/MockUp37.png) | Menú del usuario con «Cerrar sesión» y la barra con todas las pantallas | RNF-04 |
+| [MockUp37](mockups/MockUp37.png) | Menú del usuario con «Cerrar sesión» y la barra de 7 pestañas | RNF-04 |
 | [MockUp38](mockups/MockUp38.png) | Lugares con el cuadro «¿Para qué sirven?» | RF-23 |
 | [MockUp39](mockups/MockUp39.png) | Compartir un lugar con un código | RF-26 |
 | [MockUp40](mockups/MockUp40.png) | Calculadora de dosis con resultado | RF-24 |
