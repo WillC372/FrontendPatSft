@@ -7,7 +7,7 @@ import { liveStream } from "./core/LiveStream.js";
 import { emptyState, enableCapsLockHints, enableRipples, enableScrollableTables, enableToggleGroups, toast } from "./ui/Components.js";
 import { Shell } from "./views/Shell.js";
 import { loginView, registerView, forgotView, resetView, verifyAdminView } from "./views/Auth.js";
-import { waitForServer } from "./core/ServerWake.js";
+import { wakeAiService, waitForServer } from "./core/ServerWake.js";
 import { watchSessionExpiry } from "./core/SessionTimer.js";
 import { refreshRelativeTimes } from "./core/Format.js";
 import { lazyView } from "./core/LazyView.js";
@@ -189,6 +189,9 @@ wake.setAttribute("role", "status");
 wake.innerHTML = `<div class="wake-card"><div class="spinner"></div><strong>Activando el servidor...</strong>
   <p>El servidor gratuito se apaga cuando nadie lo usa y tarda hasta un minuto en arrancar. Espera un momento.</p></div>`;
 document.body.append(wake);
+// The AI service sleeps when nobody uses it: it starts waking up now, while the person signs in or looks around.
+wakeAiService();
+bus.on("session:changed", () => { if (session.isAuthenticated) wakeAiService(); });
 waitForServer(() => { wake.hidden = false; }).then((up) => {
   if (up) {
     wake.remove();

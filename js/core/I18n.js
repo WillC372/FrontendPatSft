@@ -9,7 +9,8 @@ import { LANG, LANG_KEY, LANGUAGES, IS_SPANISH, SUPPORTED } from "./Locale.js";
 // order of the other language is respected; numbers travel as {0}, {1} so "Cada 7 días" and "Cada 3 días" share one
 // translation. Anything marked translate="no" (names, notes, what the person writes) is left as it is.
 
-const API = "https://aquasense-backend-willc372.onrender.com/api/v1/i18n";
+// The translations are served by the AI service, which makes them.
+const API = `${(window.AQUASENSE_CONFIG?.aiBaseUrl || "https://aquasense-ai-willc372.onrender.com/api/v1").replace(/\/$/, "")}/i18n`;
 const DICT_KEY = (lang) => `aquasense.i18n.${lang}`;
 const RTL = new Set();
 // Every language of the app is drawn in the server's PDF (Chinese and Japanese with their own font).

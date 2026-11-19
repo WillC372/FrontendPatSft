@@ -7,15 +7,18 @@ const RETRY_MS = 3000;
 const GIVE_UP_MS = 150000;
 const SLOW_MS = 1200;
 
-function healthUrl() {
-  return new URL(window.AQUASENSE_CONFIG?.apiBaseUrl || "http://localhost:8080/api/v1").origin + "/actuator/health";
+const BACKEND = () => window.AQUASENSE_CONFIG?.apiBaseUrl || "http://localhost:8080/api/v1";
+const AI = () => window.AQUASENSE_CONFIG?.aiBaseUrl || "http://localhost:8081/api/v1";
+
+function healthUrl(base = BACKEND()) {
+  return new URL(base).origin + "/actuator/health";
 }
 
-async function ping() {
+async function ping(base) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), HEALTH_TIMEOUT_MS);
   try {
-    const response = await fetch(healthUrl(), { signal: controller.signal, cache: "no-store" });
+    const response = await fetch(healthUrl(base), { signal: controller.signal, cache: "no-store" });
     return response.ok;
   } catch {
     return false;
@@ -24,13 +27,16 @@ async function ping() {
   }
 }
 
-/** Resolves true when the backend answers; calls {@code onSlow} once if it takes long (it is waking up). */
-export async function waitForServer(onSlow) {
+/**
+ * Resolves true when the server answers (the backend, or the one of {@code base}); calls {@code onSlow} once if it
+ * takes long (it is waking up).
+ */
+export async function waitForServer(onSlow, base) {
   const start = Date.now();
   const slowTimer = setTimeout(onSlow, SLOW_MS);
   try {
     while (Date.now() - start < GIVE_UP_MS) {
-      if (await ping()) return true;
+      if (await ping(base)) return true;
       onSlow();
       await new Promise((r) => setTimeout(r, RETRY_MS));
     }
@@ -38,4 +44,12 @@ export async function waitForServer(onSlow) {
   } finally {
     clearTimeout(slowTimer);
   }
+}
+
+/**
+ * The AI service sleeps when nobody uses it (it does not stay awake, to save the free plan's hours). Asking for its
+ * health as soon as someone signs in wakes it, so it is ready by the time they open Aqua. Fire and forget.
+ */
+export function wakeAiService() {
+  fetch(healthUrl(AI()), { cache: "no-store" }).catch(() => {});
 }
