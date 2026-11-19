@@ -1,0 +1,61 @@
+// Regression tests for the engineering team's hook that protects `main` (H-024). The same cases run against the
+// JavaScript version (frontend and database) and the Java one (backend and AI service) when Java is installed.
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { execFileSync, spawnSync } from "node:child_process";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const hooks = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../.claude/hooks");
+const versions = [["JavaScript", "node", path.join(hooks, "proteger-main.mjs")]];
+if (spawnSync("java", ["-version"]).status === 0) versions.push(["Java", "java", path.join(hooks, "ProtegerMain.java")]);
+
+function repoOnMain() {
+  const dir = mkdtempSync(path.join(tmpdir(), "proteger-main-"));
+  const git = (...args) => execFileSync("git", ["-C", dir, ...args], { stdio: "ignore" });
+  git("init", "-q", "-b", "main");
+  git("-c", "user.name=t", "-c", "user.email=t@example.com", "-c", "commit.gpgsign=false", "commit", "-q", "--allow-empty", "-m", "init");
+  return dir;
+}
+
+const exitCode = (runner, hook, dir, command) =>
+  spawnSync(runner, [hook], { input: JSON.stringify({ tool_name: "Bash", tool_input: { command }, cwd: dir }) }).status;
+
+for (const [language, runner, hook] of versions) {
+
+test(`${language}: blocks commands that change main or rewrite history`, () => {
+  const dir = repoOnMain();
+  try {
+    for (const command of [
+      "git commit -m x",
+      "git -c user.name=x commit -m x",
+      "git --no-pager commit -m x",
+      "git -c x=y reset --hard",
+      "git reset --hard",
+      "git push",
+      "git push origin HEAD",
+      "git push -u origin HEAD",
+      "git push origin HEAD:main",
+      "git push origin +mejora/x",
+      "git push -f origin mejora/x",
+      "git branch -D main",
+    ]) assert.equal(exitCode(runner, hook, dir, command), 2, command);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test(`${language}: lets work happen in a branch`, () => {
+  const dir = repoOnMain();
+  try {
+    for (const command of [
+      "git status",
+      "git log --oneline",
+      "git switch -c mejora/H-1-x && git commit -m x",
+      "git switch --create mejora/H-1-x && git commit -m x",
+      "git switch -c mejora/H-1-x && git push -u origin mejora/H-1-x",
+      "git push -u origin mejora/H-1-x",
+    ]) assert.equal(exitCode(runner, hook, dir, command), 0, command);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+}
