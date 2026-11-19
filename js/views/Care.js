@@ -136,7 +136,7 @@ function calculatorCard(place, latest) {
   const goals = Object.entries(GOALS);
   return `<section class="card reveal calc-card" aria-labelledby="calc-title">
     <div class="card-head"><div class="card-title" id="calc-title">${icon("calc")}Calculadora de dosis</div>
-      <span class="muted small">${own(place.name)} · ${volumeText(place.volumeLiters)}</span></div>
+      <span class="muted small"><span>${own(place.name)}</span> <span>· ${volumeText(place.volumeLiters)}</span></span></div>
     ${isAquarium(place.kind) ? `<div class="banner banner-warn">${icon("alert")}<p>En acuarios y estanques usa productos hechos para peces y cambia el pH como mucho 0,2 por día. Los productos de piscina pueden matarlos.</p></div>` : ""}
     <form class="stack" data-calc novalidate>
       <div class="grid grid-2">
