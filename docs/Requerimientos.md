@@ -3,7 +3,7 @@
 Requerimientos funcionales (RF) y no funcionales (RNF) de la aplicación, escritos como historias de usuario con su descripción,
 criterios de aceptación y MockUp. Cada uno está también como Issue del repositorio (ver [`issues/`](issues/)).
 
-Los MockUps son capturas de la aplicación publicada (https://frontendpatsft.vercel.app) en tema claro, tomadas el 18 de noviembre de 2026 con la navegación por barra inferior y el robot Aqua.
+Los MockUps son capturas de la aplicación publicada (https://aquaassistantai.vercel.app) en tema claro, tomadas el 18 de noviembre de 2026 con la navegación por barra inferior y el robot Aqua.
 Las mediciones que aparecen son registros manuales de prueba de una cuenta temporal, borrada después; en las capturas de
 administración se difuminaron las cuentas reales.
 

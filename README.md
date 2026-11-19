@@ -141,11 +141,11 @@ El frontend habla con dos servicios por su API REST (`/api/v1`, con el mismo tok
 
 El servicio de IA duerme cuando nadie lo usa (el plan gratuito de Render no alcanza para tener los dos despiertos todo el mes): la app lo despierta apenas se abre (`wakeAiService` en `js/core/ServerWake.js`), así que suele estar listo cuando se toca a Aqua. La base de datos y su esquema están en [DBPatSft](https://github.com/WillC372/DBPatSft).
 
-El origen del frontend debe estar en la variable `CORS_ORIGINS` del backend y del servicio de IA: `http://localhost:5500` en desarrollo y `https://frontendpatsft.vercel.app` en producción.
+El origen del frontend debe estar en la variable `CORS_ORIGINS` del backend y del servicio de IA: `http://localhost:5500` en desarrollo y `https://aquaassistantai.vercel.app` en producción.
 
 ## Despliegue
 
-Vercel publica la carpeta tal cual (sin compilación) en **https://frontendpatsft.vercel.app**. `vercel.json` envía cualquier ruta a `index.html` y agrega cabeceras de seguridad:
+Vercel publica la carpeta tal cual (sin compilación) en **https://aquaassistantai.vercel.app**. `vercel.json` envía cualquier ruta a `index.html` y agrega cabeceras de seguridad:
 
 - `Content-Security-Policy`: solo el código del propio sitio (sin scripts en línea), Google Fonts, la API de Aqua Assistant en Render y el formulario de pago de PayU.
 - `X-Frame-Options: DENY`: la página no puede incrustarse en otros sitios.
@@ -162,7 +162,7 @@ No hay compilación: la carpeta completa es el sitio. Para publicarla en un host
 2. Agrega la URL del sitio a `CORS_ORIGINS` del backend.
 3. Sube la carpeta tal cual.
 
-**Estado:** publicado en https://frontendpatsft.vercel.app, conectado al backend de Render.
+**Estado:** publicado en https://aquaassistantai.vercel.app, conectado al backend de Render.
 
 ## Pruebas
 
