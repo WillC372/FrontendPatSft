@@ -7,14 +7,24 @@ self.addEventListener("push", (event) => {
   let data = {};
   try { data = event.data ? event.data.json() : {}; } catch { data = { body: event.data ? event.data.text() : "" }; }
   const title = data.title || "Aqua Assistant AI";
-  event.waitUntil(self.registration.showNotification(title, {
-    body: data.body || "",
-    icon: "/assets/img/Icon192.png",
-    badge: "/assets/img/Icon192.png",
-    data: { url: data.url || "/" },
-    tag: title,
-    renotify: true,
-  }));
+  // An alteration of the pH (alarm): the notice stays until it is touched, vibrates and makes the device's sound;
+  // an open app also hears about it at once to sound its own alarm and let Aqua speak.
+  const alarm = data.alarm === true;
+  event.waitUntil(Promise.all([
+    self.registration.showNotification(title, {
+      body: data.body || "",
+      icon: "/assets/img/Icon192.png",
+      badge: "/assets/img/Icon192.png",
+      data: { url: data.url || "/" },
+      tag: alarm ? "ph-alarm" : title,
+      renotify: true,
+      requireInteraction: alarm,
+      silent: false,
+      vibrate: alarm ? [400, 200, 400, 200, 800] : [200],
+    }),
+    alarm ? self.clients.matchAll({ type: "window", includeUncontrolled: true })
+      .then((windows) => windows.forEach((w) => w.postMessage({ type: "ph-alarm" }))) : null,
+  ]));
 });
 
 self.addEventListener("notificationclick", (event) => {

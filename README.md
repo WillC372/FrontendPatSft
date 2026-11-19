@@ -30,6 +30,8 @@ Presentar la información y recoger las acciones del usuario. **Toda la lógica 
 - **Datos oficiales** (`#/official`, `js/views/OfficialData.js`): datos reales de pH de las estaciones del Servicio Geológico de EE. UU. (USGS) que el backend importa cada 3 horas: estaciones que reportaron en 24 horas, mediana, mínimo, máximo y distribución; ocho estaciones destacadas con su serie de 24 horas, 7 o 30 días; las de pH más bajo y más alto, con enlace a la fuente. Se muestran aparte de las mediciones del usuario e indican si los valores son provisionales.
 - **Inicio**: indicador circular de pH animado, estado del agua con escala 0-14, perfil activo y su rango, referencia oficial del USGS, lo que sugiere Aqua, alertas sin leer (solo si hay) y consejo.
 - **Medición**: el botón "Medir" de la barra, con el medidor conectado (resultado con clasificación, fecha, dispositivo, perfil, explicación y validación; guardar o descartar), modo en tiempo real por SSE y registro manual.
+- **Alarma por alteración del pH** (`js/views/PhAlarm.js`, `js/core/AlarmSound.js`, `js/core/AlarmRules.js`): si el backend crea una alerta «Alteración del pH en el agua» (el pH cambió 0,5 o más en la última hora o entró en nivel crítico, con cualquier perfil), suena una sirena hecha con Web Audio al volumen del equipo, aparece una ventana que no se cierra sola con «Es peligroso» o «Por ahora no es peligroso» y qué hacer, y Aqua lo dice en voz alta. Se repite cada pocos segundos hasta pulsar «Entendido» (como mucho dos minutos). Con la app en segundo plano muestra un aviso del sistema, y el aviso push del servidor es urgente, queda en pantalla y vibra. La app revisa las alertas cada 15 s y al instante con el medidor conectado al mismo equipo, cuya medición continua («Medir cada 10 s») sigue aunque se cambie de pantalla. En Configuración se apaga el sonido por dispositivo y se prueba la alarma.
+- **Animaciones**: siguen la opción del sistema «reducir movimiento» (en Windows, «Efectos de animación»), salvo que en Configuración → Apariencia se elija «Animaciones: siempre» (`js/core/Motion.js`); el agua del acceso se mueve siempre, más despacio si el sistema pide menos movimiento.
 - **Historial**: 7 o 30 días, rango personalizado, filtros por origen y estado, tabla paginada, borrado con confirmación, exportación CSV. Las gráficas (evolución y distribución) se generan solo cuando el usuario las pide.
 - **Diagnóstico IA**: riesgo con anillo animado, hallazgos con evidencia, causas probables, plan de acción priorizado, datos faltantes, confianza, salvaguardas aplicadas e historial. Indica qué proveedor respondió (Gemini, Groq o reglas). El último diagnóstico aparece también en el inicio.
 - **Medidor conectado a este equipo** (Conexión, `js/core/BrowserMeter.js`, `js/views/UsbMeter.js`): en Chrome o Edge, la página abre el puerto USB del medidor (o un Bluetooth emparejado como puerto serie) con Web Serial, habla su protocolo (firmware Aqua Assistant, Atlas EZO-pH o medidor de laboratorio que envía texto), mide, calibra y guarda mediciones reales en el backend. Con el medidor conectado, "Medir" (barra inferior) ofrece medir con él.
@@ -99,7 +101,7 @@ Frontend/
 ├── .github/workflows/      Revisión automática en cada push
 └── docs/
     ├── Requerimientos.md    Requerimientos funcionales y no funcionales (historias de usuario)
-    ├── mockups/             MockUp1 ... MockUp47 (capturas de la app publicada; 46 y 47 en tema oscuro)
+    ├── mockups/             MockUp1 ... MockUp48 (capturas de la app publicada; 46 y 47 en tema oscuro)
     └── issues/              Un archivo por Issue y los scripts que los crean en GitHub
 ```
 
@@ -194,7 +196,7 @@ Se registran los errores de consola y las peticiones fallidas. La accesibilidad 
 
 ## Requerimientos y MockUps
 
-Los requerimientos funcionales (RF-01 a RF-29) y no funcionales (RNF-01 a RNF-07) están en [`docs/Requerimientos.md`](docs/Requerimientos.md), cada uno como historia de usuario (**Como**… **quiero**… **para**…), con descripción, criterios de aceptación y su MockUp. Los mismos textos están en [`docs/issues/`](docs/issues/) para crear los Issues del repositorio (instrucciones abajo).
+Los requerimientos funcionales (RF-01 a RF-30) y no funcionales (RNF-01 a RNF-07) están en [`docs/Requerimientos.md`](docs/Requerimientos.md), cada uno como historia de usuario (**Como**… **quiero**… **para**…), con descripción, criterios de aceptación y su MockUp. Los mismos textos están en [`docs/issues/`](docs/issues/) para crear los Issues del repositorio (instrucciones abajo).
 
 | | |
 |---|---|

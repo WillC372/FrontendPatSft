@@ -14,10 +14,8 @@ const HELP = {
 
 /** Card to connect and read a meter plugged into this computer (Web Serial). Returns a cleanup function. */
 export function usbMeter(host) {
-  let continuous = null;
   const lines = [];
-
-  const stopContinuous = () => { clearTimeout(continuous); continuous = null; };
+  const stopContinuous = () => browserMeter.stopContinuous();
 
   function render() {
     if (!browserMeter.supported) {
@@ -57,6 +55,7 @@ export function usbMeter(host) {
       }));
       return;
     }
+    const continuous = browserMeter.continuous;
     const p = PROTOCOLS[browserMeter.protocol];
     const r = browserMeter.lastReading;
     host.innerHTML = `
@@ -78,7 +77,7 @@ export function usbMeter(host) {
         </div>
       </div>`;
     host.querySelector("[data-usb-read]").addEventListener("click", (e) => withBusy(e.currentTarget, measureOnce));
-    host.querySelector("[data-usb-cont]").addEventListener("click", () => { if (continuous) stopContinuous(); else loop(); render(); });
+    host.querySelector("[data-usb-cont]").addEventListener("click", () => { if (continuous) stopContinuous(); else browserMeter.startContinuous(CONTINUOUS_EVERY_MS); render(); });
     host.querySelector("[data-usb-cal]")?.addEventListener("click", calibrate);
     host.querySelector("[data-usb-off]").addEventListener("click", async () => {
       stopContinuous();
@@ -98,17 +97,6 @@ export function usbMeter(host) {
     }
   }
 
-  /** Reads and saves every CONTINUOUS_EVERY_MS until stopped; {@code continuous} holds the pending timer. */
-  function loop(delay = 0) {
-    continuous = setTimeout(async () => {
-      try {
-        await browserMeter.measureAndSave();
-      } catch (error) {
-        toast(error.message, "warn");
-      }
-      if (continuous && browserMeter.connected) { render(); loop(CONTINUOUS_EVERY_MS); }
-    }, delay);
-  }
 
   async function calibrate() {
     const point = await modal({
@@ -144,6 +132,9 @@ export function usbMeter(host) {
     if (pre) pre.textContent = lines.join("\n");
   });
   const offLost = bus.on("meter:lost", () => { stopContinuous(); toast("Se perdió la conexión con el medidor (¿se desconectó el cable?).", "warn"); render(); });
+  const offError = bus.on("meter:error", (message) => toast(message, "warn"));
+  // Each reading of the continuous measuring redraws the value; the measuring itself goes on in other screens.
+  const offReading = bus.on("meter:browser", (state) => { if (state.continuous) render(); });
   render();
-  return () => { stopContinuous(); offLine(); offLost(); };
+  return () => { offLine(); offLost(); offError(); offReading(); };
 }

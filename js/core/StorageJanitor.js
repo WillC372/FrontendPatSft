@@ -1,7 +1,7 @@
 // Cleans what the app saved in this browser and no longer needs: keys of old versions and the "tour seen" marks of
 // accounts that have not signed in here for a long time. It runs once when the app opens and never touches other sites.
 
-const KEEP = [/^aquasense\.theme$/, /^aquasense\.theme\.pending$/, /^aquasense\.motion$/, /^aquasense\.session$/, /^aquasense\.aqua\.tips$/, /^aquasense\.tour\.v1\.\d+$/,
+const KEEP = [/^aquasense\.theme$/, /^aquasense\.theme\.pending$/, /^aquasense\.motion$/, /^aquasense\.alarm\.sound$/, /^aquasense\.session$/, /^aquasense\.aqua\.tips$/, /^aquasense\.tour\.v1\.\d+$/,
   /^aquasense\.lang$/, /^aquasense\.lang\.pending$/, /^aquasense\.voice\.(name|rate)$/, /^aquasense\.help\.[a-z-]+$/];
 const MAX_TOURS = 10;
 

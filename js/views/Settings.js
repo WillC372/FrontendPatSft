@@ -4,6 +4,7 @@ import { bus } from "../core/EventBus.js";
 import { session } from "../core/Session.js";
 import { theme } from "../core/Theme.js";
 import { motionChoice, setMotionChoice, systemReducesMotion } from "../core/Motion.js";
+import { alarmSoundOn, setAlarmSound } from "../core/AlarmSound.js";
 import { esc, fmt, own, quotaText } from "../core/Format.js";
 import { icon, logo } from "../ui/Icons.js";
 import { bindHelp, helpBox } from "../ui/Help.js";
@@ -106,11 +107,15 @@ export const settingsView = {
             <div class="card-head"><div class="card-title">${icon("bell")}Notificaciones y medición</div></div>
             ${helpBox("notices", "¿Cómo me llegan los avisos?", [
               ["bell", "Dentro de la app", "La campana de arriba muestra las alertas cuando una medición sale del rango. Siempre está."],
+              ["alert", "Alarma si el pH se altera", "Si el pH cambia de golpe (por ejemplo, algo cayó a la piscina o al acuario) o llega a nivel crítico, suena una alarma, aparece una ventana que no se cierra sola y Aqua dice en voz alta qué pasó y si es peligroso. Funciona con cualquier perfil."],
               ["send", "En tu celular o computador, aunque la app esté cerrada", "Activa «Avisos en este celular o computador» en cada dispositivo donde los quieras; el navegador te pedirá permiso. Con «Probar» compruebas que lleguen. En iPhone, primero agrega la app a la pantalla de inicio."],
               ["mail", "Por correo", "Con «Alertas por correo» te escribo cuando el agua sale del rango (como mucho un correo por hora). Los recordatorios también pueden llegar por correo si lo marcas al crearlos."],
             ])}
             <div class="setting-row"><div><strong>Notificaciones de alertas</strong><p>Avisos cuando una medición sale del rango (en la app y en los dispositivos donde actives los avisos).</p></div>
               <label class="switch"><input type="checkbox" data-notifications ${draft.notificationsEnabled ? "checked" : ""} aria-label="Notificaciones de alertas"><span></span></label></div>
+            <div class="setting-row"><div><strong>Alarma con sonido si el pH se altera</strong><p>En este dispositivo suena una alarma al volumen del equipo y Aqua avisa en voz alta (si «Aqua habla» está encendido). Para que suene con la app abierta, el navegador pide haber tocado la página una vez.</p></div>
+              <div class="row" style="gap:8px;flex-wrap:nowrap"><button type="button" class="btn btn-sm" data-alarm-test>${icon("volume")}Probar alarma</button>
+              <label class="switch"><input type="checkbox" data-alarm-sound ${alarmSoundOn() ? "checked" : ""} aria-label="Alarma con sonido si el pH se altera"><span></span></label></div></div>
             <div class="setting-row"><div><strong>Alertas por correo</strong><p>Te escribo a tu correo cuando una medición sale del rango (como mucho uno por hora).</p></div>
               <label class="switch"><input type="checkbox" data-email-alerts ${draft.emailAlerts !== false ? "checked" : ""} aria-label="Alertas por correo"><span></span></label></div>
             <div class="setting-row push-row"><div><strong>Avisos en este celular o computador</strong><p data-push-status>Revisando...</p></div>
@@ -179,6 +184,14 @@ export const settingsView = {
       root.querySelectorAll("[data-goto]").forEach((x) => x.classList.toggle("active", x === b));
       document.getElementById(`s-${b.dataset.goto}`).scrollIntoView({ behavior: "smooth", block: "start" });
     }));
+    root.querySelector("[data-alarm-sound]").addEventListener("change", (e) => {
+      setAlarmSound(e.target.checked);
+      toast(e.target.checked ? "La alarma sonará en este dispositivo." : "La alarma no sonará en este dispositivo; la ventana y el aviso siguen.", "ok", 3000);
+    });
+    root.querySelector("[data-alarm-test]").addEventListener("click", (e) => {
+      if (!alarmSoundOn()) { toast("Enciende primero la alarma con sonido.", "warn"); return; }
+      withBusy(e.currentTarget, async () => (await import("./PhAlarm.js")).phAlarm.test());
+    });
     root.querySelectorAll("[data-motion-option]").forEach((b) => b.addEventListener("click", () => {
       setMotionChoice(b.dataset.motionOption);
       root.querySelectorAll("[data-motion-option]").forEach((x) => { x.classList.toggle("active", x === b); x.setAttribute("aria-checked", String(x === b)); });

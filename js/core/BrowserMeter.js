@@ -12,6 +12,7 @@ class BrowserMeter {
   #waiters = [];
   #closing = false;
   #loop = null;
+  #every = null; // timer of the continuous measuring
   protocol = null;
   name = null;
   lastLine = "";
@@ -20,7 +21,31 @@ class BrowserMeter {
   get supported() { return typeof navigator !== "undefined" && "serial" in navigator; }
   get connected() { return this.#port !== null; }
 
-  #emit() { bus.emit("meter:browser", { connected: this.connected, name: this.name, protocol: this.protocol, lastReading: this.lastReading }); }
+  #emit() { bus.emit("meter:browser", { connected: this.connected, name: this.name, protocol: this.protocol, lastReading: this.lastReading, continuous: this.continuous }); }
+
+  /** Measuring every few seconds goes on while the app is open, on any screen (a meter left in the water). */
+  get continuous() { return this.#every !== null; }
+
+  startContinuous(everyMs = 10000) {
+    if (this.#every !== null || !this.connected) return;
+    const tick = async () => {
+      try {
+        await this.measureAndSave();
+      } catch (error) {
+        bus.emit("meter:error", error.message);
+      }
+      if (this.#every !== null && this.connected) this.#every = setTimeout(tick, everyMs); else this.#every = null;
+      this.#emit();
+    };
+    this.#every = setTimeout(tick, 0);
+    this.#emit();
+  }
+
+  stopContinuous() {
+    clearTimeout(this.#every);
+    this.#every = null;
+    this.#emit();
+  }
 
   async connect(protocol, baudRate, name) {
     if (!this.supported) throw new Error("Este navegador no puede conectar medidores USB. Usa Google Chrome o Microsoft Edge en un computador.");
@@ -185,6 +210,8 @@ class BrowserMeter {
   }
 
   async disconnect() {
+    clearTimeout(this.#every);
+    this.#every = null;
     this.#closing = true;
     const port = this.#port;
     this.#port = null;

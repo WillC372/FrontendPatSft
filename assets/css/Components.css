@@ -206,3 +206,19 @@ img.avatar { object-fit: cover; background: var(--surface-2); }
 .pw-rules svg { width: 14px; height: 14px; }
 .pw-rules li.ok { color: var(--ok); }
 .caps-hint { display: block; margin-top: 4px; font-size: 12.5px; font-weight: 600; color: var(--warn); }
+
+/* ---------- Alarm for an alteration of the pH ---------- */
+.alarm-modal { border: 2px solid var(--crit); animation: pop-in .28s cubic-bezier(.2,1.2,.4,1), alarm-glow 1.2s ease-in-out .3s infinite; }
+.alarm-modal .modal-head h2 { display: flex; align-items: center; gap: 8px; color: var(--crit); }
+.alarm-modal .modal-head h2 svg { width: 26px; height: 26px; flex: none; }
+.alarm-box { display: flex; gap: 14px; align-items: flex-start; padding: 14px; border-radius: 14px; background: var(--warn-bg); border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent); }
+.alarm-box.danger { background: var(--crit-bg); border-color: color-mix(in srgb, var(--crit) 45%, transparent); }
+.alarm-box p { margin: 6px 0; line-height: 1.5; }
+.alarm-face { width: 64px; height: 64px; flex: none; animation: alarm-shake .5s ease-in-out infinite; }
+.alarm-level { font-size: 17px; color: var(--warn); }
+.alarm-box.danger .alarm-level { color: var(--crit); }
+.alarm-tap { display: flex; gap: 8px; align-items: center; margin-top: 12px; }
+.alarm-tap svg { width: 18px; height: 18px; flex: none; }
+.alert-item.alteration strong { color: var(--crit); }
+@keyframes alarm-glow { 50% { box-shadow: 0 0 0 6px var(--crit-bg), 0 0 34px color-mix(in srgb, var(--crit) 55%, transparent); } }
+@keyframes alarm-shake { 0%, 100% { rotate: 0deg; } 25% { rotate: -7deg; } 75% { rotate: 7deg; } }

@@ -42,6 +42,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 | [RF-27](#rf-27) | Historial de calibraciones | Como usuario con medidor, quiero ver cada calibración que hice, para saber cuándo recalibrar o cambiar la sonda. | Hecho | [MockUp43](mockups/MockUp43.png) |
 | [RF-28](#rf-28) | Toda la app en el idioma elegido | Como usuario que no habla español, quiero elegir mi idioma (español, inglés, francés, alemán, italiano, chino o japonés) y ver toda la app en él, para entender y usar todas las funciones. | Hecho | [MockUp44](mockups/MockUp44.png), [MockUp45](mockups/MockUp45.png) |
 | [RF-29](#rf-29) | Voz de Aqua | Como usuario, quiero que Aqua me salude y me lea sus respuestas con una voz natural, y poder apagarla, para usar el asistente sin tener que leer todo. | Hecho | [MockUp44](mockups/MockUp44.png) |
+| [RF-30](#rf-30) | Alarma por alteración del pH | Como dueño de una piscina, un acuario u otra agua con un medidor dentro, quiero que la app me avise de inmediato con sonido y que Aqua me diga si el cambio es peligroso cuando el pH se altera, para sacar a las personas del agua o proteger a los peces a tiempo. | Hecho | [MockUp48](mockups/MockUp48.png) |
 
 ## Requerimientos no funcionales
 
@@ -636,6 +637,26 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 **MockUp44** · Idioma y voz de Aqua en Configuración
 
 ![MockUp44](mockups/MockUp44.png)
+
+### RF-30
+
+**Alarma por alteración del pH** · Funcional · Estado: Hecho
+
+**Como** dueño de una piscina, un acuario u otra agua con un medidor dentro, **quiero** que la app me avise de inmediato con sonido y que Aqua me diga si el cambio es peligroso cuando el pH se altera, **para** sacar a las personas del agua o proteger a los peces a tiempo.
+
+**Descripción.** Con el medidor en el agua («Medir cada 10 s», que sigue aunque se cambie de pantalla), cada medición se compara con las de la última hora. Si el pH cambia 0,5 o más (por ejemplo, algo cayó al agua), o si entra en nivel crítico, se crea la alerta «Alteración del pH en el agua». Dice si es peligroso según los rangos del perfil (nivel crítico = peligroso) y qué hacer según el tipo de agua: en una piscina, que nadie se bañe y salgan del agua; en un acuario, que los peces corren peligro; en agua potable, no tomarla; en riego, no regar. Funciona con cualquier perfil. En la app suena una alarma (al volumen del equipo), aparece una ventana que no se cierra sola y Aqua lo dice en voz alta; la alarma se repite cada pocos segundos hasta pulsar «Entendido». En el celular o computador llega un aviso urgente que queda en pantalla y vibra, aunque la app esté cerrada (si se activaron los avisos). La misma alerta no se repite en ese lugar durante 30 minutos, salvo que se vuelva peligrosa. En Configuración se puede apagar el sonido en cada dispositivo y probar la alarma. Si la app está abierta en otro equipo, revisa las alertas cada 15 segundos. Con el medidor conectado al mismo equipo, el aviso es inmediato.
+
+**Criterios de aceptación**
+
+- [x] Una caída o subida de 0,5 o más en la última hora, o la entrada en nivel crítico, crea una sola alerta «Alteración del pH en el agua».
+- [x] El mensaje dice si es peligroso según el perfil y qué hacer según el tipo de agua.
+- [x] En la app suena la alarma, aparece la ventana y Aqua lee el mensaje; «Entendido» la detiene y marca la alerta como leída.
+- [x] El aviso del celular o computador es urgente y queda en pantalla hasta tocarlo.
+- [x] Los navegadores solo dejan sonar una página después de tocarla una vez; si no, la ventana lo indica.
+
+**MockUp48** · Alarma en una piscina: el pH bajó de 7,50 a 5,20
+
+![MockUp48](mockups/MockUp48.png)
 
 ### RNF-01
 

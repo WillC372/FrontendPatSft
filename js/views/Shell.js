@@ -10,6 +10,7 @@ import { openAccountDialog } from "./AccountDialog.js";
 import { confirmDialog, toast } from "../ui/Components.js";
 import { AquaBot } from "./AquaBot.js";
 import { reducedMotion } from "../core/Motion.js";
+import { phAlarm } from "./PhAlarm.js";
 
 // Bottom bar (every screen size): Inicio, Historial, Medir (the main action, in the middle), Cuidado and Plan, or for
 // the administrator Plan and Admin (care then opens from the place menu). Lugares opens from the place menu (top),
@@ -113,8 +114,9 @@ export class Shell {
   renderDevice(status) {
     const pill = this.root.querySelector("[data-device-pill]");
     if (browserMeter.connected) {
-      pill.innerHTML = `<span class="dot" style="color:var(--ok)"></span><span class="device-chip-text">${esc(browserMeter.name)}</span>${icon("usb")}`;
-      pill.setAttribute("aria-label", `Medidor conectado por USB: ${browserMeter.name}`);
+      const every = browserMeter.continuous ? " · midiendo" : "";
+      pill.innerHTML = `<span class="dot ${every ? "dot-live" : ""}" style="color:var(--ok)"></span><span class="device-chip-text">${esc(browserMeter.name)}${every}</span>${icon("usb")}`;
+      pill.setAttribute("aria-label", `Medidor conectado por USB: ${browserMeter.name}${every ? ", midiendo cada 10 segundos" : ""}`);
       pill.classList.add("on");
       return;
     }
@@ -135,6 +137,7 @@ export class Shell {
       count.hidden = alerts.length === 0;
       count.textContent = alerts.length > 9 ? "9+" : alerts.length;
       this.alerts = alerts;
+      phAlarm.check(alerts, this.ctx.router);
     } catch { /* ignore */ }
   }
 
@@ -143,7 +146,7 @@ export class Shell {
     const alerts = this.alerts || [];
     panel.innerHTML = `<div class="row-between" style="margin-bottom:8px"><h2 class="h-sm">Alertas</h2>
         ${alerts.length ? `<button class="link-btn" data-read-all>Marcar como leidas</button>` : ""}</div>
-      ${alerts.length ? alerts.slice(0, 8).map((a) => `<div class="alert-item ${esc(a.severity)}">${icon(a.severity === "CRITICAL" ? "error" : "alert")}
+      ${alerts.length ? alerts.slice(0, 8).map((a) => `<div class="alert-item ${esc(a.severity)}${a.kind === "PH_ALTERATION" ? " alteration" : ""}">${icon(a.severity === "CRITICAL" ? "error" : "alert")}
         <div><strong>${esc(a.title)}</strong><p>${esc(a.message)}</p><small class="muted">${relativeTime(a.createdAt)}</small></div></div>`).join("")
         : `<p class="muted" style="padding:10px">No tienes alertas pendientes.</p>`}`;
     panel.querySelector("[data-read-all]")?.addEventListener("click", async () => {
@@ -214,6 +217,13 @@ export class Shell {
     this.#offs.push(bus.on("meter:browser", () => this.refreshDevice()));
     this.#offs.push(bus.on("measurement:saved", () => this.refreshAlerts()));
     this.#offs.push(bus.on("alerts:changed", () => this.refreshAlerts()));
+    // A meter in another device (or another person of the place) can alter the pH: the alerts are checked every
+    // 15 seconds, and right away when the server sends an urgent notice to this device. A meter connected to this
+    // device warns at once (each saved reading refreshes the alerts).
+    const poll = setInterval(() => this.refreshAlerts(), 15000);
+    const onWorker = (event) => { if (event.data?.type === "ph-alarm") this.refreshAlerts(); };
+    navigator.serviceWorker?.addEventListener("message", onWorker);
+    this.#offs.push(() => { clearInterval(poll); navigator.serviceWorker?.removeEventListener("message", onWorker); phAlarm.stop(); browserMeter.stopContinuous(); });
     this.#offs.push(bus.on("live:reading", (reading) => {
       if (reading.status === "CRITICAL" && this.ctx.settings?.notificationsEnabled && Date.now() - this.#lastCriticalToast > 60000) {
         this.#lastCriticalToast = Date.now();
