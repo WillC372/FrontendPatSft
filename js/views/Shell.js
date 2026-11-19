@@ -82,6 +82,7 @@ export class Shell {
   }
 
   activate(name, title) {
+    bus.emit("topmenu:open", null);
     this.root.querySelectorAll("[data-route]").forEach((link) => {
       const active = link.dataset.route === name;
       link.classList.toggle("active", active);
@@ -150,9 +151,14 @@ export class Shell {
   #bind() {
     const bell = this.root.querySelector("[data-bell]");
     const panel = this.root.querySelector("[data-alerts]");
+    // Only one menu of the top bar is open at a time: opening one closes the others (they stop the click, so their
+    // "click outside" would never hear it), and changing screens closes them all.
+    this.#offs.push(bus.on("topmenu:open", (which) => {
+      if (which !== "alerts" && !panel.hidden) { panel.hidden = true; bell.setAttribute("aria-expanded", "false"); }
+    }));
     bell.addEventListener("click", async (event) => {
       event.stopPropagation();
-      if (panel.hidden) await this.refreshAlerts();
+      if (panel.hidden) { bus.emit("topmenu:open", "alerts"); await this.refreshAlerts(); }
       panel.hidden = !panel.hidden;
       bell.setAttribute("aria-expanded", String(!panel.hidden));
       if (!panel.hidden) this.#renderAlertPanel();
@@ -247,9 +253,11 @@ export class Shell {
       chip.setAttribute("aria-expanded", "false");
       if (focusChip) chip.focus();
     };
+    this.#offs.push(bus.on("topmenu:open", (which) => { if (which !== "place") close(); }));
     chip.addEventListener("click", async (event) => {
       event.stopPropagation();
       if (!menu.hidden) { close(); return; }
+      bus.emit("topmenu:open", "place");
       this.#renderPlaceMenu();
       menu.hidden = false;
       chip.setAttribute("aria-expanded", "true");
@@ -309,10 +317,12 @@ export class Shell {
       if (focusChip) chip.focus();
     };
     const open = () => {
+      bus.emit("topmenu:open", "account");
       menu.hidden = false;
       chip.setAttribute("aria-expanded", "true");
       items()[0].focus();
     };
+    this.#offs.push(bus.on("topmenu:open", (which) => { if (which !== "account") close(); }));
     chip.addEventListener("click", (event) => {
       event.stopPropagation();
       if (menu.hidden) open(); else close();

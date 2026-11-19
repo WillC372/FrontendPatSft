@@ -4,9 +4,17 @@
 
 .topbar {
   position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 14px;
-  padding: 10px max(20px, calc((100vw - var(--page-max)) / 2)); background: color-mix(in srgb, var(--bg) 72%, transparent); backdrop-filter: blur(12px);
+  padding: 10px max(20px, calc((100vw - var(--page-max)) / 2));
   border-bottom: 1px solid var(--border);
 }
+
+/* The frosted background sits on its own layer: a blur on the bar itself makes some browsers (Safari on iPhone) clip
+   whatever hangs below the bar, so its menus (place, account, alerts) would open without being seen. */
+.topbar::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: color-mix(in srgb, var(--bg) 72%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+}
+
 .topbar-brand { display: flex; align-items: center; gap: 8px; color: var(--text); text-decoration: none; font-family: var(--font-display); font-weight: 700; font-size: 18px; white-space: nowrap; }
 .topbar-brand svg { width: 30px; height: 30px; filter: drop-shadow(0 0 10px rgba(var(--accent-rgb), 0.45)); }
 .topbar-brand b { color: var(--primary-2); }
@@ -103,4 +111,6 @@ body:has(.tabbar) .toasts { bottom: 104px; }
 .user-menu-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 10px; border: 0; border-radius: 10px; background: none; color: var(--text); font: inherit; font-weight: 700; text-align: left; cursor: pointer; }
 .user-menu-item svg { width: 19px; height: 19px; color: var(--primary-2); }
 .user-menu-item:hover, .user-menu-item:focus-visible { background: var(--surface-2); }
+/* Links in the menus look like the other items (no underline). */
+a.user-menu-item { text-decoration: none; }
 .user-menu-item.danger, .user-menu-item.danger svg { color: var(--crit); }

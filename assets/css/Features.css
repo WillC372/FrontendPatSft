@@ -20,7 +20,7 @@
 @media (max-width: 760px) {
   .place-chip { max-width: 120px; padding: 0 8px; }
   /* On a phone the chip sits mid-bar: the menu spans the screen under the bar instead of hanging off one edge. */
-  .place-menu { position: fixed; left: 12px; right: 12px; width: auto; top: calc(env(safe-area-inset-top, 0px) + 62px); }
+  .place-menu, .topbar [data-alerts], .topbar .user-menu { position: fixed; left: 12px; right: 12px; width: auto; top: calc(env(safe-area-inset-top, 0px) + 62px); }
 }
 
 /* ---------- places screen ---------- */
@@ -93,12 +93,14 @@ fieldset.checks label { display: flex; gap: 8px; align-items: flex-start; font-s
 .i18n-busy[hidden] { display: none; }
 .lang-select { max-width: 260px; }
 .auth-panel { position: relative; }
-.auth-tools { position: absolute; top: 14px; right: 16px; display: inline-flex; align-items: center; gap: 10px; z-index: 2; }
+/* Theme and language above the sign-in card, in their own row, so they never sit on top of it. */
+.auth-panel { grid-template-rows: auto 1fr; align-content: start; }
+.auth-tools { justify-self: end; display: inline-flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .auth-tools .btn svg { width: 16px; height: 16px; }
 .auth-lang { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
 .auth-lang svg { width: 18px; height: 18px; }
 .auth-lang select { width: auto; max-width: 170px; height: 36px; padding: 0 10px; font-size: 14px; }
-[dir="rtl"] .auth-tools { right: auto; left: 16px; }
+[dir="rtl"] .auth-tools { justify-self: start; }
 
 /* Screens grouped under one tab of the bar (Lugares | Perfiles, Ajustes | Medidor | Actividad...). */
 .subnav { display: flex; gap: 6px; padding: 4px; margin-bottom: 18px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; max-width: 100%; width: fit-content; }
@@ -121,8 +123,4 @@ fieldset.checks label { display: flex; gap: 8px; align-items: flex-start; font-s
 /* The calculator's button: centered and of normal size under the fields. */
 .calc-actions { display: flex; justify-content: center; margin-top: 6px; }
 .calc-actions .btn { width: auto; min-width: 140px; justify-content: center; }
-/* On a phone the theme and language controls go on their own row above the sign-in card. */
-@media (max-width: 760px) {
-  .auth-panel { place-items: start center; }
-  .auth-tools { position: static; justify-self: end; margin-bottom: 14px; }
-}
+
