@@ -46,8 +46,24 @@ async function systemNotice(title, body, tag) {
   } catch { /* the dialog is still there when the person comes back */ }
 }
 
+/** The extended explanation of the AI (causes, steps, when it is safe again), as HTML and as what Aqua says. */
+function explanationHtml(x) {
+  const list = (items, tag) => `<${tag}>${items.map((i) => `<li>${esc(i)}</li>`).join("")}</${tag}>`;
+  const sources = (x.citations || []).map((c) => esc(c.organization)).filter((v, i, all) => all.indexOf(v) === i);
+  return `<p>${esc(x.summary)}</p>
+    <div class="alarm-ai-grid">
+      <div><strong>Causas probables</strong>${list(x.likelyCauses || [], "ul")}</div>
+      <div><strong>Qué hacer ahora</strong>${list(x.steps || [], "ol")}</div>
+    </div>
+    <p><strong>Cuándo vuelve a ser seguro:</strong> ${esc(x.safeAgain)}</p>
+    <small class="muted">${esc(x.sourceLabel)}${x.provider ? ` · ${esc(x.provider)}` : ""}${sources.length ? ` · Fuentes: ${sources.join(", ")}` : ""}${x.note ? ` · ${esc(x.note)}` : ""}</small>`;
+}
+
+const clean = (t) => String(t || "").trim().replace(/[.;:,\s]+$/, "");
+const explanationSpeech = (x) => `${clean(x.summary)}. ${(x.steps || []).length ? `Qué hacer ahora: ${x.steps.map(clean).join(". ")}.` : ""} ${clean(x.safeAgain)}.`;
+
 /** Sound and voice, repeated until stopped: siren, Aqua speaks, then a short siren every few seconds. */
-function ring(speech) {
+function ring(speech, more) {
   let stopped = false;
   const started = Date.now();
   (async () => {
@@ -60,6 +76,12 @@ function ring(speech) {
       if (stopped) return;
       voice.speak(spoken);
       await waitForVoice();
+      // Then the extended explanation of the AI, if it arrived (the AI service may need a moment to wake up).
+      const extra = await Promise.race([more, new Promise((r) => setTimeout(() => r(null), 30000))]);
+      if (extra && !stopped) {
+        voice.speak(extra);
+        await waitForVoice();
+      }
     }
     while (!stopped && Date.now() - started < MAX_MS) {
       await new Promise((r) => setTimeout(r, REPEAT_MS));
@@ -73,7 +95,10 @@ async function raise(alert, router) {
   const dangerous = alert.severity === "CRITICAL";
   // What Aqua says goes in the person's language; the dialog is translated like the rest of the page.
   const speech = Promise.all([i18n.tAsync(alert.title), i18n.tAsync(alert.message)]).then(([t, m]) => alarmSpeech(t, m));
-  const stop = ring(speech);
+  // The extended explanation is asked to the AI service at once; the dialog shows it when it arrives.
+  const explained = api.post(`/intelligence/alarm/${alert.id}/explain`).catch(() => null);
+  const moreSpeech = explained.then((x) => (x ? i18n.tAsync(explanationSpeech(x)) : null)).catch(() => null);
+  const stop = ring(speech, moreSpeech);
   active = { stop };
   navigator.vibrate?.([400, 200, 400, 200, 800]);
   speech.then((text) => systemNotice(text.split(". ")[0], text.slice(text.indexOf(". ") + 2), "ph-alarm"));
@@ -84,8 +109,23 @@ async function raise(alert, router) {
         <div><strong class="alarm-level">${dangerous ? "Es peligroso" : "Por ahora no es peligroso"}</strong>
           <p>${esc(alert.message)}</p><small class="muted">${relativeTime(alert.createdAt)}</small></div>
       </div>
+      <section class="alarm-ai" data-alarm-ai aria-live="polite">
+        <div class="alarm-ai-head">${aquaFace("alarm-ai-face")}<strong>Aqua explica</strong></div>
+        <p class="muted" data-alarm-ai-body><span class="spinner"></span> Preparando una explicación más completa con IA...</p>
+      </section>
       ${audioReady() ? "" : `<p class="muted small alarm-tap">${icon("volume")}<span>Toca esta ventana para oír la alarma: el navegador pide un toque antes de reproducir sonido.</span></p>`}`,
-    onMount: (node) => (node.closest?.(".modal") || node.querySelector?.(".modal") || node).classList.add("alarm-modal"),
+    onMount: (node) => {
+      (node.closest?.(".modal") || node.querySelector?.(".modal") || node).classList.add("alarm-modal");
+      const host = node.querySelector("[data-alarm-ai-body]");
+      explained.then((x) => {
+        if (!host.isConnected) return;
+        if (!x) { host.textContent = "No pude preparar la explicación ahora. Sigue los pasos del aviso y vuelve a medir."; return; }
+        const div = document.createElement("div");
+        div.className = "alarm-ai-body";
+        div.innerHTML = explanationHtml(x);
+        host.replaceWith(div);
+      });
+    },
     actions: [
       { label: "Ver qué hacer", icon: "flask", className: "btn-ghost", value: "care" },
       { label: "Entendido", icon: "check", className: "btn-primary", value: "ok" },

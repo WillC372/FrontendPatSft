@@ -38,31 +38,75 @@ function scoreRows(models, chosen) {
 
 export async function deepPane(host) {
   const includeSimulated = false;
+  let station = "";
   host.innerHTML = `
     <div class="dx-head"><div><h2>Red neuronal de predicción (LSTM)</h2>
       <p class="muted" style="max-width:66ch">Una red neuronal recurrente aprende de tu historial por horas y predice el pH de las próximas 12 horas. Antes de usarla, el sistema la compara con referencias simples en datos que nunca vio: si no es mejor, usa la referencia y lo dice.</p></div></div>
+    <section class="card deep-source" style="margin-top:14px">
+      <div class="deep-source-row">
+        <strong>Datos para entrenar</strong>
+        <div class="segmented" role="radiogroup" aria-label="Datos para entrenar">
+          <button type="button" role="radio" data-src="mine" aria-checked="true" class="active">${icon("drop")}Mis mediciones</button>
+          <button type="button" role="radio" data-src="usgs" aria-checked="false">${icon("globe")}Un río del USGS</button>
+        </div>
+        <select class="input deep-station" data-station aria-label="Estación del USGS" translate="no" hidden></select>
+      </div>
+      <p class="muted small" data-src-note>Tus mediciones del lugar activo. Si todavía no alcanzan, prueba la red con los datos reales de una estación oficial del USGS.</p>
+    </section>
     <div data-body style="margin-top:14px">${loading("Entrenando la red neuronal...")}</div>`;
   const body = host.querySelector("[data-body]");
+  const select = host.querySelector("[data-station]");
+  const note = host.querySelector("[data-src-note]");
   const load = async () => {
-    body.innerHTML = loading("Entrenando la red neuronal...");
+    body.innerHTML = loading(station ? "Entrenando la red con los datos del USGS..." : "Entrenando la red neuronal...");
     let r;
     try {
-      r = await api.get("/intelligence/deep/forecast", { includeSimulated });
+      r = await api.get("/intelligence/deep/forecast", station ? { station } : { includeSimulated });
     } catch (error) {
       body.innerHTML = emptyState("error", "No disponible", error.message);
       return;
     }
-    render(body, r);
+    render(body, r, () => choose("usgs"));
   };
+  const choose = async (src) => {
+    host.querySelectorAll("[data-src]").forEach((b) => { const on = b.dataset.src === src; b.classList.toggle("active", on); b.setAttribute("aria-checked", String(on)); });
+    if (src === "mine") {
+      station = "";
+      select.hidden = true;
+      note.textContent = "Tus mediciones del lugar activo. Si todavía no alcanzan, prueba la red con los datos reales de una estación oficial del USGS.";
+      await load();
+      return;
+    }
+    if (!select.options.length) {
+      body.innerHTML = loading("Buscando estaciones del USGS con datos suficientes...");
+      try {
+        const list = await api.get("/intelligence/deep/stations");
+        if (!list.length) { body.innerHTML = emptyState("info", "Sin estaciones todavía", "Aún no hay estaciones del USGS con datos suficientes. El servidor los importa cada pocas horas."); return; }
+        select.innerHTML = list.map((s) => `<option value="${esc(s.id)}">${esc(s.name || s.id)}${s.state ? ` (${esc(s.state)})` : ""}</option>`).join("");
+      } catch (error) {
+        body.innerHTML = emptyState("error", "No disponible", error.message);
+        return;
+      }
+    }
+    select.hidden = false;
+    station = select.value;
+    note.textContent = "Datos reales de un río medido por el Servicio Geológico de EE. UU. (cada 15 minutos). Sirven para ver la red funcionando; no son tus mediciones ni describen tu agua.";
+    await load();
+  };
+  host.querySelectorAll("[data-src]").forEach((b) => b.addEventListener("click", () => { if (!b.classList.contains("active")) choose(b.dataset.src); }));
+  select.addEventListener("change", () => { station = select.value; load(); });
   await load();
 }
 
-function render(body, r) {
+function render(body, r, tryOfficial) {
   const d = r.data;
+  const source = r.dataSource ? `<div class="banner banner-info deep-official">${icon("globe")}<p><strong>Datos oficiales, no tuyos.</strong> ${esc(r.dataSource)}</p></div>` : "";
   if (!r.trained) {
     const pct = Math.min(100, Math.round((d.windows / d.requiredWindows) * 100));
     body.innerHTML = `
+      ${source}
       <div class="banner banner-info">${icon("info")}<p>${esc(r.reason)}</p></div>
+      ${r.dataSource ? "" : `<div class="row" style="margin-top:12px"><button type="button" class="btn btn-primary" data-try-usgs>${icon("globe")}Ver la red con datos reales de un río (USGS)</button></div>`}
       <section class="card reveal" style="margin-top:14px"><div class="card-head"><div class="card-title">${icon("database")}Datos para entrenar</div><span class="badge">${pct} %</span></div>
         <div class="meter big"><i data-w="${pct}%" style="width:0"></i></div>
         <div class="stats" style="margin-top:14px">
@@ -72,6 +116,7 @@ function render(body, r) {
           <div class="stat"><span>Tramos continuos</span><strong>${d.segments}</strong></div>
         </div></section>
       <p class="disclaimer" style="margin-top:12px">${icon("info")}${esc(r.disclaimer)}</p>`;
+    body.querySelector("[data-try-usgs]")?.addEventListener("click", () => tryOfficial?.());
     animateBars(body);
     return;
   }
@@ -80,7 +125,8 @@ function render(body, r) {
   const f = r.forecast;
   const a = r.architecture;
   body.innerHTML = `
-    <div class="row">
+    ${source}
+    <div class="row"${source ? ' style="margin-top:12px"' : ""}>
       <span class="badge ${e.networkChosen ? "badge-ok" : "badge-warn"}">${icon(e.networkChosen ? "brain" : "activity")}Predicción con: ${esc(e.chosenLabel)}</span>
       <span class="badge badge-info">${icon("target")}${e.skillPercent > 0 ? "−" : "+"}${Math.abs(e.skillPercent)} % de error frente a ${esc(e.bestBaselineLabel.toLowerCase())}</span>
       ${r.includesSimulated ? `<span class="badge badge-sim">${icon("flask")}Incluye datos simulados</span>` : ""}

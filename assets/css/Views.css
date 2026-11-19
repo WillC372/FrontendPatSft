@@ -582,3 +582,10 @@ select.input.cam-select { width: auto; flex: none; padding-top: 8px; padding-bot
 @media (max-width: 520px) { .dist-legend { grid-template-columns: 1fr; } }
 .detail-status { margin: 0 0 8px; font-size: 14px; }
 .name-form { gap: 6px; flex-wrap: nowrap; } .name-form .input { min-width: 0; flex: 1 1 160px; padding: 6px 10px; }
+
+/* LSTM: which data trains the network (own measurements or a USGS river) */
+.deep-source { padding: 14px 16px; }
+.deep-source-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.deep-source-row .segmented button { white-space: nowrap; }
+.deep-station { width: auto; max-width: 100%; min-width: 220px; flex: 1 1 260px; }
+.deep-source p { margin-top: 8px; }

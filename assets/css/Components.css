@@ -222,3 +222,9 @@ img.avatar { object-fit: cover; background: var(--surface-2); }
 .alert-item.alteration strong { color: var(--crit); }
 @keyframes alarm-glow { 50% { box-shadow: 0 0 0 6px var(--crit-bg), 0 0 34px color-mix(in srgb, var(--crit) 55%, transparent); } }
 @keyframes alarm-shake { 0%, 100% { rotate: 0deg; } 25% { rotate: -7deg; } 75% { rotate: 7deg; } }
+.alarm-ai { margin-top: 14px; padding: 14px; border-radius: 14px; border: 1px solid var(--border-strong); background: var(--surface-2); }
+.alarm-ai-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.alarm-ai-face { width: 30px; height: 30px; flex: none; }
+.alarm-ai-body p { margin: 6px 0; line-height: 1.5; }
+.alarm-ai-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px 18px; margin: 8px 0; }
+.alarm-ai-grid ul, .alarm-ai-grid ol { margin: 4px 0 0; padding-left: 20px; display: grid; gap: 3px; }
