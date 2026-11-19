@@ -82,7 +82,7 @@ export const settingsView = {
                 `<button role="radio" data-theme-option="${v}" aria-checked="${draft.theme === v}" class="${draft.theme === v ? "active" : ""}">${icon(ic)}${l}</button>`).join("")}
             </div>
             <p class="muted" style="margin-top:10px;font-size:13px">"Automático" sigue la preferencia de tu sistema operativo. La elección se guarda en tu cuenta.</p>
-            <div class="setting-row"><div><strong>Animaciones</strong><p>${systemReducesMotion()
+            <div class="setting-row wide-control"><div><strong>Animaciones</strong><p>${systemReducesMotion()
               ? "Tu equipo pide reducir el movimiento (en Windows, «Efectos de animación» apagado), así que con «Según el sistema» las animaciones casi no se ven. Con «Siempre» se ven en este dispositivo."
               : "Tu equipo no pide reducir el movimiento: las animaciones se ven. «Según el sistema» las quitaría si un día lo activas."}</p></div>
               <div class="segmented" role="radiogroup" aria-label="Animaciones">
@@ -113,8 +113,8 @@ export const settingsView = {
             ])}
             <div class="setting-row"><div><strong>Notificaciones de alertas</strong><p>Avisos cuando una medición sale del rango (en la app y en los dispositivos donde actives los avisos).</p></div>
               <label class="switch"><input type="checkbox" data-notifications ${draft.notificationsEnabled ? "checked" : ""} aria-label="Notificaciones de alertas"><span></span></label></div>
-            <div class="setting-row"><div><strong>Alarma con sonido si el pH se altera</strong><p>En este dispositivo suena una alarma al volumen del equipo y Aqua avisa en voz alta (si «Aqua habla» está encendido). Para que suene con la app abierta, el navegador pide haber tocado la página una vez.</p></div>
-              <div class="row" style="gap:8px;flex-wrap:nowrap"><button type="button" class="btn btn-sm" data-alarm-test>${icon("volume")}Probar alarma</button>
+            <div class="setting-row wide-control"><div><strong>Alarma con sonido si el pH se altera</strong><p>En este dispositivo suena una alarma al volumen del equipo y Aqua avisa en voz alta (si «Aqua habla» está encendido). Para que suene con la app abierta, el navegador pide haber tocado la página una vez.</p></div>
+              <div class="row" style="gap:8px;flex-wrap:nowrap;flex:none"><button type="button" class="btn btn-sm" style="white-space:nowrap;flex:none" data-alarm-test>${icon("volume")}Probar alarma</button>
               <label class="switch"><input type="checkbox" data-alarm-sound ${alarmSoundOn() ? "checked" : ""} aria-label="Alarma con sonido si el pH se altera"><span></span></label></div></div>
             <div class="setting-row"><div><strong>Alertas por correo</strong><p>Te escribo a tu correo cuando una medición sale del rango (como mucho uno por hora).</p></div>
               <label class="switch"><input type="checkbox" data-email-alerts ${draft.emailAlerts !== false ? "checked" : ""} aria-label="Alertas por correo"><span></span></label></div>
