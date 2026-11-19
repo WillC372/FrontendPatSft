@@ -254,7 +254,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 ![MockUp12](mockups/MockUp12.png)
 
-**MockUp13** · Red neuronal LSTM (sin datos suficientes)
+**MockUp13** · Red neuronal LSTM entrenada con los datos reales de un río del USGS (no son mediciones propias)
 
 ![MockUp13](mockups/MockUp13.png)
 
@@ -613,7 +613,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 - [x] Un idioma que ya no se ofrece vuelve a español sin errores.
 - [x] El PDF en chino y japonés muestra los caracteres (sin signos «?»).
 
-**MockUp44** · Idioma y voz de Aqua en Configuración
+**MockUp44** · Apariencia (tema e interruptores de animación), idioma y voz de Aqua en Configuración
 
 ![MockUp44](mockups/MockUp44.png)
 
@@ -636,7 +636,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 - [x] Con la voz apagada no se dice nada y la elección queda en la cuenta.
 - [x] La calidad de la voz depende de las voces instaladas en el dispositivo.
 
-**MockUp44** · Idioma y voz de Aqua en Configuración
+**MockUp44** · Apariencia (tema e interruptores de animación), idioma y voz de Aqua en Configuración
 
 ![MockUp44](mockups/MockUp44.png)
 
@@ -657,7 +657,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 - [x] «Aqua explica» muestra y lee el resumen, las causas probables, los pasos y cuándo vuelve a ser segura (con IA o, sin ella, con las reglas del perfil).
 - [x] Los navegadores solo dejan sonar una página después de tocarla una vez; si no, la ventana lo indica.
 
-**MockUp48** · Alarma en una piscina: el pH bajó de 7,50 a 5,20
+**MockUp48** · Alarma en una piscina: el pH bajó de 7,50 a 5,20, con la explicación de Aqua (IA)
 
 ![MockUp48](mockups/MockUp48.png)
 
