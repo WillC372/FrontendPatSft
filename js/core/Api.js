@@ -27,7 +27,7 @@ function aiWork(method, path) {
   return () => { if (!done) { done = true; bus.emit("ai:busy", --aiBusy); } };
 }
 
-// What the AI service answers (AiPatSft); everything else is the backend's. Both accept the same session.
+// What the AI service answers (AIPatSft); everything else is the backend's. Both accept the same session.
 const AI_PATHS = /^\/(intelligence|vision|knowledge|reports|i18n)(\/|$)|^\/admin\/ai-usage(\/|$)/;
 export const isAiPath = (path) => AI_PATHS.test(path);
 
