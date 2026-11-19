@@ -195,6 +195,17 @@ Además, la app publicada se revisa de punta a punta con Playwright. El recorrid
 
 Se registran los errores de consola y las peticiones fallidas. La accesibilidad se revisa con axe-core en tema claro y oscuro. Ese recorrido se ejecuta aparte y no forma parte del repositorio.
 
+## Medidor casero (hardware)
+
+[`hardware/Esp32PhSensor/`](hardware/Esp32PhSensor/) tiene todo para armar un medidor con un ESP32 y el módulo PH-4502C: el firmware (C++ de Arduino, calibración de 1 a 3 puntos), el proyecto KiCad (esquemático, PCB y 3D) con su generador, los planos de la protoboard y el proyecto para simularlo en Wokwi. La app se conecta a él por USB con Web Serial (`js/core/BrowserMeter.js`). Estaba en BackendPatSft y se trasladó aquí para que el backend quede solo en Java; su historial anterior sigue en BackendPatSft.
+
+```bash
+cd hardware/Esp32PhSensor
+g++ -std=c++17 -Wall -Wextra -Werror -I tools/shim -x c++ tools/FirmwareTest.cpp -o fwtest && ./fwtest
+```
+
+GitHub Actions corre esas pruebas cuando cambia `hardware/` (`.github/workflows/Firmware.yml`). La carpeta no se publica en Vercel (`.vercelignore`).
+
 ## Requerimientos y MockUps
 
 Los requerimientos funcionales (RF-01 a RF-30) y no funcionales (RNF-01 a RNF-07) están en [`docs/Requerimientos.md`](docs/Requerimientos.md), cada uno como historia de usuario (**Como**… **quiero**… **para**…), con descripción, criterios de aceptación y su MockUp. Los mismos textos están en [`docs/issues/`](docs/issues/) para crear los Issues del repositorio (instrucciones abajo).
