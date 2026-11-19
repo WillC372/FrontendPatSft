@@ -59,7 +59,7 @@ export const dashboardView = {
             <small class="muted num" data-gauge-meta>${latest ? relativeTime(latest.measuredAt) : "Aún no has medido"}</small>
           </div>
           <div class="gauge-actions">
-            ${place?.canEdit === false ? `<span class="badge">${icon("eye")}Solo puedes ver este lugar</span>` : `<button class="btn btn-primary btn-pill btn-lg" data-measure-now>${icon("drop")}Medir ahora</button>`}
+            ${place?.canEdit === false ? `<span class="badge">${icon("eye")}Solo puedes ver este lugar</span>` : ""}
             ${connected ? `<button class="btn btn-pill" data-live>${icon(device.state === "LIVE" ? "pause" : "play")}${device.state === "LIVE" ? "Detener vivo" : "Tiempo real"}</button>` : ""}
           </div>
           <canvas class="splash" data-splash aria-hidden="true"></canvas>
@@ -68,7 +68,7 @@ export const dashboardView = {
         <div class="stack">
           <section class="card reveal">
             <div class="card-head"><div class="card-title">${icon("drop")}Tu agua</div>
-              <a class="btn btn-sm btn-pill" href="#/profiles" aria-label="Cambiar el perfil de uso (ahora ${esc(profile.name)})"><span class="profile-mini">${icon(PROFILE_ICONS[profile.type] || "profiles")}</span><span class="pill-text">${esc(profile.name)}</span>${icon("chevronRight")}</a></div>
+              <span class="btn btn-sm btn-pill pill-static" title="Perfil de uso de este lugar (se cambia en Lugares)"><span class="profile-mini">${icon(PROFILE_ICONS[profile.type] || "profiles")}</span><span class="pill-text">${esc(profile.name)}</span></span></div>
             ${latest ? `<div class="water-state-value">${icon("drop")}<strong data-nature>${esc(latest.natureLabel)}</strong></div>
               <p class="muted" style="margin-top:8px" data-nature-text>${NATURE_TEXT[latest.nature]}</p>
               <div data-scale>${phScale(latest.ph, profile.idealMin, profile.idealMax)}</div>`
@@ -78,15 +78,14 @@ export const dashboardView = {
           </section>
 
           <section class="card aqua-tip reveal" data-aqua-tip>
-            <button type="button" class="aqua-tip-bot" data-aqua-open aria-label="Abrir a Aqua">${aquaFace()}</button>
+            <span class="aqua-tip-bot" aria-hidden="true">${aquaFace()}</span>
             <div style="min-width:0"><strong>Aqua dice</strong><p data-advice class="muted">Revisando tus datos...</p>
-              <div data-last-dx></div>
-              <button type="button" class="btn btn-sm btn-pill" style="margin-top:10px" data-aqua-open>${icon("message")}Preguntarle a Aqua</button></div>
+              <div data-last-dx></div></div>
           </section>
 
           <div data-due></div>
           ${params.length ? `<section class="card reveal" aria-labelledby="params-title">
-            <div class="card-head"><div class="card-title" id="params-title">${icon("flask")}Otros parámetros</div><a class="btn btn-sm btn-pill" href="#/care">Calcular dosis ${icon("chevronRight")}</a></div>
+            <div class="card-head"><div class="card-title" id="params-title">${icon("flask")}Otros parámetros</div></div>
             <p class="muted small" style="margin:-4px 0 10px">Lo que anotaste de tu kit de prueba además del pH. Verde está bien; amarillo o rojo, revisa el consejo o usa la calculadora.</p>
             <div class="params-grid">${params.map((p) => `<div class="param ${p.status}"><span>${esc(p.label)}</span>
               <strong class="num">${p.value.toLocaleString(LOCALE, { maximumFractionDigits: 1 })} <small>mg/L</small></strong>
@@ -104,7 +103,6 @@ export const dashboardView = {
       <div class="tip-bar reveal">${icon("bulb")}<p><strong>Consejo:</strong> ${esc(data.tip)}</p></div>
       <p class="disclaimer">${icon("info")}${esc(data.disclaimer)}</p>`;
 
-    root.querySelectorAll("[data-aqua-open]").forEach((b) => b.addEventListener("click", () => bus.emit("aqua:open")));
     // Reminders that are due today, with "Hecho" right here.
     api.get("/reminders").then((list) => {
       const due = list.filter((r) => r.due);
@@ -121,7 +119,6 @@ export const dashboardView = {
         if (!holder.querySelector("li")) holder.innerHTML = "";
       }));
     }).catch(() => {});
-    root.querySelector("[data-measure-now]")?.addEventListener("click", () => root.ownerDocument.querySelector("[data-measure-tab]")?.click());
 
     // What Aqua suggests (rules and statistics of the server), loaded after the main values are on screen.
     api.get("/intelligence/overview").then((overview) => {
@@ -145,15 +142,15 @@ export const dashboardView = {
         compare = Math.abs(diff) < 0.25 ? " Tu medición está cerca de ese valor."
           : ` Tu medición está ${comma(Math.abs(diff))} ${diff > 0 ? "por encima" : "por debajo"}.`;
       }
-      line.innerHTML = `${icon("globe")}Referencia: hoy el pH típico de ${ref.stationsReporting} ríos de EE. UU. es <strong>${comma(median)}</strong> (USGS).${compare} <a href="#/official">Ver</a>`;
+      line.innerHTML = `${icon("globe")}Referencia: hoy el pH típico de ${ref.stationsReporting} ríos de EE. UU. es <strong>${comma(median)}</strong> (USGS).${compare}`;
       line.hidden = false;
     }).catch(() => { /* without official data the line stays hidden */ });
 
     api.get("/intelligence/diagnosis/latest").then((dx) => {
       const holder = root.querySelector("[data-last-dx]");
       if (!dx || !holder || ctx.stale()) return;
-      holder.innerHTML = `<a class="ai-last" href="#/intelligence/diagnosis"><span class="dot risk-${dx.riskLevel}"></span>
-        <span>Último diagnóstico: <strong>riesgo ${esc(dx.riskLabel.toLowerCase())}</strong> · ${relativeTime(dx.createdAt)}</span>${icon("chevronRight")}</a>`;
+      holder.innerHTML = `<div class="ai-last"><span class="dot risk-${dx.riskLevel}"></span>
+        <span>Último diagnóstico: <strong>riesgo ${esc(dx.riskLabel.toLowerCase())}</strong> · ${relativeTime(dx.createdAt)}</span></div>`;
     }).catch(() => {});
     const gauge = createGauge(root.querySelector("[data-gauge]"));
     gauge.set(latest?.ph ?? null);

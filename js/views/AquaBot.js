@@ -78,14 +78,9 @@ export class AquaBot {
         </div>
         <div class="aqua-body" data-aqua-home>
           <div class="aqua-bubble">Hola${first ? `, <span translate="no">${first}</span>` : ""}. ¿En qué te puedo ayudar?</div>
-          <form class="aqua-ask" data-aqua-ask>
-            <input class="input" name="q" maxlength="500" placeholder="Pregúntame lo que quieras..." aria-label="Pregúntale a Aqua" autocomplete="off">
-            <button class="btn btn-primary icon-btn" type="submit" aria-label="Enviar pregunta">${icon("send")}</button>
-          </form>
           <button type="button" class="aqua-chat-btn" data-aqua-chat-open>${icon("message")}<span><strong>Chatear conmigo</strong><small>Respondo sobre tu agua, piscinas, acuarios, riego y calibración</small></span>${icon("chevronRight")}</button>
           ${GROUPS().map(([label, keys]) => `<h3 class="aqua-group">${label}</h3><div class="aqua-grid">
             ${keys.map((k) => { const [key, title, ic, text] = BY_KEY[k]; return `<a class="aqua-fn" href="#/intelligence/${key}" data-aqua-fn="${key}">${icon(ic)}<span><strong>${title}</strong><small>${text}</small></span></a>`; }).join("")}
-            ${label === "Más herramientas" ? `<button type="button" class="aqua-fn" data-aqua-photo>${icon("camera")}<span><strong>Leer pH de una foto</strong><small>Tira reactiva o pantalla del medidor</small></span></button>` : ""}
           </div>`).join("")}
           <div class="aqua-foot">
             <button type="button" class="btn btn-pill" data-aqua-tour>${icon("info")}¿Qué puedo hacer aquí?</button>
@@ -134,7 +129,7 @@ export class AquaBot {
     this.node.querySelector("[data-aqua-chat]").hidden = true;
     this.node.querySelector("[data-aqua-back]").hidden = true;
     this.node.querySelector("[data-aqua-sub]").textContent = "Tu asistente de agua con IA";
-    this.node.querySelector("[data-aqua-ask] input").focus({ preventScroll: true });
+    this.node.querySelector("[data-aqua-chat-open]").focus({ preventScroll: true });
   }
 
   async #showChat(question = "") {
@@ -226,25 +221,12 @@ export class AquaBot {
     $("[data-aqua-back]").addEventListener("click", () => this.#showHome());
     $("[data-say-close]").addEventListener("click", () => this.hideSay());
     $("[data-aqua-chat-open]").addEventListener("click", () => this.#showChat());
-    $("[data-aqua-ask]").addEventListener("submit", (event) => {
-      event.preventDefault();
-      const input = event.currentTarget.querySelector("input");
-      const q = input.value.trim();
-      if (!q) { input.focus(); return; }
-      input.value = "";
-      this.#showChat(q);
-    });
     $("[data-aqua-tour]").addEventListener("click", () => this.tour());
     const tips = $("[data-aqua-tips]");
     tips.checked = read(localStorage, TIPS_KEY) !== "off";
     tips.addEventListener("change", () => {
       write(localStorage, TIPS_KEY, tips.checked ? "on" : "off");
       toast(tips.checked ? "Aqua te dará un consejo al abrir cada pantalla." : "Aqua ya no dará consejos al cambiar de pantalla.", "info", 3000);
-    });
-    $("[data-aqua-photo]").addEventListener("click", async () => {
-      this.close({ focusBot: false });
-      const { photoReading } = await import("./PhotoFlow.js");
-      photoReading();
     });
     // Choosing a function opens its screen; on a phone the panel closes so the screen can be seen.
     this.node.addEventListener("click", (event) => {

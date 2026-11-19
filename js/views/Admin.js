@@ -317,7 +317,6 @@ export const adminView = {
     root.innerHTML = `
       <div class="row-between reveal">
         <div><h1>Administración</h1><p class="muted">Usuarios, planes y pagos. Cada cambio queda registrado en la auditoría.</p></div>
-        <a class="btn" href="#/settings">${icon("mail")}Correo del sistema</a>
       </div>
       <div data-summary class="reveal">${loading("Cargando cifras...")}</div>
       <section class="card reveal">

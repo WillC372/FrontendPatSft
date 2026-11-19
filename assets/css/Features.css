@@ -109,3 +109,6 @@ fieldset.checks label { display: flex; gap: 8px; align-items: flex-start; font-s
 .sheet-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; font-size: 14px; font-weight: 600; }
 .sheet-link svg { width: 16px; height: 16px; }
 .pane-split { border: 0; border-top: 1px solid var(--border); margin: 26px 0 22px; }
+
+/* A pill that only shows information (for example the profile of the place on Home). */
+.pill-static { cursor: default; pointer-events: none; }

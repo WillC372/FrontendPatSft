@@ -1,7 +1,6 @@
 import { api } from "../core/Api.js";
 import { bus } from "../core/EventBus.js";
 import { session } from "../core/Session.js";
-import { theme } from "../core/Theme.js";
 import { liveStream } from "../core/LiveStream.js";
 import { browserMeter } from "../core/BrowserMeter.js";
 import { esc, fmt, own, relativeTime } from "../core/Format.js";
@@ -37,15 +36,14 @@ export class Shell {
         <button type="button" class="skip-link" data-skip>Saltar al contenido</button>
         <div class="main">
           <header class="topbar">
-            <a class="topbar-brand" href="#/dashboard" aria-label="Aqua Assistant AI, ir al inicio">${logo("")}<span>Aqua Assistant <b>AI</b></span></a>
+            <span class="topbar-brand">${logo("")}<span>Aqua Assistant <b>AI</b></span></span>
             <h1 class="topbar-h1" data-title></h1>
             <div class="topbar-actions">
               <div class="place-menu-wrap">
                 <button type="button" class="place-chip" data-place-chip aria-haspopup="menu" aria-expanded="false" aria-controls="place-menu" title="Lugar que estás viendo. Toca para cambiar de piscina, acuario o tanque.">${icon("pin")}<span data-place-name>Mi agua</span>${icon("chevronRight", "user-chev")}</button>
                 <div class="dropdown place-menu" id="place-menu" role="menu" aria-label="Elegir lugar" data-place-menu hidden></div>
               </div>
-              <a class="device-chip" href="#/devices" data-device-pill aria-label="Estado del medidor"></a>
-              <button class="btn btn-ghost icon-btn" data-theme-toggle aria-label="Cambiar tema">${icon(document.documentElement.dataset.theme === "dark" ? "sun" : "moon")}</button>
+              <span class="device-chip" data-device-pill role="status" aria-label="Estado del medidor"></span>
               <div style="position:relative">
                 <button class="btn btn-ghost icon-btn" data-bell aria-label="Alertas" aria-expanded="false">${icon("bell")}<span class="count" data-count hidden></span></button>
                 <div class="dropdown" data-alerts hidden></div>
@@ -119,7 +117,7 @@ export class Shell {
     const color = status.state === "ERROR" ? "var(--crit)" : connected ? "var(--ok)" : "var(--muted)";
     const label = connected ? (status.state === "ERROR" ? "Error de conexión" : `${status.deviceName}${status.simulated ? " · SIMULADO" : ""}`) : "Sin medidor";
     pill.innerHTML = `<span class="dot ${status.state === "LIVE" ? "dot-live" : ""}" style="color:${color}"></span><span class="device-chip-text">${esc(label)}</span>${icon("bluetooth")}`;
-    pill.setAttribute("aria-label", connected ? `Medidor: ${label}` : "Sin medidor conectado. Toca para conectar");
+    pill.setAttribute("aria-label", connected ? `Medidor: ${label}` : "Sin medidor conectado");
     pill.classList.toggle("on", connected && status.state !== "ERROR");
   }
 
@@ -161,17 +159,6 @@ export class Shell {
     });
     document.addEventListener("click", this.#closePanel = (event) => {
       if (!panel.hidden && !panel.contains(event.target)) { panel.hidden = true; bell.setAttribute("aria-expanded", "false"); }
-    });
-    this.root.querySelector("[data-theme-toggle]").addEventListener("click", async (event) => {
-      const next = document.documentElement.dataset.theme === "dark" ? "LIGHT" : "DARK";
-      theme.apply(next);
-      event.currentTarget.innerHTML = icon(next === "DARK" ? "sun" : "moon");
-      if (this.ctx.settings) {
-        try {
-          this.ctx.settings = await api.put("/users/me/settings", { ...this.ctx.settings, theme: next });
-          bus.emit("settings:changed", this.ctx.settings);
-        } catch { /* local preference still applies */ }
-      }
     });
     // Keyboard users skip the menu (a "#page" link would change the screen, because the router uses the hash).
     this.root.querySelector("[data-skip]").addEventListener("click", () => {
@@ -244,8 +231,7 @@ export class Shell {
   #renderPlaceMenu() {
     const menu = this.root.querySelector("[data-place-menu]");
     menu.innerHTML = `<p class="menu-title">¿Qué agua quieres ver?</p><p class="menu-hint">Cada lugar guarda sus propias mediciones. Elige uno y toda la app cambia a ese lugar.</p>${(this.places || []).map((p) => `<button type="button" class="user-menu-item ${p.active ? "current" : ""}" role="menuitemradio" aria-checked="${p.active}" data-place="${p.id}">
-        ${icon(p.active ? "check" : "pin")}<span>${own(p.name)}<small class="muted">${esc(p.kindLabel)}${p.role !== "OWNER" ? ` · ${esc(p.roleLabel)}` : ""}</small></span></button>`).join("")}
-      <a class="user-menu-item" role="menuitem" href="#/places" data-manage>${icon("plus")}Crear, editar o compartir lugares</a>`;
+        ${icon(p.active ? "check" : "pin")}<span>${own(p.name)}<small class="muted">${esc(p.kindLabel)}${p.role !== "OWNER" ? ` · ${esc(p.roleLabel)}` : ""}</small></span></button>`).join("")}`;
   }
 
   #bindPlaceMenu() {

@@ -164,6 +164,8 @@
 .aqua-tip strong { font-family: var(--font-display); }
 .aqua-tip p { margin-top: 2px; color: var(--text-soft); }
 .aqua-tip .ai-last { margin-top: 10px; }
+/* On Home, Aqua's face only decorates its tip: Aqua opens from the drop in the corner. */
+span.aqua-tip-bot, span.ia-head-bot { cursor: default; }
 .profile-mini svg { width: 16px; height: 16px; }
 .btn-lg { padding: 13px 26px; font-size: 16px; }
 @media (max-width: 760px) { .ia-head { flex-wrap: wrap; } .ia-head > .btn { width: 100%; justify-content: center; } }

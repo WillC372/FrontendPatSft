@@ -186,7 +186,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 **Criterios de aceptación**
 
 - [x] La app detecta si el navegador no admite puertos serie y lo explica.
-- [x] Con el medidor conectado, «Medir ahora» guarda la lectura con origen REAL.
+- [x] Con el medidor conectado, «Medir» → «Con mi medidor» guarda la lectura con origen REAL.
 - [x] La calibración envía el punto y el valor del buffer y muestra la respuesta del medidor.
 - [ ] Pendiente: probarlo con un medidor físico (hasta ahora con puerto simulado).
 

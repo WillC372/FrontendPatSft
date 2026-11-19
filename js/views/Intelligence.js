@@ -406,7 +406,7 @@ export const intelligenceView = {
     const initial = PANES.some(([k]) => k === wanted) ? wanted : "diagnosis";
     root.innerHTML = `
       <nav class="ia-head reveal" aria-label="Función de Aqua">
-        <button type="button" class="ia-head-bot" data-aqua-open aria-label="Abrir a Aqua para elegir otra función">${aquaFace()}</button>
+        <span class="ia-head-bot" aria-hidden="true">${aquaFace()}</span>
         <div class="ia-head-text"><small class="muted">Funciones de Aqua</small><strong data-pane-title></strong><span class="muted" data-pane-desc></span></div>
         <button type="button" class="btn btn-pill" data-aqua-open>${icon("sparkle")}Otras funciones</button>
       </nav>

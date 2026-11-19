@@ -4,8 +4,6 @@ import { esc, fmt } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { confirmDialog, emptyState, loading, modal, sourceBadge, toast } from "../ui/Components.js";
 import { barChart, lineChart } from "../ui/Charts.js";
-import { manualEntry } from "./MeasureFlow.js";
-import { photoReading } from "./PhotoFlow.js";
 import { LOCALE } from "../core/Locale.js";
 import { i18n } from "../core/I18n.js";
 
@@ -39,8 +37,6 @@ export const historyView = {
       <div class="row-between reveal">
         <div><h1>Historial de mediciones</h1><p class="muted">Consulta y analiza tus registros. Las gráficas se generan cuando las solicitas.</p></div>
         <div class="row">
-          <button class="btn" data-photo>${icon("camera")}Leer desde foto</button>
-          <button class="btn" data-manual>${icon("plus")}Registro manual</button>
           <button class="btn" data-export>${icon("download")}Exportar CSV</button>
           <button class="btn" data-pdf title="Informe del periodo con gráficas y fuentes normativas">${icon("file")}Informe PDF</button>
         </div>
@@ -229,8 +225,6 @@ export const historyView = {
     root.querySelector("[data-source]").addEventListener("change", (e) => { state.source = e.target.value; refresh(); });
     root.querySelector("[data-status]").addEventListener("change", (e) => { state.status = e.target.value; refresh(); });
     root.querySelectorAll("[data-chart]").forEach((b) => b.addEventListener("click", () => drawChart(b.dataset.chart)));
-    root.querySelector("[data-manual]").addEventListener("click", async () => { if (await manualEntry()) refresh(); });
-    root.querySelector("[data-photo]").addEventListener("click", async () => { if (await photoReading()) refresh(); });
     root.querySelector("[data-export]").addEventListener("click", async () => {
       try {
         // The same period and filters as the table.

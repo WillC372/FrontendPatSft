@@ -9,12 +9,11 @@ import { bindHelp, helpBox } from "../ui/Help.js";
 import { i18n } from "../core/I18n.js";
 import { voice } from "../core/Voice.js";
 import { avatarMarkup, avatarUrl } from "../core/Avatar.js";
-import { openAccountDialog } from "./AccountDialog.js";
 import { confirmDialog, emptyState, loading, passwordChecklist, showFieldErrors, toast, withBusy } from "../ui/Components.js";
 import { LOCALE_CO } from "../core/Locale.js";
 import { SETTINGS_NAV, subNav } from "../ui/SubNav.js";
 
-const SECTIONS = [["appearance", "Apariencia", "sun"], ["measurement", "Notificaciones y medición", "bell"], ["account", "Cuenta y plan", "user"], ["activity", "Medidor y actividad", "clock"], ["about", "Acerca de", "info"]];
+const SECTIONS = [["appearance", "Apariencia", "sun"], ["measurement", "Notificaciones y medición", "bell"], ["account", "Cuenta y plan", "user"], ["about", "Acerca de", "info"]];
 
 /** Email delivery status and test email (administrators only). */
 async function loadMail(root) {
@@ -119,15 +118,14 @@ export const settingsView = {
             <div class="card-head"><div class="card-title">${icon("user")}Cuenta y plan</div>
               <span class="badge ${me.plan === "PREMIUM" ? "badge-info" : "badge-ok"}">${me.plan === "PREMIUM" ? "Premium" : "Gratuito"}</span></div>
             <div class="account-row"><span data-settings-avatar>${avatarMarkup(me, null, "avatar-lg")}</span>
-              <button type="button" class="btn btn-sm" data-change-photo>${icon("camera")}Foto de perfil</button></div>
+              <small class="muted">La foto se cambia en «Mi cuenta», en el menú de tu nombre.</small></div>
             <dl class="kv"><dt>Nombre</dt><dd data-name-view><span data-name-text translate="no">${esc(me.fullName)}</span>${me.demo ? "" : ` <button type="button" class="btn btn-ghost btn-sm" data-edit-name aria-label="Cambiar el nombre">${icon("edit")}</button>`}</dd><dt>Correo</dt><dd>${own(me.email)}</dd><dt>Rol</dt><dd>${me.role === "ADMIN" ? "Administrador" : "Usuario"}</dd>
               <dt>Miembro desde</dt><dd>${fmt.dateTime(me.createdAt)}</dd>
               ${current ? `<dt>Sesión actual</dt><dd>Desde ${fmt.dateTime(current.startedAt)} · vence ${fmt.dateTime(current.expiresAt)}${current.rememberMe ? " (recordada)" : ""}</dd>` : ""}
               <dt>Análisis histórico</dt><dd>Hasta ${ai.maxAnalysisDays} días</dd>
               <dt>Consultas IA hoy</dt><dd>${ai.configured ? quotaText(ai.usedToday, ai.dailyQuota) : "IA no configurada en el servidor"}</dd></dl>
             ${me.premiumUntil ? `<p class="muted" style="margin-top:10px">Premium activo hasta el ${new Intl.DateTimeFormat(LOCALE_CO, { dateStyle: "long" }).format(new Date(me.premiumUntil))}.</p>` : ""}
-            <div class="banner banner-info" style="margin-top:14px">${icon("star")}<p>Premium amplía el análisis histórico a 365 días, la predicción a 7 días y la cuota diaria de IA a 200 consultas.</p>
-              <a class="btn btn-primary btn-pill" href="#/billing" style="margin-left:auto;white-space:nowrap">${icon("card")}${me.plan === "PREMIUM" ? "Ver plan y pagos" : "Mejorar a Premium"}</a></div>
+            <div class="banner banner-info" style="margin-top:14px">${icon("star")}<p>Premium amplía el análisis histórico a 365 días, la predicción a 7 días y la cuota diaria de IA a 200 consultas. Se contrata en la pestaña «Plan».</p></div>
           </section>
 
           ${me.role === "ADMIN" ? `<section class="card reveal" id="s-mail">
@@ -135,13 +133,6 @@ export const settingsView = {
             <div data-mail>${loading("Consultando...")}</div>
           </section>` : ""}
 
-          <section class="card reveal" id="s-activity">
-            <div class="card-head"><div class="card-title">${icon("clock")}Medidor y actividad</div></div>
-            <div class="sheet-options">
-              <a class="sheet-option" href="#/devices"><span class="sheet-ic">${icon("bluetooth")}</span><span><strong>Medidor</strong><small>Conecta tu medidor por USB o Bluetooth, léelo con la cámara y mira sus calibraciones</small></span>${icon("chevronRight")}</a>
-              <a class="sheet-option" href="#/sessions"><span class="sheet-ic">${icon("clock")}</span><span><strong>Actividad y sesiones</strong><small>Qué hiciste en cada sesión y desde qué equipo; cierra las sesiones abiertas en otros equipos</small></span>${icon("chevronRight")}</a>
-            </div>
-          </section>
 
           ${me.demo ? "" : `<section class="card reveal" id="s-security">
             <div class="card-head"><div class="card-title">${icon("lock")}Seguridad</div></div>
@@ -293,10 +284,6 @@ export const settingsView = {
       if (slot) slot.innerHTML = avatarMarkup(current, await avatarUrl(current), "avatar-lg");
     };
     settingsAvatar();
-    root.querySelector("[data-change-photo]").addEventListener("click", async () => {
-      await openAccountDialog();
-      settingsAvatar();
-    });
     const startEditName = () => {
       const view = root.querySelector("[data-name-view]");
       const current = session.user?.fullName || me.fullName;
