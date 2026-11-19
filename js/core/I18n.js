@@ -28,7 +28,13 @@ const MAX = 1500;
 const dict = new Map();
 // Texts that already are a translation (the app sometimes reads a label back and writes it again): left as they are.
 const outputs = new Set();
-const put = (key, value) => { dict.set(key, value); outputs.add(value); };
+// A "translation" identical to its Spanish source was not translated: it is ignored, so the text is asked again.
+const STILL_SPANISH = /[ñ¿¡áéíóú]|\b(?:el|los|las|del|que|qué|está|tu|tus|agua|medidor|medición|mediciones)\b/i;
+const put = (key, value) => {
+  if (value.trim().toLowerCase() === key.trim().toLowerCase() && STILL_SPANISH.test(key) && key !== "Español") return false;
+  dict.set(key, value); outputs.add(value);
+  return true;
+};
 const nodeState = new WeakMap(); // text node -> { src, applied }
 const unitState = new WeakMap(); // element translated as one sentence -> { key, appliedSer }
 const attrState = new WeakMap(); // element -> Map(attr -> { src, applied })
@@ -285,7 +291,7 @@ async function flush() {
       const res = await fetch(`${API}/translate`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ lang: LANG, texts }) });
       if (!res.ok) throw new Error(String(res.status));
       const { translations } = await res.json();
-      texts.forEach((k, i) => { if (translations[i]) { put(k, translations[i]); retries.delete(k); } else fail(k); });
+      texts.forEach((k, i) => { if (translations[i] && put(k, translations[i])) retries.delete(k); else fail(k); });
     } catch {
       texts.forEach((k) => fail(k));
     }
@@ -371,7 +377,7 @@ export const i18n = {
     // Everything already translated for this language, in one request (also what other people translated).
     fetch(`${API}/dictionary/${encodeURIComponent(LANG)}`).then((r) => (r.ok ? r.json() : {})).then((all) => {
       let added = 0;
-      for (const [k, v] of Object.entries(all)) if (dict.get(k) !== v) { put(k, v); added++; }
+      for (const [k, v] of Object.entries(all)) if (dict.get(k) !== v && put(k, v)) added++;
       if (added) { save(); refresh(); }
     }).catch(() => {});
   },
