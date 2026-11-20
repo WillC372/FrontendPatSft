@@ -207,6 +207,10 @@ g++ -std=c++17 -Wall -Wextra -Werror -I tools/shim -x c++ tools/FirmwareTest.cpp
 
 GitHub Actions corre esas pruebas cuando cambia `hardware/` (`.github/workflows/Firmware.yml`). La carpeta no se publica en Vercel (`.vercelignore`).
 
+## Análisis de software
+
+[`docs/analisis/`](docs/analisis/README.md) reúne los modelos de ingeniería de requisitos y análisis, dibujados con Mermaid y sacados del código: actores y casos de uso, diagrama de requisitos, diagramas de flujo, de secuencia, de clases, entidad-relación y de estados, arquitectura de componentes y despliegue, y la matriz de trazabilidad (requisito → caso de uso → código → pruebas).
+
 ## Requerimientos y MockUps
 
 Los requerimientos funcionales (RF-01 a RF-30) y no funcionales (RNF-01 a RNF-07) están en [`docs/Requerimientos.md`](docs/Requerimientos.md), cada uno como historia de usuario (**Como**… **quiero**… **para**…), con descripción, criterios de aceptación y su MockUp. Los mismos textos están en [`docs/issues/`](docs/issues/) para crear los Issues del repositorio (instrucciones abajo).
