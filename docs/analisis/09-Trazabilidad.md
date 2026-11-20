@@ -10,7 +10,7 @@ Cada requisito con su caso de uso, dónde está implementado y qué prueba autom
 | RF-04 Inicio | CU-03 | `dashboard/DashboardController`, `js/views/Dashboard.js` | B `ApiFlowIntegrationTest` |
 | RF-05 Registrar una medición | CU-03 | `MeasurementService`, `Measurers`, `PlaceAccess.activeForRecording` | B `ApiFlowIntegrationTest`, B `PlacesIntegrationTest`, B `DemoAccountsIntegrationTest` |
 | RF-06 Historial, gráficas y exportación | CU-07 | `MeasurementSpecifications`, `MeasurementIterator`, `js/views/History.js` | B `MeasurementExportIntegrationTest`, B `MeasurementIteratorTest` |
-| RF-07 Conectar y calibrar un medidor | CU-04 | `device/*` (Adapter, Factory, State), `js/core/BrowserMeter.js` | B `AdapterTest`, B `PhMeterFactoryTest`, B `DeviceConnectionStateTest`, B `TextMeterParserTest`, F `MeterProtocols` |
+| RF-07 Conectar y calibrar un medidor | CU-04 | `device/*` (Abstract Factory, Factory Method, Adapter, State), `js/core/BrowserMeter.js` | B `AdapterTest`, B `PhMeterFactoryTest`, B `DeviceConnectionStateTest`, B `TextMeterParserTest`, F `MeterProtocols` |
 | RF-08 Perfiles de agua con rangos | CU-08 | `profile/PhClassifier`, `WaterProfile.copyFor` | B `PhClassifierTest`, F `ProfileRules` |
 | RF-09 Alertas y anomalías | CU-06 | `alert/AlertService`, `AnomalyDetector` y sus reglas | B `PhAlterationRuleTest`, B `ApiFlowIntegrationTest`, I `IsolationForestTest`, I `MlModelServiceTest` |
 | RF-10 Tendencias y predicción | CU-12 | `intelligence/deep/DeepForecastService` (LSTM) | I `DeepLearningTest`, I `OfficialSeriesForecastIntegrationTest` |
@@ -28,7 +28,7 @@ Cada requisito con su caso de uso, dónde está implementado y qué prueba autom
 | RF-22 Aqua y recorrido guiado | CU-12 | `js/views/AquaBot.js`, `js/views/Tour.js` | Revisión en el navegador |
 | RF-23 Varios lugares y otros parámetros | CU-08 | `place/*`, `WaterParams` | B `PlacesIntegrationTest` |
 | RF-24 Calculadora de dosis y tratamientos | CU-10 | `js/core/DoseCalc.js`, `treatment/*` | F `DoseCalc`, B `CareFeaturesIntegrationTest` |
-| RF-25 Recordatorios y avisos | CU-11 | `reminder/*`, `notify/Notifier`, Web Push | B `CareFeaturesIntegrationTest`, B `WebPushCryptoTest`, B `DeliverableEmailTest` |
+| RF-25 Recordatorios y avisos | CU-11 | `reminder/*`, `notify/*` (Bridge y Decorator), Web Push | B `CareFeaturesIntegrationTest`, B `WebPushCryptoTest`, B `DeliverableEmailTest` |
 | RF-26 Compartir un lugar | CU-09 | `PlaceService.share` / `join` | B `PlacesIntegrationTest` |
 | RF-27 Historial de calibraciones | CU-04 | `calibration/*` | B `CareFeaturesIntegrationTest` |
 | RF-28 App en el idioma elegido | CU-16 | `i18n` en los dos servicios, `js/core/I18n.js` | B `I18nIntegrationTest`, I `I18nIntegrationTest`, I `TranslationServiceTest`, I `UiTextWarmerTest` |

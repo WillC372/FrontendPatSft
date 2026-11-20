@@ -281,7 +281,7 @@ classDiagram
     AlertService --> Notifier
 ```
 
-## 5.3 Medidores (Adapter, Factory Method y State)
+## 5.3 Medidores (Abstract Factory, Factory Method, Adapter y State)
 
 ```mermaid
 classDiagram
@@ -304,7 +304,20 @@ classDiagram
     class JSerialCommLink
     class PhMeterFactory {
         +create(protocol, port) PhMeter
+        +kitFor(protocol) MeterKit
     }
+    class MeterKit {
+        <<interface>>
+        +createLink(port) SerialLink
+        +createMeter(link) PhMeter
+    }
+    class SerialMeterKit {
+        <<abstract>>
+        #terminator() String
+    }
+    class AtlasEzoKit
+    class Esp32FirmwareKit
+    class TextMeterKit
     class DeviceService
     class DeviceConnection
     class ConnectionState {
@@ -324,6 +337,15 @@ classDiagram
     TextMeterAdapter --> SerialLink
     SerialLink <|.. JSerialCommLink
     PhMeterFactory ..> PhMeter : crea
+    PhMeterFactory o-- MeterKit : Abstract Factory
+    MeterKit <|.. SerialMeterKit
+    SerialMeterKit <|-- AtlasEzoKit
+    SerialMeterKit <|-- Esp32FirmwareKit
+    SerialMeterKit <|-- TextMeterKit
+    AtlasEzoKit ..> AtlasEzoPhAdapter : crea
+    Esp32FirmwareKit ..> AquaAssistantFirmwareAdapter : crea
+    TextMeterKit ..> TextMeterAdapter : crea
+    SerialMeterKit ..> JSerialCommLink : crea
     DeviceService --> PhMeterFactory
     DeviceService --> DeviceConnection
     DeviceConnection --> ConnectionState
@@ -331,6 +353,48 @@ classDiagram
     ConnectionState <|.. ConnectedState
     ConnectionState <|.. LiveState
     ConnectionState <|.. ErrorState
+```
+
+## 5.3.1 Avisos fuera de la app (Bridge y Decorator)
+
+`Notice` dice **qué** se avisa y por qué canales; `NoticeChannel` dice **cómo** se entrega. Los decoradores agregan capacidades a un canal sin cambiarlo.
+
+```mermaid
+classDiagram
+    direction LR
+    class Notifier {
+        +alert(userId, message)
+        +reminder(userId, message, byPush, byEmail)
+    }
+    class Notice {
+        <<abstract>>
+        +send(userId, message)
+        #channels() List~NoticeChannel~
+    }
+    class AlertNotice
+    class ReminderNotice
+    class NoticeChannel {
+        <<interface>>
+        +deliver(userId, content) boolean
+    }
+    class WebPushChannel
+    class EmailChannel
+    class ChannelDecorator {
+        <<abstract>>
+    }
+    class TranslatedChannel
+    class OncePerHourChannel
+
+    Notifier ..> Notice : crea
+    Notice <|-- AlertNotice
+    Notice <|-- ReminderNotice
+    Notice o-- NoticeChannel : Bridge
+    NoticeChannel <|.. WebPushChannel
+    NoticeChannel <|.. EmailChannel
+    NoticeChannel <|.. ChannelDecorator
+    ChannelDecorator <|-- TranslatedChannel
+    ChannelDecorator <|-- OncePerHourChannel
+    ChannelDecorator o-- NoticeChannel : Decorator
 ```
 
 ## 5.4 Servicio de IA
