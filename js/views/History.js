@@ -7,6 +7,9 @@ import { barChart, lineChart } from "../ui/Charts.js";
 import { LOCALE } from "../core/Locale.js";
 import { i18n } from "../core/I18n.js";
 
+/** The other values of the water that a manual measurement may carry. */
+const PARAM_KEYS = ["freeChlorine", "totalAlkalinity", "calciumHardness", "cyanuricAcid"];
+
 const PAGE_SIZE = 15;
 
 export const historyView = {
@@ -105,7 +108,8 @@ export const historyView = {
           return;
         }
         // Columns of other parameters only when some measurement of the page has them.
-        const withParams = result.content.some((m) => m.params && Object.values(m.params).some((v) => v !== null));
+        // Only the four measured values count (the API also sends "empty": true, which showed empty columns).
+        const withParams = result.content.some((m) => PARAM_KEYS.some((k) => m.params?.[k] != null));
         tableHost.innerHTML = `<div class="table-wrap"><table>
           <thead><tr><th>Fecha y hora</th><th>pH</th><th>Estado</th><th>Origen</th><th>Perfil</th><th>Validación</th>${withParams ? "<th>Cloro</th><th>Alcalinidad</th><th>Dureza</th><th>Ác. cianúrico</th>" : ""}<th><span class="sr-only">Acciones</span></th></tr></thead>
           <tbody>${result.content.map((m) => `<tr>
@@ -115,7 +119,7 @@ export const historyView = {
             <td>${sourceBadge(m.source)}</td>
             <td>${esc(m.profileName)}</td>
             <td title="${esc(m.validationNotes || "")}">${esc(m.validationLabel)}</td>
-            ${withParams ? ["freeChlorine", "totalAlkalinity", "calciumHardness", "cyanuricAcid"].map((k) => `<td class="num">${m.params?.[k] != null ? Number(m.params[k]).toLocaleString(LOCALE, { maximumFractionDigits: 1 }) : "—"}</td>`).join("") : ""}
+            ${withParams ? PARAM_KEYS.map((k) => `<td class="num">${m.params?.[k] != null ? Number(m.params[k]).toLocaleString(LOCALE, { maximumFractionDigits: 1 }) : "—"}</td>`).join("") : ""}
             <td><button class="btn btn-ghost btn-sm" data-detail="${m.id}" aria-label="Ver detalle">${icon("info")}</button>
                 <button class="btn btn-ghost btn-sm" data-delete="${m.id}" aria-label="Eliminar">${icon("trash")}</button></td>
           </tr>`).join("")}</tbody></table></div>`;

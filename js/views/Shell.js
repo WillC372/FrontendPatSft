@@ -9,6 +9,7 @@ import { avatarMarkup, avatarUrl, forgetAvatar } from "../core/Avatar.js";
 import { openAccountDialog } from "./AccountDialog.js";
 import { confirmDialog, toast } from "../ui/Components.js";
 import { AquaBot } from "./AquaBot.js";
+import { isAdmin } from "../core/Roles.js";
 import { reducedMotion } from "../core/Motion.js";
 import { phAlarm } from "./PhAlarm.js";
 
@@ -23,6 +24,12 @@ const RIGHT = [["billing", "Plan", "card", "Plan y pagos"]];
 // from the place menu.
 const CARE = ["care", "Cuidado", "flask", "Cuidado del agua: dosis, tratamientos y recordatorios"];
 const ADMIN = ["admin", "Admin", "users", "Administración"];
+// The administrator works for the company that runs the platform and sees another application (core/Roles.js): no
+// «Medir», places, care or Aqua; their own bar with the company's work.
+const ADMIN_TABS = [["admin", "Panel", "users", "Panel de administración: cuentas, planes, pagos y actividad"],
+  ["ai-usage", "Consumo IA", "sparkle", "Consumo y costos de IA de la plataforma"],
+  ["official", "Datos oficiales", "globe", "Datos oficiales del USGS que importa la plataforma"],
+  ["sessions", "Sesiones", "clock", "Sesiones y actividad de las cuentas"]];
 
 // A label too long for a phone has a short one ("Ajustes"); the full name stays for screen readers.
 const tab = ([r, label, ic, full, short]) => `<a class="tab-link" data-route="${r}" data-tab="${r}" href="#/${r}"${full || short ? ` aria-label="${full || label}" title="${full || label}"` : ""}>${icon(ic)}${short
@@ -36,6 +43,8 @@ export class Shell {
   constructor(root, ctx) {
     this.ctx = ctx;
     const user = session.user;
+    const admin = isAdmin(user);
+    this.admin = admin;
     root.innerHTML = `
       <div class="shell">
         <button type="button" class="skip-link" data-skip>Saltar al contenido</button>
@@ -44,12 +53,12 @@ export class Shell {
             <span class="topbar-brand">${logo("")}<span>Aqua Assistant <b>AI</b></span></span>
             <h1 class="topbar-h1" data-title></h1>
             <div class="topbar-actions">
-              <div class="place-menu-wrap">
+              <div class="place-menu-wrap"${admin ? " hidden" : ""}>
                 <button type="button" class="place-chip" data-place-chip aria-haspopup="menu" aria-expanded="false" aria-controls="place-menu" title="Lugar que estás viendo. Toca para cambiar de piscina, acuario o tanque.">${icon("pin")}<span data-place-name>Mi agua</span>${icon("chevronRight", "user-chev")}</button>
                 <div class="dropdown place-menu" id="place-menu" role="menu" aria-label="Elegir lugar" data-place-menu hidden></div>
               </div>
-              <span class="device-chip" data-device-pill role="status" aria-label="Estado del medidor"></span>
-              <div style="position:relative">
+              <span class="device-chip" data-device-pill role="status" aria-label="Estado del medidor"${admin ? " hidden" : ""}></span>
+              <div style="position:relative"${admin ? " hidden" : ""}>
                 <button class="btn btn-ghost icon-btn" data-bell aria-label="Alertas" aria-expanded="false">${icon("bell")}<span class="count" data-count hidden></span></button>
                 <div class="dropdown" data-alerts hidden></div>
               </div>
@@ -70,17 +79,18 @@ export class Shell {
         </div>
         <nav class="tabbar" aria-label="Navegación principal">
           <div class="tabbar-scroll" data-tab-scroll>
-            ${LEFT.map(tab).join("")}
+            ${admin ? ADMIN_TABS.map(tab).join("") : `${LEFT.map(tab).join("")}
             <button type="button" class="tab-measure" data-tab="measure" data-measure-tab aria-haspopup="dialog"><span class="tab-measure-ring">${icon("drop")}</span><span>Medir</span></button>
-            ${user?.role === "ADMIN" ? "" : tab(CARE)}
-            ${RIGHT.map(tab).join("")}
-            ${user?.role === "ADMIN" ? tab(ADMIN) : ""}
+            ${tab(CARE)}
+            ${RIGHT.map(tab).join("")}`}
           </div>
         </nav>
       </div>`;
     this.root = root;
     this.page = root.querySelector("#page");
-    this.aqua = new AquaBot(root.querySelector(".shell"), { onTourEnd: () => this.#centerActive() });
+    // Aqua is the AI of a person's water: the administrator's application does not have it.
+    this.aqua = admin ? { onRoute() {}, destroy() {}, maybeFirstTour() {} }
+      : new AquaBot(root.querySelector(".shell"), { onTourEnd: () => this.#centerActive() });
     this.#bind();
     this.refreshDevice();
     this.refreshAlerts();
@@ -102,6 +112,7 @@ export class Shell {
   }
 
   async refreshDevice() {
+    if (this.admin) return;
     const pill = this.root.querySelector("[data-device-pill]");
     try {
       const status = await api.get("/devices/status");
@@ -131,6 +142,7 @@ export class Shell {
   }
 
   async refreshAlerts() {
+    if (this.admin) return;
     try {
       const alerts = await api.get("/alerts", { unreadOnly: true, limit: 20 });
       const count = this.root.querySelector("[data-count]");
@@ -203,7 +215,7 @@ export class Shell {
       session.clear();
       this.ctx.router.go("register");
     });
-    this.root.querySelector("[data-measure-tab]").addEventListener("click", async () => {
+    this.root.querySelector("[data-measure-tab]")?.addEventListener("click", async () => {
       // The measuring flows are downloaded the first time "Medir" is pressed.
       try {
         const { openMeasureSheet } = await import("./MeasureSheet.js");
@@ -236,6 +248,7 @@ export class Shell {
 
   /** The active place in the top bar, and the list to change it. */
   async refreshPlace() {
+    if (this.admin) return;
     try {
       this.places = await api.get("/places");
       const active = this.places.find((p) => p.active) || this.places[0];

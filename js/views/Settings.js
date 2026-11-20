@@ -70,10 +70,12 @@ export const settingsView = {
     }
     session.updateUser(me);
     const draft = { ...settings };
+    // The administrator does not measure: no alarm, meter or measuring options (core/Roles.js).
+    const admin = me.role === "ADMIN";
 
     root.innerHTML = `${subNav("settings", SETTINGS_NAV, "Configuración")}
       <div class="settings-layout">
-        <nav class="card ia-menu" aria-label="Secciones">${SECTIONS.map(([id, label, ic]) => `<button data-goto="${id}">${icon(ic)}${label}</button>`).join("")}</nav>
+        <nav class="card ia-menu" aria-label="Secciones">${SECTIONS.filter(([id]) => !(admin && id === "measurement")).map(([id, label, ic]) => `<button data-goto="${id}">${icon(ic)}${label}</button>`).join("")}</nav>
         <div class="stack">
           <section class="card reveal" id="s-appearance">
             <div class="card-head"><div class="card-title">${icon("sun")}Modo de apariencia</div></div>
@@ -104,7 +106,7 @@ export const settingsView = {
               <div class="row" style="gap:8px;flex-wrap:nowrap"><input type="range" min="0.7" max="1.4" step="0.05" data-voice-rate aria-label="Velocidad de la voz">
               <button type="button" class="btn btn-sm" data-voice-test>${icon("play")}Probar</button></div></div>
           </section>
-          <section class="card reveal" id="s-measurement">
+          <section class="card reveal" id="s-measurement"${admin ? " hidden" : ""}>
             <div class="card-head"><div class="card-title">${icon("bell")}Notificaciones y medición</div></div>
             ${helpBox("notices", "¿Cómo me llegan los avisos?", [
               ["bell", "Dentro de la app", "La campana de arriba muestra las alertas cuando una medición sale del rango. Siempre está."],

@@ -36,8 +36,9 @@ const sessionsView = lazyView({ name: "sessions", title: "Historial de sesiones"
 const placesView = lazyView({ name: "places", title: "Lugares" }, () => import("./views/Places.js"), "placesView");
 const careView = lazyView({ name: "care", title: "Cuidado del agua" }, () => import("./views/Care.js"), "careView");
 const officialDataView = lazyView({ name: "official", title: "Datos oficiales" }, () => import("./views/OfficialData.js"), "officialDataView");
+const aiUsageView = lazyView({ name: "ai-usage", title: "Consumo de IA" }, () => import("./views/AiUsage.js"), "aiUsageView");
 const LAZY = Object.fromEntries([dashboardView, historyView, intelligenceView, devicesView, profilesView, settingsView, billingView,
-  adminView, sessionsView, officialDataView, placesView, careView].map((v) => [v.name, v]));
+  adminView, sessionsView, officialDataView, placesView, careView, aiUsageView].map((v) => [v.name, v]));
 
 // Pointing at (or tabbing to) a link starts downloading its screen, so opening it feels immediate.
 const preloadFrom = (event) => {
@@ -138,7 +139,8 @@ ctx.router = new Router(show)
   .add("official", officialDataView)
   .add("places", placesView)
   .add("care", careView)
-  .add("admin", adminView);
+  .add("admin", adminView)
+  .add("ai-usage", aiUsageView);
 
 let slowNoticeShown = false;
 bus.on("api:slow", () => {
