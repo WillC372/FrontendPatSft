@@ -74,7 +74,8 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 | H-060 | Se quita WhatsApp: el dueño decidió no configurar la cuenta de Meta | BackendPatSft · FrontendPatSft | decisión del dueño | Baja | no | Resuelto (BackendPatSft#10, FrontendPatSft#46) |
 | H-061 | El administrador veía la misma app que un usuario y podía medir; el historial mostraba columnas vacías | BackendPatSft · FrontendPatSft | pedido del dueño / error | Media | no | Resuelto (BackendPatSft#11, FrontendPatSft#47) |
 | H-062 | El requisito RNF-07 pedía «instalar la app» y decía que la interfaz solo estaba en español | FrontendPatSft | documentación / decisión del dueño | Baja | no | Resuelto (FrontendPatSft#49) |
-| H-063 | La gota de «Acerca de» en Configuración ocupaba todo el ancho de la tarjeta | FrontendPatSft | error de interfaz | Baja | no | En revisión (rama `mejora/H-063-gota-acerca-de`) |
+| H-063 | La gota de «Acerca de» en Configuración ocupaba todo el ancho de la tarjeta | FrontendPatSft | error de interfaz | Baja | no | Resuelto (FrontendPatSft#51) |
+| H-064 | Tres patrones vistos en clase (Abstract Factory, Bridge y Decorator) no estaban en el software | BackendPatSft · FrontendPatSft | requisito del curso / arquitectura | Media | sí (diseño interno, pedido por el dueño) | En revisión (BackendPatSft#12) |
 
 ## Detalle
 
@@ -630,6 +631,17 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 - Corrección: RNF-07 pasa a «Compatibilidad con navegadores»: se usa desde el navegador sin instalar nada, en computador y celular; el medidor necesita Chrome o Edge en un computador; interfaz en siete idiomas. No cambia código: el manifiesto y `sw.js` (que también sirve para los avisos Web Push) se quedan.
 
 ### H-063 · La gota de «Acerca de» en Configuración ocupaba todo el ancho de la tarjeta
-- Repositorio: FrontendPatSft · Tipo: error de interfaz · Severidad: **Baja** · Estructural: no · Esfuerzo: S · Riesgo de regresión: bajo · Estado: En revisión (rama `mejora/H-063-gota-acerca-de`) · Detectado por: el dueño (20 nov)
+- Repositorio: FrontendPatSft · Tipo: error de interfaz · Severidad: **Baja** · Estructural: no · Esfuerzo: S · Riesgo de regresión: bajo · Estado: Resuelto (FrontendPatSft#51) · Detectado por: el dueño (20 nov)
 - Evidencia: en la app publicada, el logo de «Acerca de» medía 948 × 948 px en computador (1280 px de ancho) y 320 × 320 px en celular. `Settings.js` usa `logo("brand-logo")`, pero `.brand-logo` solo tiene tamaño dentro de la pantalla de acceso (`.auth-hero-content .brand-logo`), y un SVG sin tamaño crece hasta llenar el espacio.
 - Corrección: la fila pasa a `about-brand` y `Views.css` le da a la gota 56 × 56 px (`flex: none`), con la misma sombra que la de la barra superior. Se mantiene la clase `brand-logo`, así la gota sigue respetando el ajuste «Animaciones». Probado sobre la app publicada con los archivos de la rama: 56 px en computador y en celular, sin errores de consola. Pruebas: 64 → 65 (`AboutLogo.test.mjs`, que falla sin la corrección).
+
+### H-064 · Tres patrones vistos en clase (Abstract Factory, Bridge y Decorator) no estaban en el software
+- Repositorio: BackendPatSft · FrontendPatSft (documentación) · Tipo: requisito del curso / arquitectura · Severidad: **Media** · Estructural: sí (diseño interno; el dueño lo pidió y lo aprobó el 20 nov) · Riesgo de regresión: bajo · Estado: En revisión (BackendPatSft#12) · Detectado por: el dueño (20 nov)
+- Evidencia: de los siete patrones vistos en clase, solo Factory Method, Adapter, Facade y Proxy estaban en el código. `docs/DesignPatterns.md` tenía a Abstract Factory, Bridge y Decorator como «evaluados y descartados», y el dueño pide que todos se usen con una función concreta.
+- Corrección (BackendPatSft#12):
+  - **Abstract Factory** en los medidores: `MeterKit` crea por modelo el enlace serie con su fin de línea y el adaptador de su protocolo (`AtlasEzoKit`, `Esp32FirmwareKit`, `TextMeterKit`).
+  - **Bridge** en los avisos: `Notice` (`AlertNotice`, `ReminderNotice`) × `NoticeChannel` (`WebPushChannel`, `EmailChannel`).
+  - **Decorator** sobre los canales: `TranslatedChannel` (push en el idioma de la persona) y `OncePerHourChannel` (un correo por hora por tipo).
+  - La API del `Notifier` no cambia, y si un canal falla, el otro igual se envía.
+  - Pruebas del backend: 119 → 130.
+  - En este repositorio se actualizan el diagrama de clases (5.3 y el nuevo 5.3.1) y la trazabilidad.
