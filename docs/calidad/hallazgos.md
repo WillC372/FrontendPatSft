@@ -8,13 +8,13 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 
 > Primera auditoría (19 nov 2026), modo `auditar`, en solo lectura, completa con los ocho especialistas: base de datos, arquitectura e integración, seguridad, backend, frontend y experiencia de usuario, IA, rendimiento y pruebas. Los hallazgos repetidos entre especialistas se unieron en uno. 50 hallazgos: 1 crítico, 12 altos, 24 medios y 13 bajos (H-051 lo pidió después el dueño). Línea base de pruebas (mismo código de `main`): frontend 56, backend 112 y servicio de IA 123, todas aprobadas; migraciones verificadas en GitHub Actions.
 >
-> Corregidos en ramas con pull request (sin merge, lo hace el dueño): H-001, H-002, H-003 y H-019. H-024 se corrigió en la rama del equipo.
+> Resueltos con merge (al 20 nov): H-001, H-002, H-003, H-019 y H-051 a H-062. H-024 se corrigió en la rama del equipo. Del 053 al 062 son pedidos y errores que aparecieron después de la auditoría. Los demás siguen como «Nuevo» y esperan la decisión del dueño.
 
 | ID | Título | Repositorio | Tipo | Severidad | Estructural | Estado |
 |---|---|---|---|---|---|---|
-| H-001 | Premium puede aplicarse dos veces si el retorno de PayU y la confirmación llegan a la vez | BackendPatSft | error | Alta | no | En revisión (BackendPatSft#3) |
-| H-002 | Borrar la cuenta falla si un lugar ajeno usa un perfil personalizado suyo | BackendPatSft · DBPatSft | error | Alta | no | En revisión (BackendPatSft#4) |
-| H-003 | El backend y el servicio de IA aplican reglas distintas de cambio brusco y dan severidades opuestas | AIPatSft · BackendPatSft | IA / arquitectura | Alta | no (cambia el comportamiento de los análisis: validar) | En revisión (AIPatSft#2) |
+| H-001 | Premium puede aplicarse dos veces si el retorno de PayU y la confirmación llegan a la vez | BackendPatSft | error | Alta | no | Resuelto (BackendPatSft#3) |
+| H-002 | Borrar la cuenta falla si un lugar ajeno usa un perfil personalizado suyo | BackendPatSft · DBPatSft | error | Alta | no | Resuelto (BackendPatSft#4) |
+| H-003 | El backend y el servicio de IA aplican reglas distintas de cambio brusco y dan severidades opuestas | AIPatSft · BackendPatSft | IA / arquitectura | Alta | no (cambia el comportamiento de los análisis: validar) | Resuelto (AIPatSft#2) |
 | H-004 | Al borrar la cuenta de un miembro EDITOR se borran sus mediciones y tratamientos del lugar compartido | DBPatSft · BackendPatSft | datos | Media | sí (decisión de producto y privacidad) | Nuevo |
 | H-005 | Una lectura por foto se pierde si el backend no la acepta, y el botón queda desactivado | AIPatSft · FrontendPatSft | error | Media | no | Nuevo |
 | H-006 | La entidad Alert del servicio de IA no tiene `kind` y la explicación de alarmas acepta cualquier alerta y recalcula el peligro | AIPatSft | incompleto | Media | no | Nuevo |
@@ -30,7 +30,7 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 | H-016 | El aviso push de una alarma puede tardar ~35 s si el servicio de IA está dormido | BackendPatSft | rendimiento | Baja | no | Nuevo |
 | H-017 | `docs/Architecture.md` del backend describe el monolito anterior | BackendPatSft | documentación | Baja | no | Nuevo |
 | H-018 | El README del servicio de IA y `Esquema.md` contradicen el código | AIPatSft · DBPatSft | documentación | Baja | no | Nuevo |
-| H-019 | La cuenta pública de administrador de demostración ve los correos reales y tiene IA ilimitada | AIPatSft | seguridad | Crítica | no | En revisión (AIPatSft#3) |
+| H-019 | La cuenta pública de administrador de demostración ve los correos reales y tiene IA ilimitada | AIPatSft | seguridad | Crítica | no | Resuelto (AIPatSft#3) |
 | H-020 | Los datos oficiales del USGS cargados en un lugar disparan alarmas falsas y se mezclan con las mediciones propias en los modelos | BackendPatSft · AIPatSft | error / IA | Alta | no | Nuevo |
 | H-021 | Los recordatorios ya avisados y no marcados como hechos bloquean el envío de todos los demás | BackendPatSft | error | Alta | no | Nuevo |
 | H-022 | Las consultas de 2000 mediciones se quedan con las más antiguas (gráfica, entrenamiento de modelos) | BackendPatSft · AIPatSft | error / rendimiento | Alta | no | Nuevo |
@@ -62,26 +62,35 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 | H-048 | Si falla «Marcar como leídas» en las alertas, el error queda sin manejar | FrontendPatSft | error | Baja | no | Nuevo |
 | H-049 | Cualquier visita a la pantalla de inicio de sesión despierta el servicio de IA | FrontendPatSft · AIPatSft | rendimiento | Baja | no | Nuevo |
 | H-050 | Costo de IA no registrado: traducciones y ejecuciones fallidas del agente | AIPatSft | IA / costos | Baja | no | Nuevo |
-| H-051 | El backend y el servicio de IA tenían código que no es Java (firmware, generador KiCad y scripts) | BackendPatSft · AIPatSft · FrontendPatSft | requisito del dueño | Media | no | En revisión (FrontendPatSft#40, BackendPatSft#5, AIPatSft#4) |
-| H-052 | Traducciones que la IA reescribió en español en vez de traducir (italiano y japonés) | AIPatSft · DBPatSft | error / IA | Media | no | En revisión (AIPatSft#5, DBPatSft#3) |
-| H-062 | El requisito RNF-07 pedía «instalar la app» y decía que la interfaz solo estaba en español | FrontendPatSft | documentación / decisión del dueño | Baja | no | En revisión (rama `calidad/H-062-rnf07-compatibilidad`) |
+| H-051 | El backend y el servicio de IA tenían código que no es Java (firmware, generador KiCad y scripts) | BackendPatSft · AIPatSft · FrontendPatSft | requisito del dueño | Media | no | Resuelto (FrontendPatSft#40, BackendPatSft#5, AIPatSft#4) |
+| H-052 | Traducciones que la IA reescribió en español en vez de traducir (italiano y japonés) | AIPatSft · DBPatSft | error / IA | Media | no | Resuelto (AIPatSft#5, DBPatSft#3) |
+| H-053 | El docente no podía probar todo con los botones de acceso, y las fotos no se guardaban si el lugar en uso era solo para ver | BackendPatSft · FrontendPatSft | pedido del docente / error | Alta | no | Resuelto (BackendPatSft#6, FrontendPatSft#42) |
+| H-054 | La foto podía tomar la temperatura como pH, y el administrador demo tenía límite de IA | AIPatSft | IA / pedido del docente | Media | no | Resuelto (AIPatSft#6) |
+| H-055 | En el celular, la lectura por foto abría la cámara y no dejaba elegir una foto de la galería | FrontendPatSft | error de interfaz | Media | no | Resuelto (FrontendPatSft#43) |
+| H-056 | Una medición crítica no hacía sonar la alarma si no había mediciones en la última hora | BackendPatSft · AIPatSft | error | Alta | no | Resuelto (BackendPatSft#7, AIPatSft#7) |
+| H-057 | En el celular aparecía la ventana de la alarma pero la sirena no sonaba | FrontendPatSft | error | Alta | no | Resuelto (FrontendPatSft#44) |
+| H-058 | Avisos de la alarma por WhatsApp y correos reales en los botones de acceso | DBPatSft · BackendPatSft · FrontendPatSft | pedido del dueño | Media | sí (columnas nuevas, aprobadas por el dueño) | Resuelto y luego retirado en parte por H-060 (DBPatSft#4, BackendPatSft#8, FrontendPatSft#45) |
+| H-059 | Los botones de acceso usaban correos inventados | BackendPatSft | pedido del dueño | Baja | no | Resuelto (BackendPatSft#9) |
+| H-060 | Se quita WhatsApp: el dueño decidió no configurar la cuenta de Meta | BackendPatSft · FrontendPatSft | decisión del dueño | Baja | no | Resuelto (BackendPatSft#10, FrontendPatSft#46) |
+| H-061 | El administrador veía la misma app que un usuario y podía medir; el historial mostraba columnas vacías | BackendPatSft · FrontendPatSft | pedido del dueño / error | Media | no | Resuelto (BackendPatSft#11, FrontendPatSft#47) |
+| H-062 | El requisito RNF-07 pedía «instalar la app» y decía que la interfaz solo estaba en español | FrontendPatSft | documentación / decisión del dueño | Baja | no | Resuelto (FrontendPatSft#49) |
 
 ## Detalle
 
 ### H-001 · Premium puede aplicarse dos veces si el retorno de PayU y la confirmación llegan a la vez
-- Repositorio: BackendPatSft · Tipo: error · Severidad: **Alta** · Estructural: no · Esfuerzo: S · Riesgo de regresión: bajo · Estado: En revisión (BackendPatSft#3)
+- Repositorio: BackendPatSft · Tipo: error · Severidad: **Alta** · Estructural: no · Esfuerzo: S · Riesgo de regresión: bajo · Estado: Resuelto (BackendPatSft#3)
 - Evidencia: `payment/PaymentService.java` (verify/confirm leen con `findByReferenceCode` sin bloqueo; `reconcile` llama a `applyPremium` → `extendPremium`); `Payment` sin `@Version` (V9 sin columna de versión). Con READ COMMITTED, dos transacciones que leen PENDING extienden Premium dos veces. Verificado en el código; reproducción por confirmar.
 - Impacto: Un pago extiende Premium el doble, dos correos y dos registros PREMIUM_PAID.
 - Propuesta: Bloqueo `@Lock(PESSIMISTIC_WRITE)` en una variante de `findByReferenceCode` usada por `reconcile` (solo código) y prueba de concurrencia.
 
 ### H-002 · Borrar la cuenta falla si un lugar ajeno usa un perfil personalizado suyo
-- Repositorio: BackendPatSft · DBPatSft · Tipo: error · Severidad: **Alta** · Estructural: no · Esfuerzo: M · Riesgo de regresión: medio · Estado: En revisión (BackendPatSft#4)
+- Repositorio: BackendPatSft · DBPatSft · Tipo: error · Severidad: **Alta** · Estructural: no · Esfuerzo: M · Riesgo de regresión: medio · Estado: Resuelto (BackendPatSft#4)
 - Evidencia: `PlaceService.profileFor` acepta perfiles visibles para el editor (`isVisibleTo(userId)`), no para el dueño; `water_profiles.owner_id` ON DELETE CASCADE (V1:16) pero `places.profile_id` (V18:10) y `measurements.profile_id` (V1:58) sin ON DELETE; `AccountDeletionService` solo hace `users.delete`. Reproducido en H2: violación de integridad de `places.profile_id`.
 - Impacto: El miembro EDITOR no puede eliminar su cuenta; el dueño queda con un perfil que no ve ni edita.
 - Propuesta: `profileFor` solo acepta perfiles del sistema o del dueño del lugar; antes de borrar la cuenta, pasar los lugares ajenos que usen sus perfiles al perfil general (como `ProfileService.delete`). Las mediciones ajenas con ese perfil: decisión pendiente (ver H-004).
 
 ### H-003 · El backend y el servicio de IA aplican reglas distintas de cambio brusco y dan severidades opuestas
-- Repositorio: AIPatSft · BackendPatSft · Tipo: IA / arquitectura · Severidad: **Alta** · Estructural: no (cambia el comportamiento de los análisis: validar) · Esfuerzo: S · Riesgo de regresión: medio · Estado: En revisión (AIPatSft#2)
+- Repositorio: AIPatSft · BackendPatSft · Tipo: IA / arquitectura · Severidad: **Alta** · Estructural: no (cambia el comportamiento de los análisis: validar) · Esfuerzo: S · Riesgo de regresión: medio · Estado: Resuelto (AIPatSft#2)
 - Evidencia: Backend: `alert/analysis/PhAlterationRule.java` (última hora, severidad por el perfil). IA: `intelligence/analysis/SuddenChangeRule.java` (solo la medición anterior, CRITICAL desde 1,0). Ejemplos: perfil general 7,0→8,1 = alarma CAUTION en backend y «Cambio brusco» CRITICAL en IA; piscina 7,5→8,1 = CRITICAL en backend y CAUTION en IA; subida gradual 7,0→7,6 suena en backend y la IA no la ve. El informe muestra ambas (`report/ReportService.java:110-116`).
 - Impacto: Diagnóstico, agente, informe y anomalías pueden contradecir la alarma (rompe «la IA nunca contradice el veredicto del sistema»).
 - Propuesta: Llevar `PhAlterationRule` al servicio de IA en lugar de `SuddenChangeRule` (tipo `PH_ALTERATION`) con pruebas de los ejemplos.
@@ -177,7 +186,7 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 - Propuesta: Corregir esos puntos.
 
 ### H-019 · La cuenta pública de administrador de demostración ve los correos reales y tiene IA ilimitada
-- Repositorio: AIPatSft · Tipo: seguridad · Severidad: **Crítica** · Estructural: no · Esfuerzo: S · Riesgo de regresión: bajo · Estado: En revisión (AIPatSft#3) · Detectado por: seguridad
+- Repositorio: AIPatSft · Tipo: seguridad · Severidad: **Crítica** · Estructural: no · Esfuerzo: S · Riesgo de regresión: bajo · Estado: Resuelto (AIPatSft#3) · Detectado por: seguridad
 - Evidencia: 
   - Cualquiera, sin sesión, obtiene la contraseña: `GET /api/v1/auth/demo-accounts` está abierta (`backendpatsft/.../config/SecurityConfig.java:41`, `user/AuthController.java:68-71`) y la devuelve en `DemoAccounts.java:93`.
   - Esa cuenta tiene el rol ADMIN (`DemoAccounts.java`, `Kind.ADMIN`).
@@ -560,19 +569,61 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
   - Devolver los tokens acumulados en `AgentFailedException` y guardarlos en `recordFailure`.
 
 ### H-051 · El backend y el servicio de IA tenían código que no es Java (firmware, generador KiCad y scripts)
-- Repositorio: BackendPatSft · AIPatSft · FrontendPatSft · Tipo: requisito del dueño · Severidad: **Media** · Estructural: no (traslado de una carpeta y scripts reescritos, sin cambiar la aplicación) · Esfuerzo: M · Riesgo de regresión: bajo · Estado: En revisión (FrontendPatSft#40, BackendPatSft#5, AIPatSft#4) · Pedido por: el dueño
+- Repositorio: BackendPatSft · AIPatSft · FrontendPatSft · Tipo: requisito del dueño · Severidad: **Media** · Estructural: no (traslado de una carpeta y scripts reescritos, sin cambiar la aplicación) · Esfuerzo: M · Riesgo de regresión: bajo · Estado: Resuelto (FrontendPatSft#40, BackendPatSft#5, AIPatSft#4) · Pedido por: el dueño
 - Evidencia: GitHub mostraba en BackendPatSft Python 79 KB, C++ 24 KB, HTML 10 KB, JavaScript 3 KB y Shell, todo de `hardware/` (firmware del ESP32 y generador KiCad) y de `scripts/sync-migrations.sh`. En AIPatSft había `scripts/extract-ui-texts.mjs`, `scripts/VerifyKnowledgeQuotes.py` y `scripts/sync-migrations.sh`.
 - Cambio: `hardware/` pasa a FrontendPatSft con su prueba de GitHub Actions; los cinco scripts se reescriben en Java con el mismo resultado (2300 textos y 0 diferencias; 20 de 20 citas; 27 migraciones). El control de `main` de esos dos repositorios queda en Java (`ProtegerMain.java`), probado con los mismos casos que el de JavaScript. El `Dockerfile` se queda porque Render lo necesita; `.gitattributes` lo excluye de las estadísticas de lenguaje.
 - Orden de merge: FrontendPatSft#40 antes que BackendPatSft#5.
 
 ### H-052 · Traducciones que la IA reescribió en español en vez de traducir (italiano y japonés)
-- Repositorio: AIPatSft · DBPatSft · Tipo: error / IA · Severidad: **Media** · Estructural: no · Esfuerzo: S · Riesgo de regresión: bajo · Estado: En revisión (AIPatSft#5, DBPatSft#3) · Detectado por: revisión de idiomas en producción (20 nov)
+- Repositorio: AIPatSft · DBPatSft · Tipo: error / IA · Severidad: **Media** · Estructural: no · Esfuerzo: S · Riesgo de regresión: bajo · Estado: Resuelto (AIPatSft#5, DBPatSft#3) · Detectado por: revisión de idiomas en producción (20 nov)
 - Evidencia: los 2274 textos están en el diccionario de los 6 idiomas, y la revisión de cada pantalla con una cuenta temporal dio 0 textos en español en inglés, francés, alemán, chino y japonés (en japonés, en la segunda vuelta). En italiano dio 2: «¿Qué ha aplicado o ha hecho?» y «Ácido cianúrico», guardados como traducción. Al revisar los diccionarios aparecieron además «relatório» (portugués) en italiano, «estación», «Cerrar sesión» y «Análisis avanzado» dentro del japonés, y la etiqueta vieja «Resumen en español» en inglés. `TranslationService.leftInSpanish` solo detectaba una traducción idéntica al original.
 - Impacto: la app muestra esos textos en español para siempre en ese idioma.
 - Corrección: `stillSpanish` (¿, ¡ o una palabra con ñ, á, í, ó o ú que no sea un nombre copiado del original) hace que el texto se pida una vez más y que, si sigue en español, no se guarde. La migración V28 borra las 10 filas malas para que se traduzcan otra vez. Sin falsos positivos en los diccionarios publicados. Pruebas del servicio de IA: 125 → 128.
 - Orden de merge: AIPatSft#5 antes que DBPatSft#3.
 
+### H-053 · El docente no podía probar todo con los botones de acceso, y las fotos no se guardaban si el lugar en uso era solo para ver
+- Repositorio: BackendPatSft · FrontendPatSft · Tipo: pedido del docente / error · Severidad: **Alta** · Estructural: no · Estado: Resuelto (BackendPatSft#6, FrontendPatSft#42) · Detectado por: pedido del dueño (20 nov)
+- Evidencia: el docente revisa la app solo con los botones, sin hablar con nadie, y las cuentas de demostración tenían bloqueos (pagar, cambiar nombre, foto y contraseña, compartir, eliminar). Con la cuenta de Ana, la foto fallaba con 403 porque el lugar en uso era un río compartido solo para ver. Además, `PhotoFlow` usaba `event.currentTarget` después de un `await`: tras un error, «Guardar» quedaba desactivado para siempre.
+- Corrección: tres botones (Usuario en plan gratuito, Premium y Administrador) sin bloqueos de demostración. `DemoAccounts.restore` deja cada cuenta como se ofrece antes de cada inicio de sesión con el botón. El administrador demo solo actúa sobre cuentas demo y `@example.com`. `PlaceAccess.activeForRecording` guarda la medición en un lugar propio si el lugar en uso es de solo lectura. Pruebas: backend 114 → 115; frontend 60 → 60.
+
+### H-054 · La foto podía tomar la temperatura como pH, y el administrador demo tenía límite de IA
+- Repositorio: AIPatSft · Tipo: IA / pedido del docente · Severidad: **Media** · Estructural: no · Estado: Resuelto (AIPatSft#6) · Detectado por: pedido del dueño (20 nov)
+- Evidencia: muchos medidores muestran varios números (pH, temperatura, mV) y la instrucción al modelo de visión no decía cuál leer.
+- Corrección: la IA lee solo el número que tiene «pH» al lado, y si no lo distingue dice que no se pudo leer. El administrador demo vuelve a tener IA ilimitada (revierte una parte de H-019), y los correos de personas reales siguen enmascarados. Pruebas: 125 → 125.
+
+### H-055 · En el celular, la lectura por foto abría la cámara y no dejaba elegir una foto de la galería
+- Repositorio: FrontendPatSft · Tipo: error de interfaz · Severidad: **Media** · Estructural: no · Estado: Resuelto (FrontendPatSft#43) · Detectado por: el dueño en su celular (20 nov)
+- Evidencia: el campo de archivo tenía `capture="environment"`, que en el celular obliga a usar la cámara.
+- Corrección: se quita `capture`, así el celular ofrece la galería y los archivos. La cámara sigue disponible con el botón «Usar la cámara de este equipo». Pruebas: 60 → 60.
+
+### H-056 · Una medición crítica no hacía sonar la alarma si no había mediciones en la última hora
+- Repositorio: BackendPatSft · AIPatSft · Tipo: error · Severidad: **Alta** · Estructural: no · Estado: Resuelto (BackendPatSft#7, AIPatSft#7) · Detectado por: el dueño en producción (20 nov)
+- Evidencia: una foto con pH 12,67 solo creó «pH en nivel crítico» y «Valor atípico». No sonó la alarma, Aqua no habló y no llegó el aviso urgente. `PhAlterationRule` solo comparaba con la última hora, y la medición anterior era de 1 h 16 min antes (`recent.isEmpty()`).
+- Corrección: una medición en nivel crítico es una alteración aunque no haya mediciones recientes. Se compara con la anterior, sea de cuando sea, o se menciona sola si es la primera. La misma regla está en la IA (H-003). Pruebas: backend 115 → 116, con el caso de producción; IA 128 → 128.
+
+### H-057 · En el celular aparecía la ventana de la alarma pero la sirena no sonaba
+- Repositorio: FrontendPatSft · Tipo: error · Severidad: **Alta** · Estructural: no · Estado: Resuelto (FrontendPatSft#44) · Detectado por: el dueño en su celular (20 nov)
+- Evidencia: la sirena se hacía con Web Audio, que el iPhone silencia con el interruptor de silencio y que en los celulares queda suspendido si el toque no se tomó como permiso.
+- Corrección: la sirena es un WAV generado en el navegador (`sirenWav`) y suena con un elemento `<audio>`. El primer toque (`touchend` o `click`) la habilita, junto con la voz. En iPhone con Safari 17 o más se pide `audioSession.type = "playback"`. Web Audio queda como respaldo. Pruebas: 60 → 62; 64 de 64 junto con el `main` del 20 nov. El PR se cerró sin merge, se reabrió el mismo día y se hizo merge.
+
+### H-058 · Avisos de la alarma por WhatsApp y correos reales en los botones de acceso
+- Repositorio: DBPatSft · BackendPatSft · FrontendPatSft · Tipo: pedido del dueño · Severidad: **Media** · Estructural: sí (columnas nuevas, aprobadas por el dueño) · Estado: Resuelto y luego retirado en parte por H-060 (DBPatSft#4, BackendPatSft#8, FrontendPatSft#45)
+- Cambio: la migración V29 agrega `users.phone_number` y `user_settings.whatsapp_alerts`. Se agregaron el envío por la WhatsApp Cloud API (apagado sin credenciales, sin fingir envíos), un límite propio para el correo de la alarma, `Notifier.deliverable` (las direcciones inventadas o de ejemplo no reciben correo) y los correos de los botones configurables con `DEMO_*_EMAIL`. Pruebas: backend 116 → 120.
+
+### H-059 · Los botones de acceso usaban correos inventados
+- Repositorio: BackendPatSft · Tipo: pedido del dueño · Severidad: **Baja** · Estructural: no · Estado: Resuelto (BackendPatSft#9)
+- Corrección: las cuentas de los botones pasan a buzones reales del dueño (Usuario, Premium y Administrador). Cada cuenta se renombra y conserva sus lugares, mediciones e historial. No se usa la cuenta personal del dueño, porque los intentos fallidos con la contraseña pública la bloquearían. Pruebas: 120 → 120.
+
+### H-060 · Se quita WhatsApp: el dueño decidió no configurar la cuenta de Meta
+- Repositorio: BackendPatSft · FrontendPatSft · Tipo: decisión del dueño · Severidad: **Baja** · Estructural: no · Estado: Resuelto (BackendPatSft#10, FrontendPatSft#46)
+- Cambio: salen `WhatsAppService`, `WhatsAppController`, las variables `WHATSAPP_*` y la fila de Configuración. Las columnas de V29 quedan sin usar, porque borrarlas sería un cambio destructivo de la base. Se mantienen el correo de la alarma, los correos de los botones y `Notifier.deliverable` (`DeliverableEmailTest`). Pruebas: backend 120 → 118 (salen 3 de WhatsApp y entra 1 del correo); frontend 60 → 60.
+
+### H-061 · El administrador veía la misma app que un usuario y podía medir; el historial mostraba columnas vacías
+- Repositorio: BackendPatSft · FrontendPatSft · Tipo: pedido del dueño / error · Severidad: **Media** · Estructural: no · Estado: Resuelto (BackendPatSft#11, FrontendPatSft#47)
+- Evidencia: el administrador trabaja para la empresa dueña del software y no debe medir, pero tenía «Medir», el medidor y Aqua. En el historial, Cloro, Alcalinidad, Dureza y Ác. cianúrico aparecían siempre, porque la API manda `"empty": true` dentro de `params`.
+- Corrección: `Measurers.require` responde 403 a cualquier medición de una cuenta ADMIN (a mano, con el medidor, con la foto y al cargar datos del USGS). `js/core/Roles.js` separa las pantallas de cada rol, y el administrador tiene su propia barra: Panel, Consumo IA, Datos oficiales y Sesiones. El historial solo muestra esas columnas si alguna medición tiene ese valor. Pruebas: backend 118 → 119; frontend 60 → 62.
+
 ### H-062 · El requisito RNF-07 pedía «instalar la app» y decía que la interfaz solo estaba en español
-- Repositorio: FrontendPatSft · Tipo: documentación / decisión del dueño · Severidad: **Baja** · Estructural: no · Esfuerzo: S · Riesgo de regresión: ninguno (solo documentación) · Estado: En revisión (rama `calidad/H-062-rnf07-compatibilidad`) · Detectado por: preparación de la exposición (20 nov)
+- Repositorio: FrontendPatSft · Tipo: documentación / decisión del dueño · Severidad: **Baja** · Estructural: no · Esfuerzo: S · Riesgo de regresión: ninguno (solo documentación) · Estado: Resuelto (FrontendPatSft#49) · Detectado por: preparación de la exposición (20 nov)
 - Evidencia: `docs/Requerimientos.md` y `docs/issues/37-RNF-07.md` describían RNF-07 como «Compatibilidad e instalación», con el criterio «El navegador ofrece instalar la app» y la frase «Interfaz en español». La app tiene siete idiomas (`js/core/Locale.js`). Sobre la instalación: Chromium no reporta errores de instalabilidad en la app publicada (`Page.getInstallabilityErrors` vacío, manifiesto sin errores), así que técnicamente sí se puede instalar en Chrome o Edge; pero el dueño decidió que el requisito no prometa instalarla.
 - Corrección: RNF-07 pasa a «Compatibilidad con navegadores»: se usa desde el navegador sin instalar nada, en computador y celular; el medidor necesita Chrome o Edge en un computador; interfaz en siete idiomas. No cambia código: el manifiesto y `sw.js` (que también sirve para los avisos Web Push) se quedan.
