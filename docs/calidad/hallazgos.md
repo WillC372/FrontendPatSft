@@ -75,9 +75,9 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 | H-061 | El administrador veía la misma app que un usuario y podía medir; el historial mostraba columnas vacías | BackendPatSft · FrontendPatSft | pedido del dueño / error | Media | no | Resuelto (BackendPatSft#11, FrontendPatSft#47) |
 | H-062 | El requisito RNF-07 pedía «instalar la app» y decía que la interfaz solo estaba en español | FrontendPatSft | documentación / decisión del dueño | Baja | no | Resuelto (FrontendPatSft#49) |
 | H-063 | La gota de «Acerca de» en Configuración ocupaba todo el ancho de la tarjeta | FrontendPatSft | error de interfaz | Baja | no | Resuelto (FrontendPatSft#51) |
-| H-064 | Tres patrones vistos en clase (Abstract Factory, Bridge y Decorator) no estaban en el software | BackendPatSft · FrontendPatSft | requisito del curso / arquitectura | Media | sí (diseño interno, pedido por el dueño) | En revisión (BackendPatSft#12) |
+| H-064 | Tres patrones vistos en clase (Abstract Factory, Bridge y Decorator) no estaban en el software | BackendPatSft · FrontendPatSft | requisito del curso / arquitectura | Media | sí (diseño interno, pedido por el dueño) | Resuelto (BackendPatSft#12, FrontendPatSft#52) |
 | H-065 | La app se dormía y tardaba en responder: el despertador corría cada 3 horas y GitHub lo ejecutaba aún menos | BackendPatSft | disponibilidad / pedido del dueño | Media | no | En revisión (BackendPatSft#13) |
-| H-066 | Documentación atrasada: MockUps, requerimientos, issues y README de los cuatro repositorios no reflejaban H-053 a H-065 | Los cuatro | documentación | Baja | no | En revisión (FrontendPatSft#52 y los PR de documentación de cada repositorio) |
+| H-066 | Documentación atrasada: MockUps, requerimientos, issues y README de los cuatro repositorios no reflejaban H-053 a H-065 | Los cuatro | documentación | Baja | no | En revisión (FrontendPatSft#53, BackendPatSft#14, AIPatSft#8, DBPatSft#5) |
 
 ## Detalle
 
@@ -638,7 +638,7 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 - Corrección: la fila pasa a `about-brand` y `Views.css` le da a la gota 56 × 56 px (`flex: none`), con la misma sombra que la de la barra superior. Se mantiene la clase `brand-logo`, así la gota sigue respetando el ajuste «Animaciones». Probado sobre la app publicada con los archivos de la rama: 56 px en computador y en celular, sin errores de consola. Pruebas: 64 → 65 (`AboutLogo.test.mjs`, que falla sin la corrección).
 
 ### H-064 · Tres patrones vistos en clase (Abstract Factory, Bridge y Decorator) no estaban en el software
-- Repositorio: BackendPatSft · FrontendPatSft (documentación) · Tipo: requisito del curso / arquitectura · Severidad: **Media** · Estructural: sí (diseño interno; el dueño lo pidió y lo aprobó el 20 nov) · Riesgo de regresión: bajo · Estado: En revisión (BackendPatSft#12) · Detectado por: el dueño (20 nov)
+- Repositorio: BackendPatSft · FrontendPatSft (documentación) · Tipo: requisito del curso / arquitectura · Severidad: **Media** · Estructural: sí (diseño interno; el dueño lo pidió y lo aprobó el 20 nov) · Riesgo de regresión: bajo · Estado: Resuelto (BackendPatSft#12, FrontendPatSft#52) · Detectado por: el dueño (20 nov)
 - Evidencia: de los siete patrones vistos en clase, solo Factory Method, Adapter, Facade y Proxy estaban en el código. `docs/DesignPatterns.md` tenía a Abstract Factory, Bridge y Decorator como «evaluados y descartados», y el dueño pide que todos se usen con una función concreta.
 - Corrección (BackendPatSft#12):
   - **Abstract Factory** en los medidores: `MeterKit` crea por modelo el enlace serie con su fin de línea y el adaptador de su protocolo (`AtlasEzoKit`, `Esp32FirmwareKit`, `TextMeterKit`).
@@ -655,7 +655,7 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 - Costo: los dos servicios despiertos usan unas 48 de las 750 horas gratis de Render por día, así que el dueño debe volver al modo ahorro cuando termine la presentación.
 
 ### H-066 · Documentación atrasada en los cuatro repositorios
-- Repositorio: los cuatro · Tipo: documentación · Severidad: **Baja** · Estado: En revisión · Detectado por: el dueño (20 nov)
+- Repositorio: los cuatro · Tipo: documentación · Severidad: **Baja** · Estado: En revisión (FrontendPatSft#53, BackendPatSft#14, AIPatSft#8, DBPatSft#5) · Detectado por: el dueño (20 nov)
 - Evidencia: 9 MockUps mostraban la app vieja:
   - 1, 4, 27, 32 y 47: el inicio de sesión con 2 botones y correos inventados.
   - 19: la foto con «Toma una foto o elige una imagen».
