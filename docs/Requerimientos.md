@@ -54,7 +54,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 | [RNF-04](#rnf-04) | Usabilidad, accesibilidad y diseño adaptable | Como usuario de computador o celular, quiero una interfaz clara que funcione en cualquier pantalla, para usarla cómodamente donde esté. | Hecho | [MockUp30](mockups/MockUp30.png), [MockUp37](mockups/MockUp37.png), [MockUp46](mockups/MockUp46.png), [MockUp47](mockups/MockUp47.png) |
 | [RNF-05](#rnf-05) | Privacidad de los datos | Como usuario, quiero que mis datos personales no salgan del sistema, para confiar en la app. | Hecho | [MockUp31](mockups/MockUp31.png) |
 | [RNF-06](#rnf-06) | Mantenibilidad y calidad del código | Como desarrollador del proyecto, quiero un código organizado, documentado y con pruebas automáticas, para cambiarlo sin romper lo que funciona. | Hecho | — |
-| [RNF-07](#rnf-07) | Compatibilidad e instalación | Como usuario, quiero usar la app en mi navegador o instalarla como aplicación, para tenerla a mano. | Hecho | [MockUp32](mockups/MockUp32.png) |
+| [RNF-07](#rnf-07) | Compatibilidad con navegadores | Como usuario, quiero usar la app en el navegador que tenga, en computador o en celular, para no depender de un equipo en particular. | Hecho | [MockUp32](mockups/MockUp32.png) |
 
 ## Detalle
 
@@ -783,15 +783,15 @@ _Requerimiento sin pantalla propia: se comprueba con las pruebas automáticas y 
 
 ### RNF-07
 
-**Compatibilidad e instalación** · No funcional · Estado: Hecho
+**Compatibilidad con navegadores** · No funcional · Estado: Hecho
 
-**Como** usuario, **quiero** usar la app en mi navegador o instalarla como aplicación, **para** tenerla a mano.
+**Como** usuario, **quiero** usar la app en el navegador que tenga, en computador o en celular, **para** no depender de un equipo en particular.
 
-**Descripción.** Aplicación web progresiva (instalable en computador y celular). El medidor por cable o Bluetooth requiere Chrome o Edge (Web Serial); el resto funciona en navegadores actuales. Interfaz en español.
+**Descripción.** Aplicación web que se usa desde el navegador, sin instalar nada, con diseño adaptable para computador y celular. El medidor por cable o Bluetooth requiere Chrome o Edge en un computador (Web Serial); el resto funciona en navegadores actuales. Interfaz en siete idiomas.
 
 **Criterios de aceptación**
 
-- [x] El navegador ofrece instalar la app (manifiesto con íconos).
+- [x] Funciona en navegadores actuales de computador y celular, sin instalar nada.
 - [x] En navegadores sin Web Serial, la app explica qué navegador usar para el medidor.
 
 **MockUp32** · Inicio de sesión en un celular
