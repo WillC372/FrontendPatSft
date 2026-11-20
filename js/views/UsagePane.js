@@ -10,14 +10,15 @@ const usd = (v, digits = 4) => `US$ ${Number(v || 0).toFixed(digits)}`;
 const int = (v) => Number(v || 0).toLocaleString(LOCALE);
 
 /** AI usage and costs: calls, failures, tokens, estimated cost and real charge, per model, feature and day. */
-export async function usagePane(host) {
-  const admin = session.user?.role === "ADMIN";
+export async function usagePane(host, { platform = false } = {}) {
+  // «Consumo de IA» of the administrator shows the whole platform only; a person sees their own usage.
+  const admin = session.user?.role === "ADMIN" && !platform;
   let days = 30;
-  let scope = "mine";
+  let scope = platform ? "all" : "mine";
   host.innerHTML = `
     <div class="dx-head">
       <div><h2>Consumo y costos de IA</h2>
-        <p class="muted" style="max-width:64ch">Cada llamada queda registrada con su proveedor, tokens, latencia y costo estimado. Los intentos fallidos también se registran, pero no cuentan para tu cuota.</p></div>
+        <p class="muted" style="max-width:64ch">Cada llamada queda registrada con su proveedor, tokens, latencia y costo estimado. Los intentos fallidos también se registran, pero no cuentan para ${platform ? "la cuota de las personas" : "tu cuota"}.</p></div>
       <div class="row">
         ${admin ? `<div class="tabs"><button class="tab active" data-scope="mine">Mi consumo</button><button class="tab" data-scope="all">Global (admin)</button></div>` : ""}
         <div class="tabs"><button class="tab" data-ud="7">7 días</button><button class="tab active" data-ud="30">30 días</button><button class="tab" data-ud="90">90 días</button></div>

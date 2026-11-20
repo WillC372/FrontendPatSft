@@ -1,4 +1,5 @@
 import { session } from "./Session.js";
+import { allowed, homeOf } from "./Roles.js";
 
 const RETURN_KEY = "aquasense.return";
 
@@ -65,7 +66,12 @@ export class Router {
       return;
     }
     if (route.guestOnly && session.isAuthenticated) {
-      this.go(this.#fallback);
+      this.go(homeOf(session.user));
+      return;
+    }
+    // The administrator and the users see different applications (Roles.js): each goes to its own start.
+    if (session.isAuthenticated && !route.isPublic && !allowed(target.name, session.user)) {
+      this.go(homeOf(session.user));
       return;
     }
     this.#onChange(route.view, target);
