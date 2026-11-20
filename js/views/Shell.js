@@ -65,7 +65,7 @@ export class Shell {
               </div>
             </div>
           </header>
-          ${user?.demo ? `<aside class="demo-banner" aria-label="Cuenta de demostración">${icon("info")}<span>Estás en una <strong>cuenta de demostración compartida</strong>${user.role === "ADMIN" ? " de administración (solo lectura)" : ""}. Lo que hagas es real y queda guardado, pero otras personas que usen este botón también lo ven. <a href="#/register" data-demo-register>Crea tu cuenta</a> para tener tus datos privados.</span></aside>` : ""}
+          ${user?.demo ? `<aside class="demo-banner" aria-label="Cuenta de demostración">${icon("info")}<span>Estás en una <strong>cuenta de demostración compartida</strong>: puedes usar todo. Lo que hagas es real y otras personas que usen este botón también lo ven; cada vez que alguien entra con el botón, la cuenta vuelve a su plan, nombre y contraseña. <a href="#/register" data-demo-register>Crea tu cuenta</a> para tener tus datos privados.</span></aside>` : ""}
           <main class="page" id="page" tabindex="-1"></main>
         </div>
         <nav class="tabbar" aria-label="Navegación principal">
@@ -305,6 +305,8 @@ export class Shell {
     document.addEventListener("click", outside);
     this.#offs.push(() => document.removeEventListener("click", outside));
     // Another place means other measurements, alerts and analyses: the open screen is drawn again.
+    // A measurement taken while looking at a place shared only to see is saved in an own place, which becomes active.
+    this.#offs.push(bus.on("measurement:saved", () => this.refreshPlace()));
     this.#offs.push(bus.on("place:changed", () => {
       this.refreshPlace();
       this.refreshAlerts();

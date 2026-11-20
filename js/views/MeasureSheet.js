@@ -21,6 +21,7 @@ export function openMeasureSheet() {
   return modal({
     title: "¿Cómo quieres medir?",
     body: `<p class="muted" style="margin-bottom:12px">Elige una forma. El valor queda guardado en tu historial.</p>
+      <div data-place-note></div>
       <div class="sheet-options">
         <div data-meter-slot>${meterOption(null)}</div>
         ${option("data-m-photo", "camera", "Con una foto", "De una tira reactiva o de la pantalla de tu medidor")}
@@ -28,6 +29,13 @@ export function openMeasureSheet() {
       </div>`,
     onMount: (node, close) => {
       const slot = node.querySelector("[data-meter-slot]");
+      // A place shared only to see cannot receive measurements: the backend saves them in an own place instead.
+      api.get("/places").then((list) => {
+        const active = list.find((p) => p.active);
+        if (!node.isConnected || !active || active.canEdit) return;
+        const target = list.find((p) => p.role === "OWNER") || list.find((p) => p.canEdit);
+        node.querySelector("[data-place-note]").innerHTML = `<p class="banner banner-info" style="margin-bottom:12px">${icon("info")}<span>«${esc(active.name)}» está compartido contigo solo para ver. Lo que midas se guardará en ${target ? `«${esc(target.name)}»` : "un lugar tuyo"}, que pasará a ser el lugar en uso.</span></p>`;
+      }).catch(() => {});
       const bindMeter = () => {
         slot.querySelector("[data-m-usb]")?.addEventListener("click", (event) => withBusy(event.currentTarget, async () => {
           try {

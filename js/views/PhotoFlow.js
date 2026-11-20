@@ -171,12 +171,14 @@ export function photoReading() {
         node.querySelector("[data-file]").value = "";
       });
       node.querySelector("[data-save]").addEventListener("click", async (event) => {
+        // Kept before awaiting: event.currentTarget is null afterwards, and the button stayed disabled after an error.
+        const button = event.currentTarget;
         const value = Number.parseFloat(node.querySelector("#pr-ph").value);
         if (Number.isNaN(value) || value < 0 || value > 14) {
           node.querySelector('[data-error-for="ph"]').textContent = "Escribe un valor entre 0 y 14.";
           return;
         }
-        event.currentTarget.disabled = true;
+        button.disabled = true;
         try {
           const saved = await api.post(`/vision/ph-reading/${encodeURIComponent(result.pendingId)}/save`,
             { ph: value, note: node.querySelector("#pr-note").value || null });
@@ -187,7 +189,7 @@ export function photoReading() {
         } catch (error) {
           if (error instanceof ApiError && error.fields.ph) node.querySelector('[data-error-for="ph"]').textContent = error.fields.ph;
           toast(error.message, "error");
-          event.currentTarget.disabled = false;
+          button.disabled = false;
         }
       });
     },

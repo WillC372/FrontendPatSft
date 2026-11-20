@@ -19,8 +19,7 @@ export async function openAccountDialog() {
         <div><div translate="no"><strong>${esc(user?.fullName || "")}</strong><p class="muted">${esc(user?.email || "")}</p></div>
           <p class="muted small">${user?.role === "ADMIN" ? "Administrador · sin límites" : `Usuario · ${user?.plan === "PREMIUM" ? "Premium" : "Plan gratuito"}`}</p></div>
       </div>
-      ${user?.demo ? `<p class="banner banner-info">${icon("info")}<span>Estás en una cuenta de demostración. La usan muchas personas a la vez, por eso no admite foto propia. Para poner tu foto, crea tu cuenta (es gratis y toma un minuto).</span></p>
-      <div class="row account-actions"><button type="button" class="btn btn-primary" data-own-account>${icon("user")}Crear mi cuenta para poner mi foto</button></div>` : `
+      ${`
       <div class="row account-actions">
         <button type="button" class="btn btn-primary" data-pick>${icon("camera")}<span>${url ? "Cambiar foto" : "Subir foto"}</span></button>
         <input type="file" accept="image/jpeg,image/png,image/webp" hidden data-file aria-label="Elegir foto de perfil">

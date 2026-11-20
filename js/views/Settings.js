@@ -133,7 +133,7 @@ export const settingsView = {
               <span class="badge ${me.plan === "PREMIUM" ? "badge-info" : "badge-ok"}">${me.plan === "PREMIUM" ? "Premium" : "Gratuito"}</span></div>
             <div class="account-row"><span data-settings-avatar>${avatarMarkup(me, null, "avatar-lg")}</span>
               <small class="muted">La foto se cambia en «Mi cuenta», en el menú de tu nombre.</small></div>
-            <dl class="kv"><dt>Nombre</dt><dd data-name-view><span data-name-text translate="no">${esc(me.fullName)}</span>${me.demo ? "" : ` <button type="button" class="btn btn-ghost btn-sm" data-edit-name aria-label="Cambiar el nombre">${icon("edit")}</button>`}</dd><dt>Correo</dt><dd>${own(me.email)}</dd><dt>Rol</dt><dd>${me.role === "ADMIN" ? "Administrador" : "Usuario"}</dd>
+            <dl class="kv"><dt>Nombre</dt><dd data-name-view><span data-name-text translate="no">${esc(me.fullName)}</span>${` <button type="button" class="btn btn-ghost btn-sm" data-edit-name aria-label="Cambiar el nombre">${icon("edit")}</button>`}</dd><dt>Correo</dt><dd>${own(me.email)}</dd><dt>Rol</dt><dd>${me.role === "ADMIN" ? "Administrador" : "Usuario"}</dd>
               <dt>Miembro desde</dt><dd>${fmt.dateTime(me.createdAt)}</dd>
               ${current ? `<dt>Sesión actual</dt><dd>Desde ${fmt.dateTime(current.startedAt)} · vence ${fmt.dateTime(current.expiresAt)}${current.rememberMe ? " (recordada)" : ""}</dd>` : ""}
               <dt>Análisis histórico</dt><dd>Hasta ${ai.maxAnalysisDays} días</dd>
@@ -148,7 +148,7 @@ export const settingsView = {
           </section>` : ""}
 
 
-          ${me.demo ? "" : `<section class="card reveal" id="s-security">
+          ${`<section class="card reveal" id="s-security">
             <div class="card-head"><div class="card-title">${icon("lock")}Seguridad</div></div>
             <form class="stack" data-password-form novalidate>
               <p class="muted">Al cambiar la contraseña se cierran tus sesiones en otros equipos; esta sigue abierta.</p>
@@ -163,7 +163,7 @@ export const settingsView = {
 
           <section class="card reveal danger-card" id="s-delete">
             <div class="card-head"><div class="card-title">${icon("trash")}Eliminar mi cuenta</div></div>
-            ${me.demo ? `<p class="muted">Esta es una cuenta de demostración compartida: no se puede eliminar. Crea tu propia cuenta para tener tus datos privados.</p>` : `
+            ${me.demo ? `<p class="muted">Es una cuenta de demostración: si la eliminas, se crea de nuevo vacía la próxima vez que alguien use su botón.</p>` : ""}${`
             <p class="muted">Se borran para siempre tu cuenta, tus mediciones, perfiles, informes, diagnósticos y conversaciones. No se puede deshacer.</p>
             <div class="row" style="margin-top:12px">
               <div class="input-wrap" style="flex:1 1 240px">${icon("lock")}<input class="input" type="password" data-delete-password placeholder="Tu contraseña" autocomplete="current-password" aria-label="Contraseña para confirmar"></div>

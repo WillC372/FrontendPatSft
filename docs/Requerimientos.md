@@ -15,7 +15,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 |---|---|---|---|---|
 | [RF-01](#rf-01) | Registro, inicio y cierre de sesión | Como visitante, quiero crear una cuenta e iniciar sesión con mi correo y contraseña, con la opción «Recordarme», para guardar mis mediciones y verlas desde cualquier equipo. | Hecho | [MockUp1](mockups/MockUp1.png), [MockUp2](mockups/MockUp2.png) |
 | [RF-02](#rf-02) | Recuperación de contraseña por correo | Como usuario que olvidó su contraseña, quiero recibir un enlace por correo para crear una nueva, para recuperar el acceso sin perder mis datos. | Hecho | [MockUp3](mockups/MockUp3.png) |
-| [RF-03](#rf-03) | Acceso de demostración por rol | Como profesor o evaluador, quiero entrar con un botón como Usuario Premium o como Administrador, para revisar la aplicación sin crear una cuenta. | Hecho | [MockUp4](mockups/MockUp4.png) |
+| [RF-03](#rf-03) | Acceso de demostración por rol | Como profesor o evaluador, quiero entrar con un botón como Usuario, Premium o Administrador, para revisar toda la aplicación sin crear una cuenta. | Hecho | [MockUp4](mockups/MockUp4.png) |
 | [RF-04](#rf-04) | Inicio (panel principal) | Como usuario, quiero ver en una pantalla el último pH, su estado, mi perfil activo y las alertas, para saber de un vistazo si mi agua está bien. | Hecho | [MockUp5](mockups/MockUp5.png), [MockUp36](mockups/MockUp36.png) |
 | [RF-05](#rf-05) | Registrar una medición y ver su resultado | Como usuario, quiero registrar un valor de pH (y opcionalmente la temperatura), para saber si está en rango y guardarlo en mi historial. | Hecho | [MockUp6](mockups/MockUp6.png) |
 | [RF-06](#rf-06) | Historial, gráficas y exportación | Como usuario, quiero filtrar mis mediciones por periodo, origen y estado, verlas en gráfica y exportarlas, para analizar cómo cambia mi agua con el tiempo. | Hecho | [MockUp7](mockups/MockUp7.png) |
@@ -103,15 +103,16 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Acceso de demostración por rol** · Funcional · Estado: Hecho
 
-**Como** profesor o evaluador, **quiero** entrar con un botón como Usuario Premium o como Administrador, **para** revisar la aplicación sin crear una cuenta.
+**Como** profesor o evaluador, **quiero** entrar con un botón como Usuario, Premium o Administrador, **para** revisar toda la aplicación sin crear una cuenta.
 
-**Descripción.** El inicio de sesión muestra dos botones con su correo y la contraseña visible. Son cuentas reales con límites: no se pueden eliminar, recuperar la contraseña ni pagar; el administrador de demostración solo consulta y ve enmascarados los datos de las cuentas reales.
+**Descripción.** El inicio de sesión muestra tres botones con su correo y la contraseña visible: Usuario (plan gratuito, con sus límites), Premium y Administrador. Son cuentas reales que pueden hacer todo lo de su rol (pagar en el sandbox, cambiar nombre, foto y contraseña, compartir lugares, eliminar la cuenta). Cada inicio de sesión con el botón deja la cuenta como se ofrece, así el botón siempre funciona. El administrador de demostración gestiona las cuentas de demostración y las de ejemplo; las de personas reales se ven enmascaradas.
 
 **Criterios de aceptación**
 
 - [x] Cada botón inicia sesión con su cuenta en un clic.
-- [x] La cuenta de demostración no puede borrarse, cambiar su nombre ni su foto, ni pagar.
-- [x] El administrador de demostración ve correos y nombres enmascarados y no puede modificar cuentas.
+- [x] Usuario tiene los límites del plan gratuito; Premium y Administrador, los de su plan y rol.
+- [x] La cuenta de demostración puede cambiar su nombre, foto y contraseña, pagar y eliminarse, y el botón sigue funcionando.
+- [x] El administrador de demostración cambia plan, rol y estado de las cuentas de demostración y de ejemplo; las cuentas reales siguen privadas.
 
 **MockUp4** · Botones de acceso de demostración
 
