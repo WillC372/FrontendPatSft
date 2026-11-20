@@ -45,9 +45,10 @@ export async function sessionList(host, base) {
     if (data.page + 1 < data.totalPages) {
       host.insertAdjacentHTML("beforeend", `<button class="btn" data-more style="margin-top:12px">Ver sesiones anteriores (${data.total - (data.page + 1) * PAGE_SIZE} más)</button>`);
       host.querySelector("[data-more]").addEventListener("click", async (e) => {
-        e.currentTarget.disabled = true;
+        const button = e.currentTarget;
+        button.disabled = true;
         page += 1;
-        try { await load(); } catch (error) { toast(error.message, "error"); e.currentTarget.disabled = false; }
+        try { await load(); } catch (error) { toast(error.message, "error"); button.disabled = false; }
       });
     }
   };
@@ -93,7 +94,8 @@ export const sessionsView = {
     root.querySelector("[data-close-others]").addEventListener("click", async (event) => {
       const ok = await confirmDialog("Cerrar las otras sesiones", "Se cerrarán las sesiones abiertas en otros navegadores o equipos. Esta sesión sigue abierta.", "Cerrar las otras");
       if (!ok) return;
-      event.currentTarget.disabled = true;
+      const button = event.currentTarget;
+      button.disabled = true;
       try {
         const r = await api.post("/users/me/sessions/close-others");
         toast(r.message, "ok");
@@ -101,7 +103,7 @@ export const sessionsView = {
       } catch (error) {
         toast(error.message, "error");
       } finally {
-        event.currentTarget.disabled = false;
+        button.disabled = false;
       }
     });
     await sessionList(root.querySelector("[data-sessions]"), "/users/me/sessions");

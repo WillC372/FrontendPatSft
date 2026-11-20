@@ -141,8 +141,9 @@ export const loginView = {
 
 const DEMO_ICON = { USER: "user", PREMIUM: "star", ADMIN: "shield" };
 
-// One button per role of the case study. They are real accounts of the database with public credentials and limits
-// (they cannot be deleted or pay, and the administrator can only look); the button fills the form and logs in.
+// One button per role of the case study: Usuario (free plan, with its limits), Premium and Administrador. They are real
+// accounts of the database with public credentials that can do everything; every login with the button puts the account
+// back as offered (plan, name and password). The button fills the form and logs in.
 async function showDemoAccounts(root) {
   // The elements of this drawing of the screen, taken before waiting: if the screen is drawn again meanwhile, this
   // call stops instead of adding a second click handler (which sent every demo login twice).

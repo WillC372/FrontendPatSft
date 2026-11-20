@@ -1,6 +1,5 @@
 import { api } from "../core/Api.js";
 import { bus } from "../core/EventBus.js";
-import { session } from "../core/Session.js";
 import { esc, fmt, own, relativeTime } from "../core/Format.js";
 import { icon } from "../ui/Icons.js";
 import { bindHelp, helpBox } from "../ui/Help.js";
@@ -150,7 +149,6 @@ export const placesView = {
         root.innerHTML = emptyState("error", "No se pudieron cargar los lugares", error.message);
         return;
       }
-      const demo = session.user?.demo;
       root.innerHTML = `${subNav("places", PLACES_NAV, "Lugares")}
         <div class="row-between reveal"><div><h1>Lugares</h1><p class="muted">Cada sitio con agua que mides, por separado.</p></div>
           <button class="btn btn-primary btn-pill" data-new>${icon("plus")}Nuevo lugar</button></div>
@@ -175,14 +173,14 @@ export const placesView = {
             <div class="row place-actions">
               ${p.active ? "" : `<button class="btn btn-sm btn-primary" data-use="${p.id}">${icon("check")}Usar</button>`}
               ${p.canEdit ? `<button class="btn btn-sm" data-edit="${p.id}">${icon("edit")}Editar</button>` : ""}
-              ${p.role === "OWNER" && !demo ? `<button class="btn btn-sm" data-share="${p.id}">${icon("share")}Compartir</button>` : ""}
-              ${p.canEdit && !demo ? `<button class="btn btn-sm" data-official="${p.id}">${icon("globe")}Datos del USGS</button>` : ""}
+              ${p.role === "OWNER" ? `<button class="btn btn-sm" data-share="${p.id}">${icon("share")}Compartir</button>` : ""}
+              ${p.canEdit ? `<button class="btn btn-sm" data-official="${p.id}">${icon("globe")}Datos del USGS</button>` : ""}
               ${p.role !== "OWNER" ? `<button class="btn btn-sm btn-ghost" data-leave="${p.id}">${icon("logout")}Salir</button>` : ""}
               ${p.role === "OWNER" && places.filter((x) => x.role === "OWNER").length > 1 ? `<button class="btn btn-sm btn-danger" data-delete="${p.id}" aria-label="Borrar el lugar">${icon("trash")}</button>` : ""}
             </div>
           </article>`).join("")}
         </div>
-        ${demo ? "" : `<section class="card reveal join-card">
+        ${`<section class="card reveal join-card">
           <div class="card-head"><div class="card-title">${icon("key")}Unirme con un código</div></div>
           <p class="muted">Si alguien te compartió su piscina o acuario, escribe aquí el código de 8 letras y números que te dio.</p>
           <form class="row" data-join style="margin-top:10px"><input class="input mono" name="code" maxlength="12" placeholder="ABCD-2345" aria-label="Código para unirse" style="flex:1;min-width:160px;text-transform:uppercase" autocomplete="off">
