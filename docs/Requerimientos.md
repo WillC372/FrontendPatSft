@@ -345,13 +345,15 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Como** usuario sin medidor electrónico, **quiero** tomar una foto de una tira reactiva o de la pantalla de mi medidor, **para** registrar el pH sin escribirlo.
 
-**Descripción.** La IA con visión lee la foto, da un valor o un rango con su confianza y una segunda opinión de otro modelo; el usuario confirma antes de guardar.
+**Descripción.** Desde «Medir» → «Con una foto» se elige una foto de la galería del celular o de los archivos, o se toma con la cámara del equipo. La IA con visión lee la foto, da un valor o un rango con su confianza y una segunda opinión de otro modelo; el usuario confirma antes de guardar. En la pantalla de un medidor lee solo el número que tiene «pH» al lado, nunca la temperatura. Una lectura crítica guardada por foto hace sonar la alarma igual que las demás.
 
 **Criterios de aceptación**
 
 - [x] Fotos borrosas o sin carta de colores se rechazan con la causa.
 - [x] El resultado muestra el valor, la confianza y el acuerdo entre modelos.
 - [x] Nada se guarda sin confirmación del usuario.
+- [x] En el celular se puede elegir una foto ya tomada (galería) o usar la cámara.
+- [x] En la pantalla de un medidor se lee solo el número marcado «pH».
 - [ ] Pendiente: medir la precisión con fotos reales de tiras.
 
 **MockUp19** · Lectura de pH por foto
@@ -455,20 +457,21 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Como** administrador, **quiero** gestionar cuentas (plan, rol, estado) y ver el consumo y costo de la IA, **para** controlar el sistema y sus gastos.
 
-**Descripción.** Búsqueda y filtros de usuarios, detalle con pagos, actividad y sesiones, cambios de plan, rol y estado con aviso por correo, y reporte de consumo de IA por modelo, función y día con costo estimado.
+**Descripción.** El administrador trabaja para la empresa y ve otra aplicación, con su propia barra: Panel (cifras, usuarios, pagos y actividad), Consumo IA, Datos oficiales y Sesiones. En el Panel hay búsqueda y filtros de usuarios, detalle con pagos, actividad y sesiones, y cambios de plan, rol y estado con aviso por correo. Consumo IA reporta llamadas, tokens y costo por modelo, función y día. El administrador no mide el pH: no tiene «Medir», ni medidor, ni Aqua, y el servidor rechaza con 403 cualquier medición de una cuenta administradora.
 
 **Criterios de aceptación**
 
 - [x] Solo el rol administrador entra a Administración.
+- [x] El administrador ve su propia barra y no puede registrar mediciones (403 en el servidor).
 - [x] No se puede dejar el sistema sin administradores activos.
 - [x] El consumo muestra llamadas, tokens y costo estimado por modelo.
 - [x] Los precios estimados vienen de fuentes de terceros y deben confirmarse en las páginas oficiales.
 
-**MockUp25** · Administración (cuentas reales difuminadas)
+**MockUp25** · Panel del administrador, con su propia barra (Panel, Consumo IA, Datos oficiales, Sesiones)
 
 ![MockUp25](mockups/MockUp25.png)
 
-**MockUp26** · Consumo y costos de IA
+**MockUp26** · Consumo de IA de toda la plataforma
 
 ![MockUp26](mockups/MockUp26.png)
 
@@ -647,7 +650,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Como** dueño de una piscina, un acuario u otra agua con un medidor dentro, **quiero** que la app me avise de inmediato con sonido y que Aqua me diga si el cambio es peligroso cuando el pH se altera, **para** sacar a las personas del agua o proteger a los peces a tiempo.
 
-**Descripción.** Con el medidor en el agua («Medir cada 10 s», que sigue aunque se cambie de pantalla), cada medición se compara con las de la última hora. Si el pH cambia 0,5 o más (por ejemplo, algo cayó al agua), o si entra en nivel crítico, se crea la alerta «Alteración del pH en el agua». Dice si es peligroso según los rangos del perfil (nivel crítico = peligroso) y qué hacer según el tipo de agua: en una piscina, que nadie se bañe y salgan del agua; en un acuario, que los peces corren peligro; en agua potable, no tomarla; en riego, no regar. Funciona con cualquier perfil. En la app suena una alarma (al volumen del equipo), aparece una ventana que no se cierra sola y Aqua lo dice en voz alta; la alarma se repite cada pocos segundos hasta pulsar «Entendido». En el celular o computador llega un aviso urgente que queda en pantalla y vibra, aunque la app esté cerrada (si se activaron los avisos). La misma alerta no se repite en ese lugar durante 30 minutos, salvo que se vuelva peligrosa. Debajo, «Aqua explica» amplía el aviso con IA: un resumen, las causas probables para ese tipo de agua, qué hacer ahora y cuándo vuelve a ser segura, con las mediciones de la última hora, el veredicto de peligro del sistema y las normas que aplican; Aqua lo lee después del aviso. Si la IA no está disponible, la explicación sale de las reglas del perfil. En Configuración se puede apagar el sonido en cada dispositivo y probar la alarma. Si la app está abierta en otro equipo, revisa las alertas cada 15 segundos. Con el medidor conectado al mismo equipo, el aviso es inmediato.
+**Descripción.** Con el medidor en el agua («Medir cada 10 s», que sigue aunque se cambie de pantalla), cada medición se compara con las de la última hora. Si el pH cambia 0,5 o más (por ejemplo, algo cayó al agua), o si entra en nivel crítico aunque no haya mediciones en la última hora, se crea la alerta «Alteración del pH en el agua». Dice si es peligroso según los rangos del perfil (nivel crítico = peligroso) y qué hacer según el tipo de agua: en una piscina, que nadie se bañe y salgan del agua; en un acuario, que los peces corren peligro; en agua potable, no tomarla; en riego, no regar. Funciona con cualquier perfil. En la app suena una sirena generada en el navegador (al volumen del equipo, también en el celular, con un elemento de audio y Web Audio de respaldo), aparece una ventana que no se cierra sola y Aqua lo dice en voz alta; la alarma se repite cada pocos segundos hasta pulsar «Entendido». En el celular o computador llega un aviso urgente que queda en pantalla y vibra, aunque la app esté cerrada (si se activaron los avisos). La misma alerta no se repite en ese lugar durante 30 minutos, salvo que se vuelva peligrosa. Debajo, «Aqua explica» amplía el aviso con IA: un resumen, las causas probables para ese tipo de agua, qué hacer ahora y cuándo vuelve a ser segura, con las mediciones de la última hora, el veredicto de peligro del sistema y las normas que aplican; Aqua lo lee después del aviso. Si la IA no está disponible, la explicación sale de las reglas del perfil. En Configuración se puede apagar el sonido en cada dispositivo y probar la alarma. Si la app está abierta en otro equipo, revisa las alertas cada 15 segundos. Con el medidor conectado al mismo equipo, el aviso es inmediato.
 
 **Criterios de aceptación**
 
@@ -657,6 +660,8 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 - [x] El aviso del celular o computador es urgente y queda en pantalla hasta tocarlo.
 - [x] «Aqua explica» muestra y lee el resumen, las causas probables, los pasos y cuándo vuelve a ser segura (con IA o, sin ella, con las reglas del perfil).
 - [x] Los navegadores solo dejan sonar una página después de tocarla una vez; si no, la ventana lo indica.
+- [x] La sirena suena también en el celular (en iPhone con Safari 17 o más, aunque esté en silencio).
+- [x] Una medición en nivel crítico hace sonar la alarma aunque la anterior sea de hace más de una hora.
 
 **MockUp48** · Alarma en una piscina: el pH bajó de 7,50 a 5,20, con la explicación de Aqua (IA)
 
@@ -705,13 +710,14 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Como** usuario, **quiero** que la app esté disponible cuando la abra y me avise si el servidor está arrancando, **para** saber que debo esperar un momento y no ver un error.
 
-**Descripción.** Frontend en Vercel, backend y servicio de IA en Render y base PostgreSQL en Neon. Para que las 750 horas gratis al mes de Render alcancen a los dos servicios, el backend se duerme cuando nadie lo usa: la primera visita después tarda alrededor de un minuto y la app muestra «Activando el servidor…» mientras arranca. Un flujo de GitHub lo despierta cada 3 horas para enviar los recordatorios e importar los datos del USGS. Para una presentación, KEEP_AWAKE=true en Render lo mantiene despierto.
+**Descripción.** Frontend en Vercel, backend y servicio de IA en Render y base PostgreSQL en Neon. Render apaga un servicio gratuito tras 15 minutos sin uso. Desde el 20 nov 2026, a pedido del dueño, el flujo de GitHub «Despertar el backend y la IA» mantiene despiertos al backend y al servicio de IA (los visita cada 4 minutos), así que responden al instante. Con la variable KEEP_AWAKE_MODE=3h de GitHub vuelve el modo ahorro, para que las 750 horas gratis al mes alcancen: los servicios se duermen cuando nadie los usa, el flujo los despierta cada 3 horas para enviar los recordatorios e importar los datos del USGS, y la primera visita tarda alrededor de un minuto mientras la app muestra «Activando el servidor…».
 
 **Criterios de aceptación**
 
 - [x] /actuator/health/liveness responde 200 sin iniciar sesión.
 - [x] Si el servidor tarda, la app avisa en lugar de mostrar un error.
 - [x] Dormido, el backend despierta con la primera visita y la app sigue sola cuando responde.
+- [x] En modo «siempre despierto», el backend y el servicio de IA responden sin esperar el arranque.
 
 **MockUp29** · Aviso mientras el servidor arranca
 
@@ -761,7 +767,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 - [x] Las cuentas reales aparecen enmascaradas para el administrador de demostración.
 - [x] Cada medición indica su origen (manual, medidor, foto).
 
-**MockUp31** · Datos enmascarados para el administrador de demostración
+**MockUp31** · Cuentas de personas reales enmascaradas para el administrador de demostración
 
 ![MockUp31](mockups/MockUp31.png)
 
@@ -771,7 +777,7 @@ Estado: **Hecho** = implementado y probado en la aplicación publicada; **Parcia
 
 **Como** desarrollador del proyecto, **quiero** un código organizado, documentado y con pruebas automáticas, **para** cambiarlo sin romper lo que funciona.
 
-**Descripción.** Cuatro repositorios: el frontend (HTML, CSS y JavaScript con módulos, sin frameworks), el backend y el servicio de IA en Spring Boot por capas (controlador, servicio, repositorio) organizados por módulo, y la base de datos (DBPatSft), cuyas migraciones Flyway GitHub Actions prueba en una base vacía y aplica a Neon. Catálogo de patrones de diseño (docs/DesignPatterns.md del backend). Pruebas automáticas: backend (111) y servicio de IA (119) con JUnit y H2, frontend (56) con node:test y el firmware del medidor con pruebas en el computador; GitHub Actions las ejecuta en cada cambio.
+**Descripción.** Cuatro repositorios: el frontend (HTML, CSS y JavaScript con módulos, sin frameworks), el backend y el servicio de IA en Spring Boot por capas (controlador, servicio, repositorio) organizados por módulo, y la base de datos (DBPatSft), cuyas migraciones Flyway GitHub Actions prueba en una base vacía y aplica a Neon. Catálogo de patrones de diseño (docs/DesignPatterns.md del backend), con los siete vistos en clase (Abstract Factory, Factory Method, Adapter, Bridge, Decorator, Facade y Proxy), cada uno con su función, y 22 más. Pruebas automáticas: backend (130) y servicio de IA (128) con JUnit y H2, frontend (65) con node:test y el firmware del medidor (31) en el computador; GitHub Actions las ejecuta en cada cambio.
 
 **Criterios de aceptación**
 
@@ -826,13 +832,13 @@ _Requerimiento sin pantalla propia: se comprueba con las pruebas automáticas y 
 | [MockUp22](mockups/MockUp22.png) | Foto de perfil | RF-18 |
 | [MockUp23](mockups/MockUp23.png) | Actividad y sesiones, dentro de Configuración | RF-19 |
 | [MockUp24](mockups/MockUp24.png) | Datos oficiales del USGS, dentro de la Biblioteca | RF-20 |
-| [MockUp25](mockups/MockUp25.png) | Administración (cuentas reales difuminadas) | RF-21 |
-| [MockUp26](mockups/MockUp26.png) | Consumo y costos de IA | RF-21 |
+| [MockUp25](mockups/MockUp25.png) | Panel del administrador, con su propia barra | RF-21 |
+| [MockUp26](mockups/MockUp26.png) | Consumo de IA de toda la plataforma | RF-21 |
 | [MockUp27](mockups/MockUp27.png) | Bloqueo tras 5 intentos fallidos | RNF-01 |
 | [MockUp28](mockups/MockUp28.png) | Asistente escribiendo la respuesta en vivo | RNF-02 |
 | [MockUp29](mockups/MockUp29.png) | Aviso mientras el servidor arranca | RNF-03 |
 | [MockUp30](mockups/MockUp30.png) | Inicio en un celular | RNF-04 |
-| [MockUp31](mockups/MockUp31.png) | Datos enmascarados para el administrador de demostración | RNF-05 |
+| [MockUp31](mockups/MockUp31.png) | Cuentas de personas reales enmascaradas para el administrador de demostración | RNF-05 |
 | [MockUp32](mockups/MockUp32.png) | Inicio de sesión en un celular | RNF-07 |
 | [MockUp33](mockups/MockUp33.png) | Recorrido guiado: Aqua señala el botón Medir | RF-22 |
 | [MockUp34](mockups/MockUp34.png) | Panel de Aqua con el chat y las funciones agrupadas | RF-22 |
