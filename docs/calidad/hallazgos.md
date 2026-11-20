@@ -64,6 +64,7 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 | H-050 | Costo de IA no registrado: traducciones y ejecuciones fallidas del agente | AIPatSft | IA / costos | Baja | no | Nuevo |
 | H-051 | El backend y el servicio de IA tenían código que no es Java (firmware, generador KiCad y scripts) | BackendPatSft · AIPatSft · FrontendPatSft | requisito del dueño | Media | no | En revisión (FrontendPatSft#40, BackendPatSft#5, AIPatSft#4) |
 | H-052 | Traducciones que la IA reescribió en español en vez de traducir (italiano y japonés) | AIPatSft · DBPatSft | error / IA | Media | no | En revisión (AIPatSft#5, DBPatSft#3) |
+| H-062 | El requisito RNF-07 pedía «instalar la app» y decía que la interfaz solo estaba en español | FrontendPatSft | documentación / decisión del dueño | Baja | no | En revisión (rama `calidad/H-062-rnf07-compatibilidad`) |
 
 ## Detalle
 
@@ -570,3 +571,8 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 - Impacto: la app muestra esos textos en español para siempre en ese idioma.
 - Corrección: `stillSpanish` (¿, ¡ o una palabra con ñ, á, í, ó o ú que no sea un nombre copiado del original) hace que el texto se pida una vez más y que, si sigue en español, no se guarde. La migración V28 borra las 10 filas malas para que se traduzcan otra vez. Sin falsos positivos en los diccionarios publicados. Pruebas del servicio de IA: 125 → 128.
 - Orden de merge: AIPatSft#5 antes que DBPatSft#3.
+
+### H-062 · El requisito RNF-07 pedía «instalar la app» y decía que la interfaz solo estaba en español
+- Repositorio: FrontendPatSft · Tipo: documentación / decisión del dueño · Severidad: **Baja** · Estructural: no · Esfuerzo: S · Riesgo de regresión: ninguno (solo documentación) · Estado: En revisión (rama `calidad/H-062-rnf07-compatibilidad`) · Detectado por: preparación de la exposición (20 nov)
+- Evidencia: `docs/Requerimientos.md` y `docs/issues/37-RNF-07.md` describían RNF-07 como «Compatibilidad e instalación», con el criterio «El navegador ofrece instalar la app» y la frase «Interfaz en español». La app tiene siete idiomas (`js/core/Locale.js`). Sobre la instalación: Chromium no reporta errores de instalabilidad en la app publicada (`Page.getInstallabilityErrors` vacío, manifiesto sin errores), así que técnicamente sí se puede instalar en Chrome o Edge; pero el dueño decidió que el requisito no prometa instalarla.
+- Corrección: RNF-07 pasa a «Compatibilidad con navegadores»: se usa desde el navegador sin instalar nada, en computador y celular; el medidor necesita Chrome o Edge en un computador; interfaz en siete idiomas. No cambia código: el manifiesto y `sw.js` (que también sirve para los avisos Web Push) se quedan.
