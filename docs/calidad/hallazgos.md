@@ -63,6 +63,7 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 | H-049 | Cualquier visita a la pantalla de inicio de sesión despierta el servicio de IA | FrontendPatSft · AIPatSft | rendimiento | Baja | no | Nuevo |
 | H-050 | Costo de IA no registrado: traducciones y ejecuciones fallidas del agente | AIPatSft | IA / costos | Baja | no | Nuevo |
 | H-051 | El backend y el servicio de IA tenían código que no es Java (firmware, generador KiCad y scripts) | BackendPatSft · AIPatSft · FrontendPatSft | requisito del dueño | Media | no | En revisión (FrontendPatSft#40, BackendPatSft#5, AIPatSft#4) |
+| H-052 | Traducciones que la IA reescribió en español en vez de traducir (italiano y japonés) | AIPatSft · DBPatSft | error / IA | Media | no | En revisión (AIPatSft#5, DBPatSft#3) |
 
 ## Detalle
 
@@ -562,3 +563,10 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 - Evidencia: GitHub mostraba en BackendPatSft Python 79 KB, C++ 24 KB, HTML 10 KB, JavaScript 3 KB y Shell, todo de `hardware/` (firmware del ESP32 y generador KiCad) y de `scripts/sync-migrations.sh`. En AIPatSft había `scripts/extract-ui-texts.mjs`, `scripts/VerifyKnowledgeQuotes.py` y `scripts/sync-migrations.sh`.
 - Cambio: `hardware/` pasa a FrontendPatSft con su prueba de GitHub Actions; los cinco scripts se reescriben en Java con el mismo resultado (2300 textos y 0 diferencias; 20 de 20 citas; 27 migraciones). El control de `main` de esos dos repositorios queda en Java (`ProtegerMain.java`), probado con los mismos casos que el de JavaScript. El `Dockerfile` se queda porque Render lo necesita; `.gitattributes` lo excluye de las estadísticas de lenguaje.
 - Orden de merge: FrontendPatSft#40 antes que BackendPatSft#5.
+
+### H-052 · Traducciones que la IA reescribió en español en vez de traducir (italiano y japonés)
+- Repositorio: AIPatSft · DBPatSft · Tipo: error / IA · Severidad: **Media** · Estructural: no · Esfuerzo: S · Riesgo de regresión: bajo · Estado: En revisión (AIPatSft#5, DBPatSft#3) · Detectado por: revisión de idiomas en producción (20 nov)
+- Evidencia: los 2274 textos están en el diccionario de los 6 idiomas, y la revisión de cada pantalla con una cuenta temporal dio 0 textos en español en inglés, francés, alemán, chino y japonés (en japonés, en la segunda vuelta). En italiano dio 2: «¿Qué ha aplicado o ha hecho?» y «Ácido cianúrico», guardados como traducción. Al revisar los diccionarios aparecieron además «relatório» (portugués) en italiano, «estación», «Cerrar sesión» y «Análisis avanzado» dentro del japonés, y la etiqueta vieja «Resumen en español» en inglés. `TranslationService.leftInSpanish` solo detectaba una traducción idéntica al original.
+- Impacto: la app muestra esos textos en español para siempre en ese idioma.
+- Corrección: `stillSpanish` (¿, ¡ o una palabra con ñ, á, í, ó o ú que no sea un nombre copiado del original) hace que el texto se pida una vez más y que, si sigue en español, no se guarde. La migración V28 borra las 10 filas malas para que se traduzcan otra vez. Sin falsos positivos en los diccionarios publicados. Pruebas del servicio de IA: 125 → 128.
+- Orden de merge: AIPatSft#5 antes que DBPatSft#3.
