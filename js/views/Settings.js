@@ -110,15 +110,23 @@ export const settingsView = {
               ["bell", "Dentro de la app", "La campana de arriba muestra las alertas cuando una medición sale del rango. Siempre está."],
               ["alert", "Alarma si el pH se altera", "Si el pH cambia de golpe (por ejemplo, algo cayó a la piscina o al acuario) o llega a nivel crítico, suena una alarma, aparece una ventana que no se cierra sola y Aqua dice en voz alta qué pasó y si es peligroso. Funciona con cualquier perfil."],
               ["send", "En tu celular o computador, aunque la app esté cerrada", "Activa «Avisos en este celular o computador» en cada dispositivo donde los quieras; el navegador te pedirá permiso. Con «Probar» compruebas que lleguen. En iPhone, primero agrega la app a la pantalla de inicio."],
-              ["mail", "Por correo", "Con «Alertas por correo» te escribo cuando el agua sale del rango (como mucho un correo por hora). Los recordatorios también pueden llegar por correo si lo marcas al crearlos."],
+              ["mail", "Por correo", "Con «Alertas por correo» te escribo cuando el agua sale del rango o el pH se altera (como mucho un correo de cada tipo por hora). Los recordatorios también pueden llegar por correo si lo marcas al crearlos."],
+              ["send", "Por WhatsApp", "Guarda tu celular con el indicativo del país (por ejemplo +57 300 123 4567) y, si el pH se altera, te llega un WhatsApp con lo que pasó y si es peligroso. Con «Enviar WhatsApp de prueba» compruebas que llegue."],
             ])}
             <div class="setting-row"><div><strong>Notificaciones de alertas</strong><p>Avisos cuando una medición sale del rango (en la app y en los dispositivos donde actives los avisos).</p></div>
               <label class="switch"><input type="checkbox" data-notifications ${draft.notificationsEnabled ? "checked" : ""} aria-label="Notificaciones de alertas"><span></span></label></div>
             <div class="setting-row wide-control"><div><strong>Alarma con sonido si el pH se altera</strong><p>En este dispositivo suena una alarma al volumen del equipo y Aqua avisa en voz alta (si «Aqua habla» está encendido). Para que suene con la app abierta, el navegador pide haber tocado la página una vez.</p></div>
               <div class="row" style="gap:8px;flex-wrap:nowrap;flex:none"><button type="button" class="btn btn-sm" style="white-space:nowrap;flex:none" data-alarm-test>${icon("volume")}Probar alarma</button>
               <label class="switch"><input type="checkbox" data-alarm-sound ${alarmSoundOn() ? "checked" : ""} aria-label="Alarma con sonido si el pH se altera"><span></span></label></div></div>
-            <div class="setting-row"><div><strong>Alertas por correo</strong><p>Te escribo a tu correo cuando una medición sale del rango (como mucho uno por hora).</p></div>
+            <div class="setting-row"><div><strong>Alertas por correo</strong><p>Te escribo a tu correo cuando una medición sale del rango o el pH se altera (como mucho uno de cada tipo por hora).</p></div>
               <label class="switch"><input type="checkbox" data-email-alerts ${draft.emailAlerts !== false ? "checked" : ""} aria-label="Alertas por correo"><span></span></label></div>
+            <div class="setting-row whatsapp-row"><div style="flex:1"><strong>Alarma por WhatsApp</strong><p data-wa-status>Revisando...</p>
+              <div class="row" style="gap:8px;margin-top:8px;flex-wrap:wrap">
+                <input class="input" type="tel" inputmode="tel" autocomplete="tel" data-wa-phone placeholder="+57 300 123 4567" aria-label="Número de celular para WhatsApp" style="max-width:220px">
+                <button type="button" class="btn btn-sm" data-wa-save>${icon("check")}Guardar número</button>
+                <button type="button" class="btn btn-sm" data-wa-test hidden>${icon("send")}Enviar WhatsApp de prueba</button></div>
+              <div class="field-error" data-wa-error></div></div>
+              <label class="switch"><input type="checkbox" data-wa-enabled aria-label="Alarma por WhatsApp"><span></span></label></div>
             <div class="setting-row push-row"><div><strong>Avisos en este celular o computador</strong><p data-push-status>Revisando...</p></div>
               <div class="row" style="gap:6px;flex-wrap:nowrap"><button type="button" class="btn btn-sm" data-push-test hidden>${icon("send")}Probar</button>
               <label class="switch"><input type="checkbox" data-push aria-label="Avisos en este dispositivo"><span></span></label></div></div>
@@ -305,6 +313,43 @@ export const settingsView = {
       try {
         const r = await api.post("/push/test");
         toast(r.delivered ? "Aviso enviado: debería aparecer en unos segundos." : "No se pudo entregar el aviso. Desactívalos y vuelve a activarlos.", r.delivered ? "ok" : "warn");
+      } catch (error) { toast(error.message, "error"); }
+    }));
+    // Mobile number for the pH alarms by WhatsApp: saved right away, without «Guardar cambios».
+    const waPhone = root.querySelector("[data-wa-phone]");
+    const waStatus = root.querySelector("[data-wa-status]");
+    const waTest = root.querySelector("[data-wa-test]");
+    const waEnabled = root.querySelector("[data-wa-enabled]");
+    const waError = root.querySelector("[data-wa-error]");
+    let wa = null;
+    const showWa = (data) => {
+      wa = data;
+      waPhone.value = data.phoneNumber || "";
+      waEnabled.checked = data.enabled;
+      waTest.hidden = !data.phoneNumber || !data.configured;
+      waStatus.textContent = !data.configured
+        ? "WhatsApp todavía no está activo en el servidor. Puedes guardar tu número: los avisos empezarán a llegar cuando se active."
+        : !data.phoneNumber ? "Escribe tu celular con el indicativo del país para recibir un WhatsApp si el pH se altera."
+          : data.enabled ? `Si el pH se altera, te escribo a ${data.phoneNumber}.` : "Tienes el número guardado, pero los avisos por WhatsApp están apagados.";
+    };
+    api.get("/users/me/whatsapp").then((data) => { if (waStatus.isConnected) showWa(data); })
+      .catch(() => { waStatus.textContent = "No se pudo consultar WhatsApp ahora."; });
+    const saveWa = (body) => api.put("/users/me/whatsapp", body);
+    root.querySelector("[data-wa-save]").addEventListener("click", (e) => withBusy(e.currentTarget, async () => {
+      waError.textContent = "";
+      try {
+        showWa(await saveWa({ phoneNumber: waPhone.value, enabled: waEnabled.checked }));
+        toast(waPhone.value ? "Número guardado." : "Número quitado.", "ok");
+      } catch (error) { waError.textContent = error.message; }
+    }));
+    waEnabled.addEventListener("change", async () => {
+      try { showWa(await saveWa({ phoneNumber: wa?.phoneNumber || waPhone.value, enabled: waEnabled.checked })); }
+      catch (error) { waEnabled.checked = !waEnabled.checked; toast(error.message, "error"); }
+    });
+    waTest.addEventListener("click", (e) => withBusy(e.currentTarget, async () => {
+      try {
+        const r = await api.post("/users/me/whatsapp/test");
+        toast(r.sent ? "WhatsApp enviado: debería llegar en unos segundos." : r.detail, r.sent ? "ok" : "warn", 8000);
       } catch (error) { toast(error.message, "error"); }
     }));
     root.querySelector("[data-autosave]").addEventListener("change", (e) => { draft.autoSave = e.target.checked; });
