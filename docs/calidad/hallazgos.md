@@ -80,6 +80,7 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 | H-066 | Documentación atrasada: MockUps, requerimientos, issues y README de los cuatro repositorios no reflejaban H-053 a H-065 | Los cuatro | documentación | Baja | no | En revisión (FrontendPatSft#53, BackendPatSft#14, AIPatSft#8, DBPatSft#5) |
 | H-067 | La alarma no llegaba al celular como mensaje de texto | DBPatSft · BackendPatSft · FrontendPatSft | pedido del dueño | Media | sí (columna y rutas nuevas, aprobadas por el dueño al elegir Twilio) | En revisión (DBPatSft#6, BackendPatSft#15, FrontendPatSft#54) |
 | H-068 | Los correos de la app llegan a spam | BackendPatSft (configuración) | entrega de correo | Media | no | Requiere acción del dueño (dominio propio) |
+| H-069 | En el celular, «Avisos en este celular o computador» volvía a apagarse sin decir por qué | FrontendPatSft | experiencia de usuario | Media | no | En revisión (FrontendPatSft#55) |
 
 ## Detalle
 
@@ -680,3 +681,12 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 - Repositorio: BackendPatSft (configuración de Render) · Tipo: entrega de correo · Severidad: **Media** · Estado: Requiere acción del dueño
 - Evidencia: `/admin/mail` muestra el canal Mailjet con remitente `@gmail.com`. Gmail desconfía de un correo que dice venir de `@gmail.com` pero no sale de sus servidores, y lo manda a spam.
 - Corrección: el dueño elige un dominio propio. Se autentica en Mailjet con SPF, DKIM y DMARC, y `MAIL_FROM` pasa a una dirección de ese dominio. Los pasos están en `docs/Deployment.md` de BackendPatSft. No requiere cambios de código: los correos ya van en texto plano y HTML.
+
+### H-069 · En el celular, el interruptor de avisos volvía a apagarse sin decir por qué
+- Repositorio: FrontendPatSft · Tipo: experiencia de usuario · Severidad: **Media** · Estado: En revisión (FrontendPatSft#55) · Detectado por: el dueño en su celular (20 nov)
+- Evidencia: si el navegador rechaza los avisos, el interruptor vuelve a apagado. Pasa con el permiso bloqueado antes, con una pestaña de incógnito o con un enlace abierto dentro de WhatsApp u otra app. El motivo solo salía en un mensaje que desaparece a los 7 segundos, y la fila decía un genérico «Apagados» o «candado junto a la dirección», que en Chrome para Android no existe. Reproducido con un Pixel 7 emulado sobre la app publicada.
+- Corrección:
+  - El motivo del último intento queda escrito en la fila.
+  - `PushClient.blockedHelp()` da los pasos del celular: Chrome en Android (ícono junto a la dirección o ⋮ → Configuración de sitios → Notificaciones), iPhone (Ajustes → Notificaciones) o computador.
+  - Un `AbortError` explica que se abra en Chrome normal, fuera de WhatsApp o de incógnito.
+  - Pruebas: 65 → 65; probado con el celular emulado.

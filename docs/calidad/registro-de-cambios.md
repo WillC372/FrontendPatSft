@@ -4,6 +4,7 @@ Cada modificación hecha por el equipo, con sus pruebas y cómo revertirla. Lo m
 
 | Fecha | Hallazgo | Repositorio | Rama y pull request | Qué cambió | Pruebas antes → después | Cómo revertir |
 |---|---|---|---|---|---|---|
+| 2026-11-20 | H-069 | FrontendPatSft | `mejora/H-069-motivo-de-avisos` · FrontendPatSft#55 | El motivo de un intento fallido de activar los avisos queda en la fila, con los pasos de Android, iPhone o computador. | 65 → 65 aprobadas; probado con un Pixel 7 emulado | Revertir el commit |
 | 2026-11-20 | H-067 | FrontendPatSft | `mejora/H-067-alarma-por-sms` · FrontendPatSft#54 | Fila «Alarma por SMS» en Configuración (número, interruptor, SMS de prueba); README, RF-30 y su issue. | 65 → 65 aprobadas; probado sobre la app publicada con las rutas imitadas, sin errores de consola | Revertir el commit |
 | 2026-11-20 | H-067 | BackendPatSft | `mejora/H-067-alarma-por-sms` · [BackendPatSft#15](https://github.com/WillC372/BackendPatSft/pull/15) | `SmsService` (Twilio), `SmsChannel` en el Bridge de avisos, `/users/me/phone`; guías de Twilio y del dominio de correo (H-068). | 130 → 134 aprobadas | Revertir los commits |
 | 2026-11-20 | H-067 | DBPatSft | `mejora/H-067-alarma-por-sms` · [DBPatSft#6](https://github.com/WillC372/DBPatSft/pull/6) | V30: `user_settings.sms_alerts`. | Probada en el flujo del PR y en H2 | La columna queda sin uso |

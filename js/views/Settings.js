@@ -288,16 +288,20 @@ export const settingsView = {
     const pushBox = root.querySelector("[data-push]");
     const pushStatus = root.querySelector("[data-push-status]");
     const pushTest = root.querySelector("[data-push-test]");
+    // The reason of the last failed attempt stays written in the row: the toggle goes back to off and a toast alone
+    // disappears before the person reads why.
+    let pushProblem = "";
     const showPush = async () => {
       const reason = pushClient.unsupportedReason();
       if (reason) { pushBox.disabled = true; pushStatus.textContent = reason; return; }
       const sub = await pushClient.current().catch(() => null);
       pushBox.checked = Boolean(sub) && Notification.permission === "granted";
       pushTest.hidden = !pushBox.checked;
+      if (pushBox.checked) pushProblem = "";
       pushStatus.textContent = pushBox.checked
         ? "Activos: aquí te llegan las alertas y los recordatorios aunque la app esté cerrada."
-        : Notification.permission === "denied" ? "Bloqueados en el navegador. Actívalos desde el candado junto a la dirección de la página."
-          : "Apagados en este dispositivo.";
+        : Notification.permission === "denied" ? pushClient.blockedHelp()
+          : pushProblem || "Apagados en este dispositivo.";
     };
     showPush();
     pushBox.addEventListener("change", async () => {
@@ -306,6 +310,7 @@ export const settingsView = {
         if (pushBox.checked) { await pushClient.enable(); toast("Avisos activados en este dispositivo.", "ok"); }
         else { await pushClient.disable(); toast("Avisos desactivados en este dispositivo.", "ok"); }
       } catch (error) {
+        pushProblem = error.message;
         toast(error.message, "error", 7000);
       } finally {
         pushBox.disabled = false;
