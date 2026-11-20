@@ -76,6 +76,8 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 | H-062 | El requisito RNF-07 pedía «instalar la app» y decía que la interfaz solo estaba en español | FrontendPatSft | documentación / decisión del dueño | Baja | no | Resuelto (FrontendPatSft#49) |
 | H-063 | La gota de «Acerca de» en Configuración ocupaba todo el ancho de la tarjeta | FrontendPatSft | error de interfaz | Baja | no | Resuelto (FrontendPatSft#51) |
 | H-064 | Tres patrones vistos en clase (Abstract Factory, Bridge y Decorator) no estaban en el software | BackendPatSft · FrontendPatSft | requisito del curso / arquitectura | Media | sí (diseño interno, pedido por el dueño) | En revisión (BackendPatSft#12) |
+| H-065 | La app se dormía y tardaba en responder: el despertador corría cada 3 horas y GitHub lo ejecutaba aún menos | BackendPatSft | disponibilidad / pedido del dueño | Media | no | En revisión (BackendPatSft#13) |
+| H-066 | Documentación atrasada: MockUps, requerimientos, issues y README de los cuatro repositorios no reflejaban H-053 a H-065 | Los cuatro | documentación | Baja | no | En revisión (FrontendPatSft#52 y los PR de documentación de cada repositorio) |
 
 ## Detalle
 
@@ -645,3 +647,20 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
   - La API del `Notifier` no cambia, y si un canal falla, el otro igual se envía.
   - Pruebas del backend: 119 → 130.
   - En este repositorio se actualizan el diagrama de clases (5.3 y el nuevo 5.3.1) y la trazabilidad.
+
+### H-065 · La app se dormía y tardaba en responder
+- Repositorio: BackendPatSft · Tipo: disponibilidad / pedido del dueño · Severidad: **Media** · Estructural: no · Estado: En revisión (BackendPatSft#13) · Detectado por: el dueño (20 nov)
+- Evidencia: Render apaga cada servicio gratuito tras 15 minutos sin uso. `WakeUp.yml` corría «cada 3 horas», pero GitHub lo ejecutó 3 veces en 18 horas, y no despertaba al servicio de IA.
+- Corrección: modo `always` (por defecto). Una ejecución visita el backend y el servicio de IA cada 4 minutos durante unas 5 h 30 min y lanza la siguiente con `workflow_dispatch`. Con `KEEP_AWAKE_MODE=3h` vuelve el modo ahorro.
+- Costo: los dos servicios despiertos usan unas 48 de las 750 horas gratis de Render por día, así que el dueño debe volver al modo ahorro cuando termine la presentación.
+
+### H-066 · Documentación atrasada en los cuatro repositorios
+- Repositorio: los cuatro · Tipo: documentación · Severidad: **Baja** · Estado: En revisión · Detectado por: el dueño (20 nov)
+- Evidencia: 9 MockUps mostraban la app vieja:
+  - 1, 4, 27, 32 y 47: el inicio de sesión con 2 botones y correos inventados.
+  - 19: la foto con «Toma una foto o elige una imagen».
+  - 25, 26 y 31: el administrador con la barra del usuario y el botón «Medir».
+  - Además, RF-15, RF-21, RF-30, RNF-03 y RNF-06 y los README tenían cifras de pruebas y comportamientos anteriores a H-053–H-065.
+- Corrección:
+  - Los 9 MockUps se capturaron otra vez desde la app publicada.
+  - Se pusieron al día los requerimientos y sus issues, y los README y documentos de BackendPatSft, AIPatSft y DBPatSft.
