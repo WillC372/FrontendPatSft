@@ -141,6 +141,9 @@
 }
 .setting-row .segmented button { white-space: nowrap; }
 .activity { max-height: 320px; overflow-y: auto; }
+/* The drop in "About": an SVG without its own size grows to fill the card, so it gets a fixed size like the top bar's. */
+.about-brand { gap: 18px; align-items: center; flex-wrap: nowrap; }
+.about-brand .brand-logo { width: 56px; height: 56px; flex: none; filter: drop-shadow(0 0 10px rgba(var(--accent-rgb), 0.35)); }
 @media (max-width: 960px) { .settings-layout { grid-template-columns: minmax(0, 1fr); } .settings-layout .ia-menu { position: static; } }
 
 .result-value { display: flex; align-items: baseline; gap: 8px; }

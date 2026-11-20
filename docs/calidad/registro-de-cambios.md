@@ -4,6 +4,7 @@ Cada modificación hecha por el equipo, con sus pruebas y cómo revertirla. Lo m
 
 | Fecha | Hallazgo | Repositorio | Rama y pull request | Qué cambió | Pruebas antes → después | Cómo revertir |
 |---|---|---|---|---|---|---|
+| 2026-11-20 | H-063 | FrontendPatSft | `mejora/H-063-gota-acerca-de` | La gota de «Acerca de» tiene un tamaño fijo de 56 px (antes llenaba la tarjeta: 948 px). Nueva prueba `AboutLogo.test.mjs`. | 64 → 65 aprobadas (la nueva fallaba antes) | Cerrar el PR o revertir el commit |
 | 2026-11-20 | H-062 | FrontendPatSft | `calidad/H-062-readme-y-registro` | El README deja de anunciar «Instalable», igual que RNF-07. El registro de hallazgos y este registro se completan con H-053 a H-061, y pasan a «Resuelto» los hallazgos cuyos PR ya tienen merge. | 64 → 64 aprobadas; `npm run check` sin errores | Cerrar el PR o revertir el commit |
 | 2026-11-20 | H-061 | FrontendPatSft | `mejora/H-061-admin-separado` · [FrontendPatSft#47](https://github.com/WillC372/FrontendPatSft/pull/47) | `Roles.js`: el administrador tiene su propia app (Panel, Consumo IA, Datos oficiales, Sesiones), sin Medir ni Aqua. El historial ya no muestra columnas vacías. | 60 → 62 aprobadas | Revertir el commit |
 | 2026-11-20 | H-061 | BackendPatSft | `mejora/H-061-admin-no-mide` · [BackendPatSft#11](https://github.com/WillC372/BackendPatSft/pull/11) | `Measurers.require`: el administrador recibe 403 al intentar medir. | 118 → 119 aprobadas | Revertir el commit |

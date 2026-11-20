@@ -74,6 +74,7 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 | H-060 | Se quita WhatsApp: el dueño decidió no configurar la cuenta de Meta | BackendPatSft · FrontendPatSft | decisión del dueño | Baja | no | Resuelto (BackendPatSft#10, FrontendPatSft#46) |
 | H-061 | El administrador veía la misma app que un usuario y podía medir; el historial mostraba columnas vacías | BackendPatSft · FrontendPatSft | pedido del dueño / error | Media | no | Resuelto (BackendPatSft#11, FrontendPatSft#47) |
 | H-062 | El requisito RNF-07 pedía «instalar la app» y decía que la interfaz solo estaba en español | FrontendPatSft | documentación / decisión del dueño | Baja | no | Resuelto (FrontendPatSft#49) |
+| H-063 | La gota de «Acerca de» en Configuración ocupaba todo el ancho de la tarjeta | FrontendPatSft | error de interfaz | Baja | no | En revisión (rama `mejora/H-063-gota-acerca-de`) |
 
 ## Detalle
 
@@ -627,3 +628,8 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 - Repositorio: FrontendPatSft · Tipo: documentación / decisión del dueño · Severidad: **Baja** · Estructural: no · Esfuerzo: S · Riesgo de regresión: ninguno (solo documentación) · Estado: Resuelto (FrontendPatSft#49) · Detectado por: preparación de la exposición (20 nov)
 - Evidencia: `docs/Requerimientos.md` y `docs/issues/37-RNF-07.md` describían RNF-07 como «Compatibilidad e instalación», con el criterio «El navegador ofrece instalar la app» y la frase «Interfaz en español». La app tiene siete idiomas (`js/core/Locale.js`). Sobre la instalación: Chromium no reporta errores de instalabilidad en la app publicada (`Page.getInstallabilityErrors` vacío, manifiesto sin errores), así que técnicamente sí se puede instalar en Chrome o Edge; pero el dueño decidió que el requisito no prometa instalarla.
 - Corrección: RNF-07 pasa a «Compatibilidad con navegadores»: se usa desde el navegador sin instalar nada, en computador y celular; el medidor necesita Chrome o Edge en un computador; interfaz en siete idiomas. No cambia código: el manifiesto y `sw.js` (que también sirve para los avisos Web Push) se quedan.
+
+### H-063 · La gota de «Acerca de» en Configuración ocupaba todo el ancho de la tarjeta
+- Repositorio: FrontendPatSft · Tipo: error de interfaz · Severidad: **Baja** · Estructural: no · Esfuerzo: S · Riesgo de regresión: bajo · Estado: En revisión (rama `mejora/H-063-gota-acerca-de`) · Detectado por: el dueño (20 nov)
+- Evidencia: en la app publicada, el logo de «Acerca de» medía 948 × 948 px en computador (1280 px de ancho) y 320 × 320 px en celular. `Settings.js` usa `logo("brand-logo")`, pero `.brand-logo` solo tiene tamaño dentro de la pantalla de acceso (`.auth-hero-content .brand-logo`), y un SVG sin tamaño crece hasta llenar el espacio.
+- Corrección: la fila pasa a `about-brand` y `Views.css` le da a la gota 56 × 56 px (`flex: none`), con la misma sombra que la de la barra superior. Se mantiene la clase `brand-logo`, así la gota sigue respetando el ajuste «Animaciones». Probado sobre la app publicada con los archivos de la rama: 56 px en computador y en celular, sin errores de consola. Pruebas: 64 → 65 (`AboutLogo.test.mjs`, que falla sin la corrección).
