@@ -69,8 +69,9 @@ export function photoReading() {
           <button data-kind="METER_DISPLAY" role="radio" aria-checked="false">${icon("chip")}Pantalla del medidor</button>
         </div>
         <label class="drop-zone" data-drop>
-          ${icon("camera")}<strong>Toma una foto o elige una imagen</strong><small class="muted">JPEG o PNG, hasta 10 MB. La foto no se guarda.</small>
-          <input type="file" accept="image/*" capture="environment" data-file aria-label="Foto de la prueba de pH">
+          ${icon("image")}<strong>Elige una foto de tu galería</strong><small class="muted">O una imagen de tus archivos. JPEG o PNG, hasta 10 MB. La foto no se guarda.</small>
+          <!-- No "capture": on a phone it forced the camera; without it the phone offers the gallery and the files. -->
+          <input type="file" accept="image/*" data-file aria-label="Elegir una foto de la prueba de pH">
         </label>
         <button class="btn" type="button" data-use-camera>${icon("camera")}Usar la cámara de este equipo</button>
         <div class="photo-camera" data-camera hidden>
