@@ -78,6 +78,8 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 | H-064 | Tres patrones vistos en clase (Abstract Factory, Bridge y Decorator) no estaban en el software | BackendPatSft · FrontendPatSft | requisito del curso / arquitectura | Media | sí (diseño interno, pedido por el dueño) | Resuelto (BackendPatSft#12, FrontendPatSft#52) |
 | H-065 | La app se dormía y tardaba en responder: el despertador corría cada 3 horas y GitHub lo ejecutaba aún menos | BackendPatSft | disponibilidad / pedido del dueño | Media | no | En revisión (BackendPatSft#13) |
 | H-066 | Documentación atrasada: MockUps, requerimientos, issues y README de los cuatro repositorios no reflejaban H-053 a H-065 | Los cuatro | documentación | Baja | no | En revisión (FrontendPatSft#53, BackendPatSft#14, AIPatSft#8, DBPatSft#5) |
+| H-067 | La alarma no llegaba al celular como mensaje de texto | DBPatSft · BackendPatSft · FrontendPatSft | pedido del dueño | Media | sí (columna y rutas nuevas, aprobadas por el dueño al elegir Twilio) | En revisión (DBPatSft#6, BackendPatSft#15, FrontendPatSft#54) |
+| H-068 | Los correos de la app llegan a spam | BackendPatSft (configuración) | entrega de correo | Media | no | Requiere acción del dueño (dominio propio) |
 
 ## Detalle
 
@@ -664,3 +666,17 @@ Estados: `Nuevo` · `Aprobado` · `Requiere propuesta` · `En corrección` · `E
 - Corrección:
   - Los 9 MockUps se capturaron otra vez desde la app publicada.
   - Se pusieron al día los requerimientos y sus issues, y los README y documentos de BackendPatSft, AIPatSft y DBPatSft.
+
+### H-067 · La alarma no llegaba al celular como mensaje de texto
+- Repositorio: DBPatSft · BackendPatSft · FrontendPatSft · Tipo: pedido del dueño · Severidad: **Media** · Estructural: sí (columna `user_settings.sms_alerts` y rutas `/users/me/phone`; el dueño eligió Twilio) · Estado: En revisión
+- Corrección:
+  - V30 agrega la preferencia; el número usa `users.phone_number` (V29).
+  - El backend envía por la API de Twilio (`SmsService`) mediante un canal nuevo del Bridge de avisos (`SmsChannel`), decorado con traducción y un SMS por hora. Solo la alarma lo usa.
+  - Configuración tiene la fila «Alarma por SMS» con número, interruptor y «Enviar SMS de prueba».
+  - Sin las variables de Twilio queda apagado y lo dice. Pruebas del backend: 130 → 134, con Twilio imitado por un servidor local.
+- Pendiente del dueño: crear la cuenta de Twilio y poner `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` y `TWILIO_FROM_NUMBER` en Render (pasos en `docs/Deployment.md` de BackendPatSft).
+
+### H-068 · Los correos de la app llegan a spam
+- Repositorio: BackendPatSft (configuración de Render) · Tipo: entrega de correo · Severidad: **Media** · Estado: Requiere acción del dueño
+- Evidencia: `/admin/mail` muestra el canal Mailjet con remitente `@gmail.com`. Gmail desconfía de un correo que dice venir de `@gmail.com` pero no sale de sus servidores, y lo manda a spam.
+- Corrección: el dueño elige un dominio propio. Se autentica en Mailjet con SPF, DKIM y DMARC, y `MAIL_FROM` pasa a una dirección de ese dominio. Los pasos están en `docs/Deployment.md` de BackendPatSft. No requiere cambios de código: los correos ya van en texto plano y HTML.

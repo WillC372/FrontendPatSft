@@ -113,6 +113,7 @@ export const settingsView = {
               ["alert", "Alarma si el pH se altera", "Si el pH cambia de golpe (por ejemplo, algo cayó a la piscina o al acuario) o llega a nivel crítico, suena una alarma, aparece una ventana que no se cierra sola y Aqua dice en voz alta qué pasó y si es peligroso. Funciona con cualquier perfil."],
               ["send", "En tu celular o computador, aunque la app esté cerrada", "Activa «Avisos en este celular o computador» en cada dispositivo donde los quieras; el navegador te pedirá permiso. Con «Probar» compruebas que lleguen. En iPhone, primero agrega la app a la pantalla de inicio."],
               ["mail", "Por correo", "Con «Alertas por correo» te escribo cuando el agua sale del rango o el pH se altera (como mucho un correo de cada tipo por hora). Los recordatorios también pueden llegar por correo si lo marcas al crearlos."],
+              ["message", "Por SMS", "Guarda tu celular con el indicativo del país (por ejemplo +57 300 123 4567) y, si el pH se altera, te llega un mensaje de texto con lo que pasó y si es peligroso (como mucho uno por hora). Con «Enviar SMS de prueba» compruebas que llegue."],
             ])}
             <div class="setting-row"><div><strong>Notificaciones de alertas</strong><p>Avisos cuando una medición sale del rango (en la app y en los dispositivos donde actives los avisos).</p></div>
               <label class="switch"><input type="checkbox" data-notifications ${draft.notificationsEnabled ? "checked" : ""} aria-label="Notificaciones de alertas"><span></span></label></div>
@@ -121,6 +122,13 @@ export const settingsView = {
               <label class="switch"><input type="checkbox" data-alarm-sound ${alarmSoundOn() ? "checked" : ""} aria-label="Alarma con sonido si el pH se altera"><span></span></label></div></div>
             <div class="setting-row"><div><strong>Alertas por correo</strong><p>Te escribo a tu correo cuando una medición sale del rango o el pH se altera (como mucho uno de cada tipo por hora).</p></div>
               <label class="switch"><input type="checkbox" data-email-alerts ${draft.emailAlerts !== false ? "checked" : ""} aria-label="Alertas por correo"><span></span></label></div>
+            <div class="setting-row sms-row"><div style="flex:1"><strong>Alarma por SMS</strong><p data-sms-status>Revisando...</p>
+              <div class="row" style="gap:8px;margin-top:8px;flex-wrap:wrap">
+                <input class="input" type="tel" inputmode="tel" autocomplete="tel" data-sms-phone placeholder="+57 300 123 4567" aria-label="Número de celular para la alarma por SMS" style="max-width:220px">
+                <button type="button" class="btn btn-sm" data-sms-save>${icon("check")}Guardar número</button>
+                <button type="button" class="btn btn-sm" data-sms-test hidden>${icon("send")}Enviar SMS de prueba</button></div>
+              <div class="field-error" data-sms-error></div></div>
+              <label class="switch"><input type="checkbox" data-sms-enabled aria-label="Alarma por SMS"><span></span></label></div>
             <div class="setting-row push-row"><div><strong>Avisos en este celular o computador</strong><p data-push-status>Revisando...</p></div>
               <div class="row" style="gap:6px;flex-wrap:nowrap"><button type="button" class="btn btn-sm" data-push-test hidden>${icon("send")}Probar</button>
               <label class="switch"><input type="checkbox" data-push aria-label="Avisos en este dispositivo"><span></span></label></div></div>
@@ -187,6 +195,7 @@ export const settingsView = {
       root.querySelectorAll("[data-goto]").forEach((x) => x.classList.toggle("active", x === b));
       document.getElementById(`s-${b.dataset.goto}`).scrollIntoView({ behavior: "smooth", block: "start" });
     }));
+    bindSms(root);
     root.querySelector("[data-alarm-sound]").addEventListener("change", (e) => {
       setAlarmSound(e.target.checked);
       toast(e.target.checked ? "La alarma sonará en este dispositivo." : "La alarma no sonará en este dispositivo; la ventana y el aviso siguen.", "ok", 3000);
@@ -403,3 +412,44 @@ export const settingsView = {
     return null;
   },
 };
+
+/** Mobile number for the pH alarm by SMS: saved right away, without «Guardar cambios». */
+function bindSms(root) {
+  const phone = root.querySelector("[data-sms-phone]");
+  if (!phone) return;
+  const status = root.querySelector("[data-sms-status]");
+  const test = root.querySelector("[data-sms-test]");
+  const enabled = root.querySelector("[data-sms-enabled]");
+  const error = root.querySelector("[data-sms-error]");
+  let current = null;
+  const show = (data) => {
+    current = data;
+    phone.value = data.phoneNumber || "";
+    enabled.checked = data.smsAlerts;
+    test.hidden = !data.phoneNumber || !data.smsConfigured;
+    status.textContent = !data.smsConfigured
+      ? "Los SMS todavía no están activos en el servidor. Puedes guardar tu número: la alarma empezará a llegar por SMS cuando se activen."
+      : !data.phoneNumber ? "Escribe tu celular con el indicativo del país para recibir un SMS si el pH se altera."
+        : data.smsAlerts ? `Si el pH se altera, te envío un SMS a ${data.phoneNumber}.` : "Tienes el número guardado, pero la alarma por SMS está apagada.";
+  };
+  api.get("/users/me/phone").then((data) => { if (status.isConnected) show(data); })
+    .catch(() => { status.textContent = "No se pudo consultar la alarma por SMS ahora."; });
+  const save = (body) => api.put("/users/me/phone", body);
+  root.querySelector("[data-sms-save]").addEventListener("click", (e) => withBusy(e.currentTarget, async () => {
+    error.textContent = "";
+    try {
+      show(await save({ phoneNumber: phone.value, smsAlerts: enabled.checked }));
+      toast(phone.value ? "Número guardado." : "Número quitado.", "ok");
+    } catch (err) { error.textContent = err.message; }
+  }));
+  enabled.addEventListener("change", async () => {
+    try { show(await save({ phoneNumber: current?.phoneNumber || phone.value, smsAlerts: enabled.checked })); }
+    catch (err) { enabled.checked = !enabled.checked; toast(err.message, "error"); }
+  });
+  test.addEventListener("click", (e) => withBusy(e.currentTarget, async () => {
+    try {
+      const r = await api.post("/users/me/phone/test");
+      toast(r.sent ? "SMS enviado: debería llegar en unos segundos." : r.detail, r.sent ? "ok" : "warn", 8000);
+    } catch (err) { toast(err.message, "error"); }
+  }));
+}
